@@ -1,13 +1,9 @@
 package com.example.accord;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -46,7 +42,7 @@ public class CardActivity extends AppCompatActivity {
     }
 
     public void setup(){
-        kCard = findViewById(R.id.kCard);
+        kCard = findViewById(R.id.kolCard);
         list = new ArrayList<Integer>();
         initCards();
         adapter = new SwipeAdapter(this, list);

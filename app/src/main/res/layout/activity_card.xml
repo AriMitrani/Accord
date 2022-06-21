@@ -52,7 +52,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.yalantis.library.Koloda
-        android:id="@+id/kCard"
+        android:id="@+id/kolCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:koloda_card_layout="@layout/card_layout"
