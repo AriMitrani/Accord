@@ -11,4 +11,4 @@
 
 <a href="https://www.flaticon.com/free-icons/pencil" title="pencil icons">Pencil icons created by Freepik - Flaticon</a>
 
-<a href="https://www.flaticon.com/free-icons/rectangle" title="rectangle icons">Rectangle icons created by Nuion - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/rounded-rectangle" title="rounded-rectangle icons">Rounded-rectangle icons created by Freepik - Flaticon</a>
