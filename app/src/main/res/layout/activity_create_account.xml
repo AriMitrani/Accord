@@ -16,6 +16,19 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etName" />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
 
     <EditText
@@ -32,12 +45,12 @@
         app:layout_constraintTop_toBottomOf="@+id/etUsername" />
 
     <Button
-        android:id="@+id/bLogin"
+        android:id="@+id/bCreateAcc"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:backgroundTint="#FF0000"
-        android:text="Log In"
+        android:text="Create Account"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
@@ -46,17 +59,6 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etPassword" />
-
-    <TextView
-        android:id="@+id/tvNew"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Start jamming!"
-        android:textColor="#F40303"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/bLogin"
-        app:layout_constraintTop_toBottomOf="@+id/bLogin" />
 
     <ImageView
         android:id="@+id/ivLogo"
@@ -69,23 +71,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/launch_logo"
         tools:srcCompat="@drawable/launch_logo" />
-
-    <TextView
-        android:id="@+id/tvBottomText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="New here?"
-        app:layout_constraintStart_toStartOf="@+id/bLogin"
-        app:layout_constraintTop_toBottomOf="@+id/bLogin" />
-
-    <TextView
-        android:id="@+id/tvError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBottomText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
