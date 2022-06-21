@@ -22,9 +22,11 @@
         <entry key="uikit/src/main/res-components/messages/layout/activity_cometchat_message_list.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res-components/messages/layout/cometchat_messagelist_toolbar.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res-components/others/layout/activity_screen.xml" value="0.2947916666666667" />
+        <entry key="uikit/src/main/res-components/userprofile/layout/fragment_cometchat_user_profile.xml" value="0.23854166666666668" />
         <entry key="uikit/src/main/res-components/users/layout/activity_cometchat_user_detail.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res-components/users/layout/fragment_cometchat_userlist.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res/layout/activity_comet_chat_start_conversation.xml" value="0.2947916666666667" />
+        <entry key="uikit/src/main/res/layout/fragment_my_profile.xml" value="0.23854166666666668" />
         <entry key="uikit/src/main/res/menu/cometchat_navigation_bottom.xml" value="0.21822916666666667" />
         <entry key="uikit/src/main/res/menu/cometchat_reaction_nav.xml" value="0.21822916666666667" />
         <entry key="uikit/src/main/res/menu/group_action_menu.xml" value="0.21822916666666667" />
