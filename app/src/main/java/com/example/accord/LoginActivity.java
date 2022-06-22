@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.User;
+import com.cometchat.pro.uikit.ui_components.cometchat_ui.CometChatUI;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -35,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         // createChatUser(ParseUser.getCurrentUser().getUsername(), ParseUser.getCurrentUser().getString("fullName"));
 
         if (ParseUser.getCurrentUser() != null) { //if someone is already logged in, skip login screen
+            loginChatUser(ParseUser.getCurrentUser().getUsername());
             goMainActivity();
         }
 
@@ -65,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void goMainActivity(){
-        Intent i = new Intent(this, CardActivity.class);
+        Intent i = new Intent(this, CometChatUI.class);
         startActivity(i);
         finish();
     }

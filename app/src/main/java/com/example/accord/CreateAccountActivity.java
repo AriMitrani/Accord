@@ -1,5 +1,6 @@
 package com.example.accord;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.widget.EditText;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.User;
+import com.cometchat.pro.uikit.ui_components.cometchat_ui.CometChatUI;
+import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -56,8 +59,9 @@ public class CreateAccountActivity extends AppCompatActivity {
                 }
                 createUser(name, username, pass);
                 Log.e(TAG, "User created.");
-                //Intent i = new Intent(getApplicationContext(), CardActivity.class);
-                //startActivity(i);
+                login(username, pass);
+                Intent i = new Intent(getApplicationContext(), CometChatUI.class);
+                startActivity(i);
             }
         });
     }
@@ -103,5 +107,46 @@ public class CreateAccountActivity extends AppCompatActivity {
                 Log.e("createUser failed", e.getMessage());
             }
         });
+    }
+
+    public void login(String username, String password){
+        loginChatUser(username);
+        loginParseUser(username, password);
+    }
+
+    public void loginParseUser(String username, String password) {
+        Log.i(TAG, "Logging in " + username);
+
+        //this statement logs the user into parse
+        ParseUser.logInInBackground(username, password, new LogInCallback() {
+            @Override
+            public void done(ParseUser user, ParseException e) {
+                if (e != null) { //e is error code, if it is null the parse login worked
+                    Log.i(TAG, "Issue with login", e);
+                    return;
+                }
+                Log.i(TAG, "Login worked");
+            }
+        });
+    }
+
+    public void loginChatUser(String UID){
+        String authKey = BuildConfig.AUTH_KEY_CHAT;
+        if (CometChat.getLoggedInUser() == null) {
+            CometChat.login(UID, authKey, new CometChat.CallbackListener<User>() {
+
+                @Override
+                public void onSuccess(User user) {
+                    Log.d(TAG, "Login Successful : " + user.toString());
+                }
+
+                @Override
+                public void onError(CometChatException e) {
+                    Log.d(TAG, "Login failed with exception: " + e.getMessage());
+                }
+            });
+        } else {
+            Log.d(TAG, "User already logged in: " + UID);
+        }
     }
 }
