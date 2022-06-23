@@ -95,4 +95,7 @@ dependencies {
     compileOnly 'com.cometchat:pro-android-calls-sdk:2.1.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.0'
     implementation "com.github.parse-community.Parse-SDK-Android:parse:3.0.0"
+
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 }
