@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <item
+      android:id="@+id/mProfile"
+      android:icon="@drawable/user_icon" />
+  <item
+      android:id="@+id/mCard"
+      android:icon="@drawable/card_icon" />
+  <item
+      android:id="@+id/mChats"
+      android:icon="@drawable/chat_icon" />
+
+</menu>

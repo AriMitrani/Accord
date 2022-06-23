@@ -176,6 +176,7 @@
             android:layout_height="30dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/settings_icon"
+            android:onClick="settingClick"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ivCircleBG" />
 
