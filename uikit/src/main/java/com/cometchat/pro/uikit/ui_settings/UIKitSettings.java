@@ -25,7 +25,7 @@ import java.util.Locale;
 public class UIKitSettings {
 
     //style
-    protected static String UIcolor = "#03A9F4";
+    protected static String UIcolor = "#ff0000";
     //BottomBar
     private static boolean users = true;
     private static boolean groups = true;
