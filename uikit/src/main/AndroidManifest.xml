@@ -30,7 +30,12 @@
         <intent>
             <action android:name="android.intent.action.CHOOSER" />
         </intent>
+
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
     </queries>
+
 
     <application
         android:extractNativeLibs="false"
@@ -116,7 +121,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${file_provider}.provider"
+            android:authorities="com.codepath.accord"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

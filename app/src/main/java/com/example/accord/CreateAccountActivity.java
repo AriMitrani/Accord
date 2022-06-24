@@ -59,9 +59,6 @@ public class CreateAccountActivity extends AppCompatActivity {
                 }
                 createUser(name, username, pass);
                 Log.e(TAG, "User created.");
-                login(username, pass);
-                Intent i = new Intent(getApplicationContext(), CometChatUI.class);
-                startActivity(i);
             }
         });
     }
@@ -86,6 +83,9 @@ public class CreateAccountActivity extends AppCompatActivity {
                 }
                 // Log.e(TAG, "User created!");
                 createChatUser(username, name);
+                login(username, pass);
+                Intent i = new Intent(getApplicationContext(), CometChatUI.class);
+                startActivity(i);
             }
         });
     }

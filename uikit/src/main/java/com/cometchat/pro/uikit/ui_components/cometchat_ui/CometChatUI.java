@@ -8,9 +8,14 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.emoji.bundled.BundledEmojiCompatConfig;
 import androidx.emoji.text.EmojiCompat;
@@ -45,6 +51,11 @@ import com.cometchat.pro.uikit.ui_settings.UIKitSettings;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -186,7 +197,7 @@ public class CometChatUI extends AppCompatActivity implements
                         UIKitConstants.RequestCode.RECORD);
             }
         }
-        badgeDrawable = activityCometChatUnifiedBinding.bottomNavigation.getOrCreateBadge(R.id.mCard);
+        badgeDrawable = activityCometChatUnifiedBinding.bottomNavigation.getOrCreateBadge(R.id.mChats);
 
         activityCometChatUnifiedBinding.bottomNavigation.setOnNavigationItemSelectedListener(this);
 
@@ -199,57 +210,11 @@ public class CometChatUI extends AppCompatActivity implements
             activityCometChatUnifiedBinding.bottomNavigation.setItemIconTintList(colorStateList);
 
         }
-//        activityCometChatUnifiedBinding.bottomNavigation.getMenu().add(Menu.NONE,12,Menu.NONE,"Test").setIcon(R.drawable.ic_security_24dp);
-        /*FeatureRestriction.isConversationListEnabled(new FeatureRestriction.OnSuccessListener() {
-            @Override
-            public void onSuccess(Boolean booleanVal) {
-                isConversationVisible = booleanVal;
-                activityCometChatUnifiedBinding.bottomNavigation.getMenu().findItem(R.id.mChats)
-                        .setVisible(booleanVal);
-            }
-        });
-
-        FeatureRestriction.isUserListEnabled(new FeatureRestriction.OnSuccessListener() {
-            @Override
-            public void onSuccess(Boolean booleanVal) {
-                isUserListVisible = booleanVal;
-                activityCometChatUnifiedBinding.bottomNavigation.getMenu().findItem(R.id.mCard)
-                        .setVisible(booleanVal);
-            }
-        });
-
-        FeatureRestriction.isGroupListEnabled(new FeatureRestriction.OnSuccessListener() {
-            @Override
-            public void onSuccess(Boolean booleanVal) {
-                isGroupsListVisible = booleanVal;
-                activityCometChatUnifiedBinding.bottomNavigation.getMenu().findItem(R.id.mCard)
-                        .setVisible(booleanVal);
-
-            }
-        });
-
-
-        FeatureRestriction.isUserSettingsEnabled(new FeatureRestriction.OnSuccessListener() {
-            @Override
-            public void onSuccess(Boolean booleanVal) {
-                isSettingsVisible = booleanVal;
-                activityCometChatUnifiedBinding.bottomNavigation.getMenu().findItem(R.id.mProfile)
-                        .setVisible(booleanVal);
-            }
-        });*/
 
         activityCometChatUnifiedBinding.bottomNavigation.getMenu().findItem(R.id.mCard)
                 .setChecked(true).setVisible(true);
         badgeDrawable.setVisible(false);
         loadFragment(new MyCardFragment());
-        /*if (isConversationVisible)
-            loadFragment(new CometChatConversationList());
-        else if (isUserListVisible)
-            loadFragment(new CometChatUserList());
-        else if (isGroupsListVisible)
-            loadFragment(new CometChatGroupList());
-        else if (isSettingsVisible)
-            loadFragment(new CometChatUserProfile());*/
     }
 
     /**

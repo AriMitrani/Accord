@@ -38,9 +38,9 @@
             android:id="@+id/ivPFP"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/testpfp"
-            app:layout_constraintBottom_toTopOf="@+id/tvName"
+            app:layout_constraintBottom_toTopOf="@+id/tvChangePFP"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:srcCompat="@drawable/testpfp" />
@@ -118,6 +118,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivButtonMedia" />
+
+        <TextView
+            android:id="@+id/tvChangePFP"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="click to change profile picture"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toTopOf="@+id/tvName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/line1"
