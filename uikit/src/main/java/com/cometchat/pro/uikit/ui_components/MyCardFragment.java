@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.cometchat.pro.core.CometChat;
@@ -42,6 +43,7 @@ public class MyCardFragment extends Fragment {
         Log.e(TAG, "Logged in as: " + ParseUser.getCurrentUser().getUsername());
         Log.e(TAG, "Chat logged in as: " + CometChat.getLoggedInUser());
         setup(v);
+        listeners();
         return v;
     }
 
@@ -49,10 +51,9 @@ public class MyCardFragment extends Fragment {
         kCard = (Koloda) v.findViewById(R.id.kolCard);
         list = new ArrayList<String>();
         initCards();
-        //list.add("jdog");
         adapter = new CardSwipeAdapter(getContext(), list);
         kCard.setAdapter(adapter);
-        ivLogo = v.findViewById(R.id. ivLogo);
+        ivLogo = v.findViewById(R.id.ivLogo);
     }
 
     public void initCards(){
@@ -70,31 +71,10 @@ public class MyCardFragment extends Fragment {
     public void listeners(){
         ivLogo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                logout();
+            public void onClick(View view) {
+                Log.e(TAG, "Left");
             }
         });
     }
 
-    public void logout(){
-        ParseUser.logOutInBackground();
-        logoutComet();
-        getActivity().finish();
-    }
-
-    public void logoutComet(){
-        if (CometChat.getLoggedInUser() != null) {
-            CometChat.logout(new CometChat.CallbackListener<String>() {
-                @Override
-                public void onSuccess(String s) {
-                    Log.e(TAG, "Logout success");
-                }
-
-                @Override
-                public void onError(CometChatException e) {
-                    Log.e(TAG, "Logout error: " + e);
-                }
-            });
-        }
-    }
 }

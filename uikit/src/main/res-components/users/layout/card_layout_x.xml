@@ -22,31 +22,62 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/lLeft"
+                android:layout_width="75dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lRight"
+                android:layout_width="75dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/ivInst4"
+                android:id="@+id/ivInst2"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toStartOf="@+id/ivInst3"
                 app:layout_constraintStart_toEndOf="@+id/ivInst1"
                 app:layout_constraintTop_toBottomOf="@+id/tvLocation"
-                app:srcCompat="@drawable/example_pfp" />
+                app:srcCompat="@drawable/cc_progress_drawable" />
 
             <RatingBar
                 android:id="@+id/rb2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:isIndicator="true"
                 android:numStars="3"
-                android:rating="3"
+                android:rating="0"
                 android:scaleX=".5"
                 android:scaleY=".5"
                 android:stepSize="1"
                 android:theme="@style/RatingBar"
-                app:layout_constraintEnd_toEndOf="@+id/ivInst4"
-                app:layout_constraintStart_toStartOf="@+id/ivInst4"
-                app:layout_constraintTop_toBottomOf="@+id/ivInst4" />
+                app:layout_constraintEnd_toEndOf="@+id/ivInst2"
+                app:layout_constraintStart_toStartOf="@+id/ivInst2"
+                app:layout_constraintTop_toBottomOf="@+id/ivInst2" />
 
             <ImageView
                 android:id="@+id/ivInst3"
@@ -56,14 +87,15 @@
                 android:layout_marginEnd="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvLocation"
-                app:srcCompat="@drawable/example_pfp" />
+                app:srcCompat="@drawable/cc_progress_drawable" />
 
             <RatingBar
                 android:id="@+id/rb3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:numStars="2"
-                android:rating="1"
+                android:isIndicator="true"
+                android:numStars="3"
+                android:rating="0"
                 android:scaleX=".5"
                 android:scaleY=".5"
                 android:stepSize="1"
@@ -103,7 +135,7 @@
                 android:id="@+id/tvAge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="19yo"
                 android:textAllCaps="true"
                 android:textColor="#FFFFFF"
@@ -116,7 +148,7 @@
                 android:id="@+id/tvLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="San diego, ca"
                 android:textAllCaps="true"
                 android:textColor="#FFFFFF"
@@ -126,11 +158,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvCardName" />
 
             <RatingBar
-                android:id="@+id/ratingBar"
+                android:id="@+id/rb1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:isIndicator="true"
                 android:numStars="3"
-                android:rating="1"
+                android:rating="0"
                 android:scaleX=".5"
                 android:scaleY=".5"
                 android:stepSize="1"
@@ -147,7 +180,7 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvLocation"
-                app:srcCompat="@drawable/example_pfp" />
+                app:srcCompat="@drawable/cc_progress_drawable" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
