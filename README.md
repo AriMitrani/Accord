@@ -18,3 +18,5 @@
 <a href="https://www.flaticon.com/free-icons/gear" title="gear icons">Gear icons created by Freepik - Flaticon</a>
 
 <a href="https://www.flaticon.com/free-icons/teenager" title="teenager icons">Teenager icons created by Freepik - Flaticon</a>
+
+<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
