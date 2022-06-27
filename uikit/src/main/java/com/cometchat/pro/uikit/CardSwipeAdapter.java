@@ -53,7 +53,6 @@ public class CardSwipeAdapter extends BaseAdapter {
         this.list = list;
         LayoutID = R.layout.card_layout_x;
         page = 1;
-        showFirst();
     }
 
     @Override
@@ -102,6 +101,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         lLeft = v.findViewById(R.id.lLeft);
         lRight = v.findViewById(R.id.lRight);
         populateInstruments(user, v);
+        showFirst();
     }
 
     public void getCardUser(int pos, View v){
@@ -198,6 +198,7 @@ public class CardSwipeAdapter extends BaseAdapter {
                 Log.e(TAG, "Left");
                 if(page - 1 == 1) {
                     showFirst();
+                    notifyDataSetChanged();
                     page -= 1;
                 }
                 else if(page != 1) {
