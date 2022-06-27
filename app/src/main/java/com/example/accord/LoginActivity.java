@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Log.e(TAG, "Login launched");
         setup();
         listeners();
 
@@ -111,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
             });
         } else {
             Log.d(TAG, "User already logged in: " + UID);
-            goMainActivity();
+            // goMainActivity();
         }
     }
 

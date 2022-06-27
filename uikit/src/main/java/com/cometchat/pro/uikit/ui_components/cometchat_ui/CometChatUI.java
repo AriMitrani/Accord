@@ -71,6 +71,8 @@ import com.cometchat.pro.uikit.ui_resources.utils.custom_alertDialog.OnAlertDial
 import com.cometchat.pro.uikit.ui_resources.utils.item_clickListener.OnItemClickListener;
 import com.cometchat.pro.uikit.ui_resources.utils.Utils;
 import com.cometchat.pro.uikit.ui_settings.FeatureRestriction;
+import com.parse.LogOutCallback;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 /**
@@ -474,24 +476,27 @@ public class CometChatUI extends AppCompatActivity implements
 
     public void settingClick(View v) { //my logout
         if (v.getId() == R.id.ivSettings) {
+            Log.e(TAG, "Logout sequence started");
             logout();
         }
     }
 
     public void logout(){ //mine
-        ParseUser.logOutInBackground();
-        logoutComet();
-        Intent intent = null;
         try {
-            intent = new Intent(this,
+            Intent intent = new Intent(CometChatUI.this,
                     Class.forName("com.example.accord.LoginActivity"));
-            startActivity(intent);
+            ParseUser.logOutInBackground(new LogOutCallback() {
+                @Override
+                public void done(ParseException e) {
+                    logoutComet();
+                    startActivity(intent);
+                }
+            });
+            Log.e(TAG, "Logout sequence ended");
         } catch (ClassNotFoundException e) {
             Log.e(TAG, "Issue: ", e);
             e.printStackTrace();
         }
-        //Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-        //startActivity(i);
     }
 
     public void logoutComet(){ //mine
