@@ -73,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(String username, String password){
-        loginChatUser(username);
         loginParseUser(username, password);
     }
 
@@ -89,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 Log.i(TAG, "Login worked");
-                goMainActivity(); //function we define to go from login screen to main if login success
+                loginChatUser(username);
             }
         });
     }
@@ -102,6 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(User user) {
                     Log.d(TAG, "Login Successful : " + user.toString());
+                    goMainActivity(); //function we define to go from login screen to main if login success
                 }
 
                 @Override
@@ -111,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             });
         } else {
             Log.d(TAG, "User already logged in: " + UID);
+            goMainActivity();
         }
     }
 
