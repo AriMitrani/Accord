@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,11 +17,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.User;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +53,7 @@ public class CardSwipeAdapter extends BaseAdapter {
     public int page;
     public LinearLayout lLeft;
     public LinearLayout lRight;
+    public VideoView vFile;
 
     public CardSwipeAdapter(Context context, List<String> list) {
         this.context = context;
@@ -100,7 +107,9 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvAge = v.findViewById(R.id.tvAge);
         lLeft = v.findViewById(R.id.lLeft);
         lRight = v.findViewById(R.id.lRight);
+        vFile = v.findViewById(R.id.vFile);
         populateInstruments(user, v);
+        page = 1;
         showFirst();
     }
 
@@ -110,7 +119,7 @@ public class CardSwipeAdapter extends BaseAdapter {
             @Override
             public void onSuccess(User user) {
                 setup(user, v);
-                listeners(pos);
+                listeners(pos, user);
             }
             @Override
             public void onError(CometChatException e) {
@@ -191,7 +200,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         return 0;
     }
 
-    public void listeners(int pos){
+    public void listeners(int pos, User user){
         lLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,7 +222,7 @@ public class CardSwipeAdapter extends BaseAdapter {
             public void onClick(View view) {
                 Log.e(TAG, "Right");
                 if(page == 1) {
-                    hideFirst();
+                    hideFirst(user);
                     notifyDataSetChanged();
                 }
                 page += 1;
@@ -222,7 +231,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         });
     }
 
-    public void hideFirst(){
+    public void hideFirst(User user){
         tvCardName.setVisibility(View.INVISIBLE);
         ivCardPic.setVisibility(View.INVISIBLE);
         ivInst1.setVisibility(View.INVISIBLE);
@@ -233,6 +242,11 @@ public class CardSwipeAdapter extends BaseAdapter {
         rb3.setVisibility(View.INVISIBLE);
         tvAge.setVisibility(View.INVISIBLE);
         tvLocation.setVisibility(View.INVISIBLE);
+
+        //show
+        vFile.setVisibility(View.VISIBLE);
+        queryMedia(user);
+        //vFile.setVideoPath();
     }
 
     public void showFirst(){
@@ -246,5 +260,37 @@ public class CardSwipeAdapter extends BaseAdapter {
         rb3.setVisibility(View.VISIBLE);
         tvAge.setVisibility(View.VISIBLE);
         tvLocation.setVisibility(View.VISIBLE);
+
+        //things to hide
+        vFile.setVisibility(View.INVISIBLE);
     }
+
+    public void queryMedia(User user){
+        ParseQuery<MyMedia> query = ParseQuery.getQuery(MyMedia.class);
+        //query.include(MyMedia.KEY_USER);
+        query.setLimit(6);
+        query.addDescendingOrder("createdAt");
+        //query.whereContains("user", "7nB7IunbBS"); //hardcoded for now, fix later
+        // start an asynchronous call for posts
+        query.findInBackground(new FindCallback<MyMedia>() {
+            @Override
+            public void done(List<MyMedia> vids, ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting media", e);
+                    return;
+                }
+                Log.e(TAG, "Size: " + vids.size());
+                loadVideo(vids.get(0));
+            }
+        });
+    }
+
+    public void loadVideo(MyMedia vid){
+        String mediaUrl = vid.getVidURL();
+        vFile.setVideoPath(mediaUrl);
+        vFile.start();
+        notifyDataSetChanged();
+    }
+
 }

@@ -5,7 +5,9 @@ import android.util.Log;
 import com.cometchat.pro.core.AppSettings;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
+import com.cometchat.pro.uikit.MyMedia;
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 public class App extends Application {
 
@@ -37,6 +39,7 @@ public class App extends Application {
                 Log.d(TAG, "Initialization failed with exception: " + e.getMessage());
             }
         });
+        ParseObject.registerSubclass(MyMedia.class);
     }
 
     public void initParse(){
