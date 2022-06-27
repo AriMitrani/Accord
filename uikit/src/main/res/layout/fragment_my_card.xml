@@ -15,7 +15,7 @@
             android:id="@+id/kolCard"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:koloda_card_layout="@layout/card_layout"
+            app:koloda_card_layout="@layout/card_layout_x"
             app:koloda_card_rotate_angle="0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

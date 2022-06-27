@@ -73,31 +73,30 @@
                 app:layout_constraintTop_toBottomOf="@+id/ivInst3" />
 
             <TextView
-                android:id="@+id/tvLabel"
+                android:id="@+id/tvCardName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="4dp"
-                android:text="James Smith"
+                android:text="x"
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textColor="#FFFFFF"
                 android:textSize="48sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/imageView"
+                app:layout_constraintEnd_toStartOf="@+id/ivCardPic"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/ivCardPic"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginEnd="32dp"
-                app:layout_constraintBottom_toBottomOf="@+id/tvLabel"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCardName"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvLabel"
-                app:srcCompat="@drawable/testpfp"
+                app:layout_constraintTop_toTopOf="@+id/tvCardName"
                 tools:srcCompat="@drawable/circle" />
 
             <TextView
@@ -109,9 +108,9 @@
                 android:textAllCaps="true"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="@+id/imageView"
-                app:layout_constraintStart_toStartOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/tvLabel" />
+                app:layout_constraintEnd_toEndOf="@+id/ivCardPic"
+                app:layout_constraintStart_toStartOf="@+id/ivCardPic"
+                app:layout_constraintTop_toBottomOf="@+id/tvCardName" />
 
             <TextView
                 android:id="@+id/tvLocation"
@@ -122,9 +121,9 @@
                 android:textAllCaps="true"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="@+id/tvLabel"
-                app:layout_constraintStart_toStartOf="@+id/tvLabel"
-                app:layout_constraintTop_toBottomOf="@+id/tvLabel" />
+                app:layout_constraintEnd_toEndOf="@+id/tvCardName"
+                app:layout_constraintStart_toStartOf="@+id/tvCardName"
+                app:layout_constraintTop_toBottomOf="@+id/tvCardName" />
 
             <RatingBar
                 android:id="@+id/ratingBar"

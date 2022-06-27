@@ -112,7 +112,7 @@ public class StickersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.imageView);
+            imageView = itemView.findViewById(R.id.ivCardPic);
         }
     }
 }

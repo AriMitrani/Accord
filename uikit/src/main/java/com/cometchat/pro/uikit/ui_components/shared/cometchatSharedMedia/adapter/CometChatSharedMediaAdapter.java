@@ -234,7 +234,7 @@ public class CometChatSharedMediaAdapter extends RecyclerView.Adapter<RecyclerVi
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.imageView);
+            imageView = itemView.findViewById(R.id.ivCardPic);
             sensitiveLayout = itemView.findViewById(R.id.sensitive_layout);
         }
     }

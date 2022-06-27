@@ -17,6 +17,9 @@ import com.cometchat.pro.uikit.R;
 import com.parse.ParseUser;
 import com.yalantis.library.Koloda;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +27,7 @@ public class MyCardFragment extends Fragment {
 
     public Koloda kCard;
     private CardSwipeAdapter adapter;
-    private List<Integer> list;
+    private List<String> list;
     public ImageView ivLogo;
     public final String TAG = "Card";
 
@@ -44,17 +47,24 @@ public class MyCardFragment extends Fragment {
 
     public void setup(View v){
         kCard = (Koloda) v.findViewById(R.id.kolCard);
-        list = new ArrayList<Integer>();
+        list = new ArrayList<String>();
         initCards();
+        //list.add("jdog");
         adapter = new CardSwipeAdapter(getContext(), list);
         kCard.setAdapter(adapter);
         ivLogo = v.findViewById(R.id. ivLogo);
     }
 
     public void initCards(){
-        list.add(1);
-        list.add(2);
-        list.add(3);
+        list.clear();
+        try {
+            JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
+            for(int i = 0; i < Deck.length(); i++){
+                list.add(Deck.get(i).toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void listeners(){
