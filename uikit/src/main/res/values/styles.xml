@@ -22,6 +22,10 @@
         <item name="android:background">@drawable/rounded_dialog</item>
     </style>
 
+    <style name="noAnimTheme" parent="android:Theme.NoTitleBar">
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     <style name="MyDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
         <!-- Fill the screen -->
         <item name="android:layout_width">fill_parent</item>

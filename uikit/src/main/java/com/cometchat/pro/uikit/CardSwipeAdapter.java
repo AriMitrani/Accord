@@ -1,18 +1,13 @@
 package com.cometchat.pro.uikit;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -26,19 +21,16 @@ import com.cometchat.pro.models.User;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.File;
 import java.util.List;
 
 public class CardSwipeAdapter extends BaseAdapter {
     private Context context;
     private List<String> list;
-    public final String TAG = "SwipeAdapter";
+    public final String TAG = "CardSwipeAdapter";
     public TextView tvCardName;
     public ImageView ivCardPic;
     public ImageView ivInst1;
@@ -51,20 +43,24 @@ public class CardSwipeAdapter extends BaseAdapter {
     public TextView tvAge;
     public int LayoutID;
     public int page;
-    public LinearLayout lLeft;
-    public LinearLayout lRight;
     public VideoView vFile;
+    public boolean vidVisible;
 
-    public CardSwipeAdapter(Context context, List<String> list) {
+    public CardSwipeAdapter(Context context, List<String> list, boolean vidVisible) {
         this.context = context;
         this.list = list;
+        this.vidVisible = vidVisible;
         LayoutID = R.layout.card_layout_x;
         page = 1;
     }
 
+    public void setVidVisible(boolean v){
+        vidVisible = v;
+    }
+
     @Override
     public int getCount() {
-        return list.size();
+        return list.size(); //fix?
     }
 
     @Override
@@ -79,11 +75,15 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.e(TAG, "List at " + position);
+        for(int i = 0; i< list.size(); i++){
+            Log.e(TAG, "Card: " + list.get(i));
+        }
+        Log.e(TAG, "Getting view " + position + " and vis is " + vidVisible);
         View view;
         if(convertView == null){
             view = LayoutInflater.from(parent.getContext()).inflate(LayoutID, parent, false);
             getCardUser(position, view);
-            Log.e(TAG, "Null");
         } else {
             view = convertView;
             Log.e(TAG, "Old view");
@@ -92,7 +92,6 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     public void setup(User user, View v){
-        Log.e(TAG, user.toString());
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
@@ -105,12 +104,29 @@ public class CardSwipeAdapter extends BaseAdapter {
         rb3 = v.findViewById(R.id.rb3);
         tvLocation = v.findViewById(R.id.tvLocation);
         tvAge = v.findViewById(R.id.tvAge);
-        lLeft = v.findViewById(R.id.lLeft);
-        lRight = v.findViewById(R.id.lRight);
         vFile = v.findViewById(R.id.vFile);
         populateInstruments(user, v);
         page = 1;
-        showFirst();
+        showFirst(user, v);
+    }
+
+    public void setupHide(User user, View v){
+        tvCardName = v.findViewById(R.id.tvCardName);
+        tvCardName.setText(user.getName());
+        ivCardPic = v.findViewById(R.id.ivCardPic);
+        Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic);
+        ivInst1 = v.findViewById(R.id.ivInst1);
+        ivInst2 = v.findViewById(R.id.ivInst2);
+        ivInst3 = v.findViewById(R.id.ivInst3);
+        rb1 = v.findViewById(R.id.rb1);
+        rb2 = v.findViewById(R.id.rb2);
+        rb3 = v.findViewById(R.id.rb3);
+        tvLocation = v.findViewById(R.id.tvLocation);
+        tvAge = v.findViewById(R.id.tvAge);
+        vFile = v.findViewById(R.id.vFile);
+        populateInstruments(user, v);
+        page = 1;
+        hideFirst(user);
     }
 
     public void getCardUser(int pos, View v){
@@ -118,7 +134,12 @@ public class CardSwipeAdapter extends BaseAdapter {
         CometChat.getUser(list.get(pos), new CometChat.CallbackListener<User>() {
             @Override
             public void onSuccess(User user) {
-                setup(user, v);
+                if(vidVisible){
+                    setup(user, v);
+                }
+                else{
+                    setupHide(user, v);
+                }
                 listeners(pos, user);
             }
             @Override
@@ -183,7 +204,7 @@ public class CardSwipeAdapter extends BaseAdapter {
             return context.getResources().getDrawable(R.drawable.keys);
             //Log.e(TAG, "keys");
         }
-
+        notifyDataSetChanged();
         return context.getResources().getDrawable(R.drawable.drums);
     }
 
@@ -201,17 +222,19 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     public void listeners(int pos, User user){
-        lLeft.setOnClickListener(new View.OnClickListener() {
+        /*lLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.e(TAG, "Left");
                 if(page - 1 == 1) {
-                    showFirst();
-                    notifyDataSetChanged();
+                    //show the first page
+                    //ivCardPic.setVisibility(View.INVISIBLE);
+                    //notifyDataSetChanged();
                     page -= 1;
                 }
                 else if(page != 1) {
                     page -=1;
+                    notifyDataSetChanged();
                 }
                 Log.e(TAG, "Page: " + page);
             }
@@ -222,16 +245,26 @@ public class CardSwipeAdapter extends BaseAdapter {
             public void onClick(View view) {
                 Log.e(TAG, "Right");
                 if(page == 1) {
-                    hideFirst(user);
+                    //go to media page
                     notifyDataSetChanged();
                 }
                 page += 1;
                 Log.e(TAG, "Page: " + page);
+                notifyDataSetChanged();
+            }
+        });*/
+
+        vFile.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                Log.e(TAG, "start");
+                mediaPlayer.setLooping(true);
             }
         });
     }
 
     public void hideFirst(User user){
+        Log.e(TAG, "hiding");
         tvCardName.setVisibility(View.INVISIBLE);
         ivCardPic.setVisibility(View.INVISIBLE);
         ivInst1.setVisibility(View.INVISIBLE);
@@ -245,19 +278,15 @@ public class CardSwipeAdapter extends BaseAdapter {
 
         //show
         vFile.setVisibility(View.VISIBLE);
+        notifyDataSetChanged();
         queryMedia(user);
         //vFile.setVideoPath();
     }
 
-    public void showFirst(){
+    public void showFirst(User user, View v){
         tvCardName.setVisibility(View.VISIBLE);
         ivCardPic.setVisibility(View.VISIBLE);
-        ivInst1.setVisibility(View.VISIBLE);
-        ivInst2.setVisibility(View.VISIBLE);
-        ivInst3.setVisibility(View.VISIBLE);
-        rb1.setVisibility(View.VISIBLE);
-        rb2.setVisibility(View.VISIBLE);
-        rb3.setVisibility(View.VISIBLE);
+        populateInstruments(user, v);
         tvAge.setVisibility(View.VISIBLE);
         tvLocation.setVisibility(View.VISIBLE);
 
@@ -281,6 +310,7 @@ public class CardSwipeAdapter extends BaseAdapter {
                     return;
                 }
                 Log.e(TAG, "Size: " + vids.size());
+                notifyDataSetChanged();
                 loadVideo(vids.get(0));
             }
         });
@@ -289,8 +319,8 @@ public class CardSwipeAdapter extends BaseAdapter {
     public void loadVideo(MyMedia vid){
         String mediaUrl = vid.getVidURL();
         vFile.setVideoPath(mediaUrl);
+        vFile.requestFocus();
         vFile.start();
-        notifyDataSetChanged();
     }
 
 }

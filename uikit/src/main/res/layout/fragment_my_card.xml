@@ -20,8 +20,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
+            app:koloda_max_visible_cards="5"
+            android:animateLayoutChanges="false"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivLogo" >
+            app:layout_constraintTop_toBottomOf="@+id/ivLogo">
 
         </com.yalantis.library.Koloda>
 
@@ -35,6 +37,32 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/launch_logo"
             tools:srcCompat="@drawable/launch_logo" />
+
+        <LinearLayout
+            android:id="@+id/rightLayout"
+            android:layout_width="75dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/kolCard"></LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/leftLayout"
+            android:layout_width="75dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/kolCard"
+            app:layout_constraintTop_toTopOf="@+id/kolCard"></LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
