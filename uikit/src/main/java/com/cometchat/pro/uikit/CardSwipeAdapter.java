@@ -19,8 +19,10 @@ import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.User;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,6 +78,7 @@ public class CardSwipeAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Log.e(TAG, "Getting view " + position + " and vis is " + vidVisible);
+        Log.e(TAG, "Page adapter: " + page);
         View view;
         if(convertView == null){
             view = LayoutInflater.from(parent.getContext()).inflate(LayoutID, parent, false);
@@ -102,7 +105,6 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvAge = v.findViewById(R.id.tvAge);
         vFile = v.findViewById(R.id.vFile);
         populateInstruments(user, v);
-        page = 1;
         showFirst(user, v);
     }
 
@@ -121,7 +123,6 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvAge = v.findViewById(R.id.tvAge);
         vFile = v.findViewById(R.id.vFile);
         populateInstruments(user, v);
-        page = 1;
         hideFirst(user);
     }
 
@@ -218,38 +219,6 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     public void listeners(int pos, User user){
-        /*lLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e(TAG, "Left");
-                if(page - 1 == 1) {
-                    //show the first page
-                    //ivCardPic.setVisibility(View.INVISIBLE);
-                    //notifyDataSetChanged();
-                    page -= 1;
-                }
-                else if(page != 1) {
-                    page -=1;
-                    notifyDataSetChanged();
-                }
-                Log.e(TAG, "Page: " + page);
-            }
-        });
-
-        lRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e(TAG, "Right");
-                if(page == 1) {
-                    //go to media page
-                    notifyDataSetChanged();
-                }
-                page += 1;
-                Log.e(TAG, "Page: " + page);
-                notifyDataSetChanged();
-            }
-        });*/
-
         vFile.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -275,7 +244,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         //show
         vFile.setVisibility(View.VISIBLE);
         notifyDataSetChanged();
-        queryMedia(user);
+        //queryMedia(user);
         //vFile.setVideoPath();
     }
 
@@ -290,27 +259,20 @@ public class CardSwipeAdapter extends BaseAdapter {
         vFile.setVisibility(View.INVISIBLE);
     }
 
-    public void queryMedia(User user){
+    public int queryMedia(String user) throws ParseException {
+        Log.e(TAG, user + "Querying");
         ParseQuery<MyMedia> query = ParseQuery.getQuery(MyMedia.class);
         //query.include(MyMedia.KEY_USER);
         query.setLimit(6);
         query.addDescendingOrder("createdAt");
-        //query.whereContains("user", "7nB7IunbBS"); //hardcoded for now, fix later
-        // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<MyMedia>() {
-            @Override
-            public void done(List<MyMedia> vids, ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting media", e);
-                    return;
-                }
-                Log.e(TAG, "Size: " + vids.size());
-                notifyDataSetChanged();
-                loadVideo(vids.get(0));
-            }
-        });
+        query.whereContains("User", user);
+        // start a synchronous call for posts
+        List<MyMedia> vids = query.find();
+        Log.e(TAG, user + " has #vids: " + vids.size());
+        notifyDataSetChanged();
+        return vids.size();
     }
+
 
     public void loadVideo(MyMedia vid){
         String mediaUrl = vid.getVidURL();

@@ -16,9 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.VideoView;
 
 import com.cometchat.pro.core.CometChat;
+import com.cometchat.pro.models.User;
 import com.cometchat.pro.uikit.CardSwipeAdapter;
 import com.cometchat.pro.uikit.MediaAdapter;
+import com.cometchat.pro.uikit.MyMedia;
 import com.cometchat.pro.uikit.R;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.yalantis.library.Koloda;
 import com.yalantis.library.KolodaListener;
@@ -102,35 +107,47 @@ public class MyCardFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //Log.e(TAG, "Left on " + page);
-                mainAdapter.setVidVisible(true);
-                kCard.reloadAdapterData();
-                /*if(page-1 == 1){
+                if(page-1 == 1){
                     mainAdapter.setVidVisible(true);
                     kCard.reloadAdapterData();
                     page--;
                 }
                 else if(page != 1){
                     page--;
-                }*/
+                }
+                Log.e(TAG, "Current page: " + page);
             }
         });
 
         right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Log.e(TAG, "Right on " + page);
-                mainAdapter.setVidVisible(false);
-                kCard.reloadAdapterData();
-                if(page == 1){
+                int mediaCount = 0;
+                try {
+                    mediaCount = mainAdapter.queryMedia(list.get(1));
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-                page++;
+                Log.e(TAG,list.get(1) + " has " + mediaCount + " media items/pages");
+                //Log.e(TAG, "Right on " + page);
+                if(page != 1 && page <= mediaCount) {
+                    kCard.reloadAdapterData();
+                    page++;
+                }
+                else if(page == 1 && page <= mediaCount) {
+                    mainAdapter.setVidVisible(false);
+                    kCard.reloadAdapterData();
+                    page++;
+                }
+                Log.e(TAG, "Current page: " + page +" " + list.get(1));
             }
         });
 
         kCard.setKolodaListener(new KolodaListener() {
             @Override
             public void onNewTopCard(int i) {
-                top = i+1;
+                //top = i+1;
+                Log.e(TAG, "Top page: " + list.get(1));
             }
 
             @Override
@@ -142,16 +159,20 @@ public class MyCardFragment extends Fragment {
             public void onCardSwipedLeft(int i) {
                 Log.e(TAG, "Left on: " + list.get(1));
                 list.remove(0);
+                page = 1;
+                mainAdapter.setVidVisible(true);
                 mainAdapter.notifyDataSetChanged();
-                //kCard.reloadAdapterData();
+                kCard.reloadAdapterData();
             }
 
             @Override
             public void onCardSwipedRight(int i) {
                 Log.e(TAG, "Right on: " + list.get(1));
                 list.remove(0);
+                page = 1;
                 mainAdapter.notifyDataSetChanged();
-                //kCard.reloadAdapterData();
+                mainAdapter.setVidVisible(true);
+                kCard.reloadAdapterData();
             }
 
             @Override
