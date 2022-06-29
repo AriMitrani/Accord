@@ -21,8 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.VideoView;
 
+import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
+import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.cometchat.pro.uikit.CardSwipeAdapter;
 import com.cometchat.pro.uikit.MediaAdapter;
@@ -305,6 +307,7 @@ public class MyCardFragment extends Fragment {
                 Log.e(TAG, "Right on: " + list.get(1));
                 if(isLikedBy(list.get(1))){
                     Log.e(TAG, "Match!");
+                    sendIntroMessage(list.get(1));
                 }
                 if(!isLikedBy(list.get(1))){
                     Log.e(TAG, "No match");
@@ -346,6 +349,29 @@ public class MyCardFragment extends Fragment {
 
             }
         });
+    }
+
+    public void sendIntroMessage(String username) {
+        User user = new User();
+        for(int i = 0; i< userList.size(); i++){
+            if(userList.get(i).getUid().equals(username)){
+                user = userList.get(i);
+            }
+        }
+        TextMessage textMessage = new TextMessage(user.getUid(), "Hey, we just matched!", CometChatConstants.RECEIVER_TYPE_USER);
+
+        CometChat.sendMessage(textMessage, new CometChat.CallbackListener<TextMessage>() {
+            @Override
+            public void onSuccess(TextMessage textMessage) {
+                //go to fragment!
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                // cry rlly hard
+            }
+        });
+
     }
 
     public void filterDialog(){

@@ -62,25 +62,27 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <ImageView
-                android:layout_gravity="center"
-                android:padding="8dp"
-                android:clickable="true"
-                android:focusable="true"
                 android:id="@+id/video_call_action"
-                android:tint="@color/colorPrimary"
-                android:src="@drawable/ic_videocall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <ImageView
-                android:padding="8dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
                 android:clickable="true"
                 android:focusable="true"
+                android:padding="8dp"
+                android:src="@drawable/ic_videocall"
+                android:tint="@color/colorPrimary" />
+
+            <ImageView
                 android:id="@+id/audio_call_action"
-                android:tint="@color/colorPrimary"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
                 android:src="@drawable/ic_audiocall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:tint="@color/colorPrimary" />
             <ImageView
                 android:clickable="true"
                 android:focusable="true"

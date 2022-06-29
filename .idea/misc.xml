@@ -17,14 +17,33 @@
         <entry key="app/src/main/res/layout/profile.xml" value="0.335" />
         <entry key="app/src/main/res/xml/strings.xml" value="0.20425724637681159" />
         <entry key="uikit/src/main/res-components/calls/layout/activity_cometchat_start_call.xml" value="0.23471569046601112" />
+        <entry key="uikit/src/main/res-components/calls/layout/cometchat_call_history_row.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/calls/layout/cometchat_call_list_row.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/chats/layout/cometchat_conversation_list_row.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/chats/layout/fragment_cometchat_conversationlist.xml" value="0.1645512239347235" />
         <entry key="uikit/src/main/res-components/cometchatui/layout/activity_cometchat_unified.xml" value="0.2947916666666667" />
+        <entry key="uikit/src/main/res-components/groups/layout/cometchat_group_member_row.xml" value="0.1645512239347235" />
         <entry key="uikit/src/main/res-components/messages/layout/activity_cometchat_forward_message.xml" value="0.19623770842240273" />
         <entry key="uikit/src/main/res-components/messages/layout/activity_cometchat_media_view.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res-components/messages/layout/activity_cometchat_message_info.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res-components/messages/layout/activity_cometchat_message_list.xml" value="0.2947916666666667" />
+        <entry key="uikit/src/main/res-components/messages/layout/activity_cometchat_reaction_info.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/messages/layout/activity_cometchat_webview.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/messages/layout/cometchat_block_user_message_view.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/messages/layout/cometchat_composebox_actions.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/messages/layout/cometchat_edit_message_view.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/messages/layout/cometchat_join_ongoing_call_view.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/messages/layout/cometchat_messagedate_header.xml" value="0.1645512239347235" />
         <entry key="uikit/src/main/res-components/messages/layout/cometchat_messagelist_toolbar.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res-components/messages/layout/fragment_cometchat_messagelist.xml" value="0.23471569046601112" />
         <entry key="uikit/src/main/res-components/others/layout/activity_screen.xml" value="0.2947916666666667" />
+        <entry key="uikit/src/main/res-components/others/layout/add_polls_layout.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/others/layout/cc_dialog.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/others/layout/cometchat_dialog_layout.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/shared/layout/cometchat_avatar.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/shared/layout/cometchat_badge_count.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/shared/layout/cometchat_compose_box.xml" value="0.1645512239347235" />
+        <entry key="uikit/src/main/res-components/userprofile/layout/activity_cometchat_more_privacy.xml" value="0.1645512239347235" />
         <entry key="uikit/src/main/res-components/userprofile/layout/fragment_cometchat_user_profile.xml" value="0.23854166666666668" />
         <entry key="uikit/src/main/res-components/users/layout/activity_cometchat_user_detail.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res-components/users/layout/card_layout.xml" value="0.19581017528858485" />
