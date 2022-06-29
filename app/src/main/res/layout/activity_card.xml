@@ -61,7 +61,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
+        app:layout_constraintTop_toBottomOf="@+id/bFilter"
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
@@ -74,5 +74,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/launch_logo"
         tools:srcCompat="@drawable/launch_logo" />
+
+    <Button
+        android:id="@+id/bFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="filters"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

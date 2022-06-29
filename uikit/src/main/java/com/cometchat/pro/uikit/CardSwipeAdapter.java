@@ -47,17 +47,39 @@ public class CardSwipeAdapter extends BaseAdapter {
     public int page;
     public VideoView vFile;
     public boolean vidVisible;
+    public List<MyMedia> mediaList;
+    String filter;
+    public boolean passesFilter;
+    public String namePass;
 
-    public CardSwipeAdapter(Context context, List<String> list, boolean vidVisible) {
+    public CardSwipeAdapter(Context context, List<String> list, boolean vidVisible, String filter) {
         this.context = context;
         this.list = list;
         this.vidVisible = vidVisible;
+        this.filter = filter;
         LayoutID = R.layout.card_layout_x;
+        passesFilter = true;
         page = 1;
     }
 
     public void setVidVisible(boolean v){
         vidVisible = v;
+    }
+
+    public void setFilter(String f){
+        filter = f;
+    }
+
+    public String getFilter(){
+        return filter;
+    }
+
+    public boolean doesPassFilter(){
+        return passesFilter;
+    }
+
+    public String getNamePass(){
+        return namePass;
     }
 
     @Override
@@ -77,8 +99,8 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        //Log.e(TAG, "Getting view");
         // Log.e(TAG, "Getting view " + position + " and vis is " + vidVisible);
-        Log.e(TAG, "Page adapter: " + page);
         View view;
         if(convertView == null){
             view = LayoutInflater.from(parent.getContext()).inflate(LayoutID, parent, false);
@@ -127,6 +149,7 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     public void getCardUser(int pos, View v){
+        //Log.e(TAG, "Getting card user");
         // Log.e(TAG, "User at " + pos + " is " + list.get(pos));
         CometChat.getUser(list.get(pos), new CometChat.CallbackListener<User>() {
             @Override
@@ -270,6 +293,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         List<MyMedia> vids = query.find();
         Log.e(TAG, user + " has #vids: " + vids.size());
         notifyDataSetChanged();
+        mediaList = vids;
         return vids.size();
     }
 
@@ -279,6 +303,23 @@ public class CardSwipeAdapter extends BaseAdapter {
         vFile.setVideoPath(mediaUrl);
         vFile.requestFocus();
         vFile.start();
+        Log.e(TAG, "Loading vid");
+    }
+
+
+    public void setPage(int p){
+        page = p;
+        Log.e(TAG, "Page adapter: " + page);
+        if (page > 1) {
+            loadVideo(mediaList.get(page-2));
+            loadVideo(mediaList.get(page-2));
+        }
+    }
+
+    public void test(int p){
+        if (page > 1) {
+            loadVideo(mediaList.get(page-2));
+        }
     }
 
 }
