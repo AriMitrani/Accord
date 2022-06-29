@@ -121,6 +121,7 @@ public class CometChatUI extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(0,0);
 
         activity = this;
         CometChatError.init(this);
@@ -463,9 +464,17 @@ public class CometChatUI extends AppCompatActivity implements
 
     @Override
     protected void onResume() {
+        overridePendingTransition(0,0);
         super.onResume();
         getUnreadConversationCount();    // To get unread conversations count
     }
+
+    @Override //animation thing
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        overridePendingTransition(0, 0);
+    }
+
 
     @Override
     protected void onPause() {

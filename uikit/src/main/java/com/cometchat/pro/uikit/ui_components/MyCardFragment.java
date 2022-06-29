@@ -51,6 +51,7 @@ public class MyCardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_my_card, container, false);
+        v.clearAnimation();
         Log.e(TAG, "Logged in as: " + ParseUser.getCurrentUser().getUsername());
         Log.e(TAG, "Chat logged in as: " + CometChat.getLoggedInUser());
         setupMain(v);
@@ -63,6 +64,8 @@ public class MyCardFragment extends Fragment {
 
     public void setupMain(View v){
         kCard = (Koloda) v.findViewById(R.id.kolCard);
+        //kCard.setAnimation(null);
+        kCard.setLayoutAnimation(null);
         list = new ArrayList<String>();
         left = v.findViewById(R.id.leftLayout);
         right = v.findViewById(R.id.rightLayout);
@@ -81,7 +84,7 @@ public class MyCardFragment extends Fragment {
             list.add(""); //blank first card
             for(int i = 0; i < Deck.length(); i++){
                 list.add(Deck.get(i).toString());
-                Log.e(TAG, "Swipe user added:" + Deck.get(i).toString());
+                // Log.e(TAG, "Swipe user added:" + Deck.get(i).toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -137,18 +140,18 @@ public class MyCardFragment extends Fragment {
 
             @Override
             public void onCardSwipedLeft(int i) {
-                Log.e(TAG, "Left on: " + list.get(i+1));
-                list.remove(i+1);
+                Log.e(TAG, "Left on: " + list.get(1));
+                list.remove(0);
                 mainAdapter.notifyDataSetChanged();
-                kCard.reloadAdapterData();
+                //kCard.reloadAdapterData();
             }
 
             @Override
             public void onCardSwipedRight(int i) {
-                Log.e(TAG, "Right on: " + list.get(i+1));
-                list.remove(i+1);
+                Log.e(TAG, "Right on: " + list.get(1));
+                list.remove(0);
                 mainAdapter.notifyDataSetChanged();
-                kCard.reloadAdapterData();
+                //kCard.reloadAdapterData();
             }
 
             @Override

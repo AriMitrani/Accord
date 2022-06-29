@@ -69,8 +69,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void goMainActivity(){
         Intent i = new Intent(this, CometChatUI.class);
-        startActivity(i);
         i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(i);
         finish();
     }
 

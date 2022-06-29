@@ -75,11 +75,7 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.e(TAG, "List at " + position);
-        for(int i = 0; i< list.size(); i++){
-            Log.e(TAG, "Card: " + list.get(i));
-        }
-        Log.e(TAG, "Getting view " + position + " and vis is " + vidVisible);
+        // Log.e(TAG, "Getting view " + position + " and vis is " + vidVisible);
         View view;
         if(convertView == null){
             view = LayoutInflater.from(parent.getContext()).inflate(LayoutID, parent, false);
@@ -130,7 +126,7 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     public void getCardUser(int pos, View v){
-        Log.e(TAG, "User at " + pos + " is " + list.get(pos));
+        // Log.e(TAG, "User at " + pos + " is " + list.get(pos));
         CometChat.getUser(list.get(pos), new CometChat.CallbackListener<User>() {
             @Override
             public void onSuccess(User user) {
@@ -144,7 +140,7 @@ public class CardSwipeAdapter extends BaseAdapter {
             }
             @Override
             public void onError(CometChatException e) {
-                Log.e(TAG, "No user to populate card", e);
+                Log.e(TAG, "No user to populate card");
             }
         });
     }
