@@ -316,9 +316,9 @@ public class MyCardFragment extends Fragment {
                 list.remove(0);
                 updateMediaCount();
                 page = 1;
-                mainAdapter.notifyDataSetChanged();
                 mainAdapter.setVidVisible(true);
                 mainAdapter.setPage(1);
+                mainAdapter.notifyDataSetChanged();
                 kCard.reloadAdapterData();
             }
 
@@ -335,10 +335,11 @@ public class MyCardFragment extends Fragment {
                 }
                 updateMediaCount();
                 list.remove(0);
+                updateMediaCount();
                 page = 1;
-                mainAdapter.notifyDataSetChanged();
                 mainAdapter.setVidVisible(true);
                 mainAdapter.setPage(1);
+                mainAdapter.notifyDataSetChanged();
                 kCard.reloadAdapterData();
             }
 
