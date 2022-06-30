@@ -1,8 +1,10 @@
 package com.cometchat.pro.uikit;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import androidx.annotation.RequiresApi;
 
 import com.bumptech.glide.Glide;
 import com.cometchat.pro.core.CometChat;
@@ -41,6 +45,13 @@ public class CardSwipeAdapter extends BaseAdapter {
     public RatingBar rb1;
     public RatingBar rb2;
     public RatingBar rb3;
+    public ImageView iv1;
+    public ImageView iv2;
+    public ImageView iv3;
+    public ImageView iv4;
+    public ImageView iv5;
+    public ImageView iv6;
+    public ImageView iv7;
     public TextView tvLocation;
     public TextView tvAge;
     public int LayoutID;
@@ -51,6 +62,8 @@ public class CardSwipeAdapter extends BaseAdapter {
     String filter;
     public boolean passesFilter;
     public String namePass;
+    public LinearLayout lTopBar;
+    public int visiblePages;
 
     public CardSwipeAdapter(Context context, List<String> list, boolean vidVisible, String filter) {
         this.context = context;
@@ -60,6 +73,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         LayoutID = R.layout.card_layout_x;
         passesFilter = true;
         page = 1;
+        visiblePages = 1;
     }
 
     public void setVidVisible(boolean v){
@@ -116,6 +130,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
+        lTopBar = v.findViewById(R.id.lTopBar);
         Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic);
         ivInst1 = v.findViewById(R.id.ivInst1);
         ivInst2 = v.findViewById(R.id.ivInst2);
@@ -123,10 +138,18 @@ public class CardSwipeAdapter extends BaseAdapter {
         rb1 = v.findViewById(R.id.rb1);
         rb2 = v.findViewById(R.id.rb2);
         rb3 = v.findViewById(R.id.rb3);
+        iv1 = v.findViewById(R.id.iv1);
+        iv2 = v.findViewById(R.id.iv2);
+        iv3 = v.findViewById(R.id.iv3);
+        iv4 = v.findViewById(R.id.iv4);
+        iv5 = v.findViewById(R.id.iv5);
+        iv6 = v.findViewById(R.id.iv6);
+        iv7 = v.findViewById(R.id.iv7);
         tvLocation = v.findViewById(R.id.tvLocation);
         tvAge = v.findViewById(R.id.tvAge);
         vFile = v.findViewById(R.id.vFile);
         populateInstruments(user, v);
+        initPageBar();
         showFirst(user, v);
     }
 
@@ -134,6 +157,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
+        lTopBar = v.findViewById(R.id.lTopBar);
         Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic);
         ivInst1 = v.findViewById(R.id.ivInst1);
         ivInst2 = v.findViewById(R.id.ivInst2);
@@ -141,11 +165,105 @@ public class CardSwipeAdapter extends BaseAdapter {
         rb1 = v.findViewById(R.id.rb1);
         rb2 = v.findViewById(R.id.rb2);
         rb3 = v.findViewById(R.id.rb3);
+        rb1 = v.findViewById(R.id.rb1);
+        rb2 = v.findViewById(R.id.rb2);
+        rb3 = v.findViewById(R.id.rb3);
+        iv1 = v.findViewById(R.id.iv1);
+        iv2 = v.findViewById(R.id.iv2);
+        iv3 = v.findViewById(R.id.iv3);
+        iv4 = v.findViewById(R.id.iv4);
+        iv5 = v.findViewById(R.id.iv5);
+        iv6 = v.findViewById(R.id.iv6);
+        iv7 = v.findViewById(R.id.iv7);
         tvLocation = v.findViewById(R.id.tvLocation);
         tvAge = v.findViewById(R.id.tvAge);
         vFile = v.findViewById(R.id.vFile);
         populateInstruments(user, v);
+        initPageBar();
         hideFirst(user);
+    }
+
+    public void setVisiblePages(int n){
+        visiblePages = n+1;
+    }
+
+    public void clearPageBar(){
+        iv1.setColorFilter(null);
+        iv2.setColorFilter(null);
+        iv3.setColorFilter(null);
+        iv4.setColorFilter(null);
+        iv5.setColorFilter(null);
+        iv6.setColorFilter(null);
+        iv7.setColorFilter(null);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void initPageBar(int newPage){
+        // Log.e(TAG, "Initializing top bar with " + visiblePages + " pages");
+        iv1.setVisibility(View.GONE);
+        iv2.setVisibility(View.GONE);
+        iv3.setVisibility(View.GONE);
+        iv4.setVisibility(View.GONE);
+        iv5.setVisibility(View.GONE);
+        iv6.setVisibility(View.GONE);
+        iv7.setVisibility(View.GONE);
+        if(visiblePages >= 1){
+            iv1.setVisibility(View.VISIBLE);
+            //iv1.setColorFilter(Color.argb(100, 255, 0, 0));
+        }
+        if(visiblePages >= 2){
+            iv2.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 3){
+            iv3.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 4){
+            iv4.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 5){
+            iv5.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 6){
+            iv6.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 7){
+            iv7.setVisibility(View.VISIBLE);
+        }
+        updateTopMenu(newPage);
+    }
+
+    public void initPageBar(){
+        // Log.e(TAG, "Initializing top bar with " + visiblePages + " pages");
+        iv1.setVisibility(View.GONE);
+        iv2.setVisibility(View.GONE);
+        iv3.setVisibility(View.GONE);
+        iv4.setVisibility(View.GONE);
+        iv5.setVisibility(View.GONE);
+        iv6.setVisibility(View.GONE);
+        iv7.setVisibility(View.GONE);
+        if(visiblePages >= 1){
+            iv1.setVisibility(View.VISIBLE);
+            //iv1.setColorFilter(Color.argb(100, 255, 0, 0));
+        }
+        if(visiblePages >= 2){
+            iv2.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 3){
+            iv3.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 4){
+            iv4.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 5){
+            iv5.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 6){
+            iv6.setVisibility(View.VISIBLE);
+        }
+        if(visiblePages >= 7){
+            iv7.setVisibility(View.VISIBLE);
+        }
+        updateTopMenu(page);
     }
 
     public void getCardUser(int pos, View v){
@@ -266,6 +384,7 @@ public class CardSwipeAdapter extends BaseAdapter {
 
         //show
         vFile.setVisibility(View.VISIBLE);
+        lTopBar.setVisibility(View.VISIBLE);
         notifyDataSetChanged();
         //queryMedia(user);
         //vFile.setVideoPath();
@@ -277,13 +396,14 @@ public class CardSwipeAdapter extends BaseAdapter {
         populateInstruments(user, v);
         tvAge.setVisibility(View.VISIBLE);
         tvLocation.setVisibility(View.VISIBLE);
+        lTopBar.setVisibility(View.VISIBLE);
 
         //things to hide
         vFile.setVisibility(View.INVISIBLE);
     }
 
     public int queryMedia(String user) throws ParseException {
-        Log.e(TAG, user + "Querying");
+        //Log.e(TAG, user + "Querying");
         ParseQuery<MyMedia> query = ParseQuery.getQuery(MyMedia.class);
         //query.include(MyMedia.KEY_USER);
         query.setLimit(6);
@@ -307,12 +427,41 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void setPage(int p){
         page = p;
         Log.e(TAG, "Page adapter: " + page);
+        initPageBar(p);
         if (page > 1) {
             loadVideo(mediaList.get(page-2));
             loadVideo(mediaList.get(page-2));
+        }
+    }
+
+    public void updateTopMenu(int p) {
+        //Log.e(TAG, "Updating menu to page " + p);
+        //clearPageBar();
+        if(p == 1){
+            iv1.setColorFilter(Color.argb(100, 10, 10, 10));
+        }
+        if(p == 2){
+            //Log.e(TAG, "here page " + p);
+            iv2.setColorFilter(Color.argb(100, 10, 10, 10));
+        }
+        if(p == 3){
+            iv3.setColorFilter(Color.argb(100, 10, 10, 10));
+        }
+        if(p == 4){
+            iv4.setColorFilter(Color.argb(100, 10, 10, 10));
+        }
+        if(p == 5){
+            iv5.setColorFilter(Color.argb(100, 10, 10, 10));
+        }
+        if(p == 6){
+            iv6.setColorFilter(Color.argb(100, 10, 10, 10));
+        }
+        if(p == 7){
+            iv7.setColorFilter(Color.argb(100, 10, 10, 10));
         }
     }
 

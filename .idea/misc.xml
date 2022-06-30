@@ -47,7 +47,7 @@
         <entry key="uikit/src/main/res-components/userprofile/layout/fragment_cometchat_user_profile.xml" value="0.23854166666666668" />
         <entry key="uikit/src/main/res-components/users/layout/activity_cometchat_user_detail.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res-components/users/layout/card_layout.xml" value="0.19581017528858485" />
-        <entry key="uikit/src/main/res-components/users/layout/card_layout_x.xml" value="0.25" />
+        <entry key="uikit/src/main/res-components/users/layout/card_layout_x.xml" value="0.165" />
         <entry key="uikit/src/main/res-components/users/layout/fragment_cometchat_userlist.xml" value="0.2947916666666667" />
         <entry key="uikit/src/main/res/drawable/shape_video.xml" value="0.172" />
         <entry key="uikit/src/main/res/layout/activity_comet_chat_start_conversation.xml" value="0.2947916666666667" />

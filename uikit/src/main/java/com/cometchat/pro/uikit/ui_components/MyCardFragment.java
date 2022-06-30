@@ -163,6 +163,7 @@ public class MyCardFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        updateMediaCount();
         mainAdapter.notifyDataSetChanged();
         //kCard.reloadAdapterData();
     }
@@ -192,6 +193,17 @@ public class MyCardFragment extends Fragment {
         kCard.reloadAdapterData();
     }
 
+    public void updateMediaCount(){
+        try {
+            if(list.size()>1){
+                int mediaCount = mainAdapter.queryMedia(list.get(1));
+                mainAdapter.setVisiblePages(mediaCount);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     public boolean isLikedBy(String username) {
         User user = new User();
         for(int i = 0; i< userList.size(); i++){
@@ -214,23 +226,27 @@ public class MyCardFragment extends Fragment {
 
     public void listeners(){
         left.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 //Log.e(TAG, "Left on " + page);
                 if(page-1 == 1){
                     mainAdapter.setVidVisible(true);
-                    kCard.reloadAdapterData();
                     page--;
+                    mainAdapter.setPage(page);
+                    kCard.reloadAdapterData();
                 }
                 else if(page != 1){
                     page--;
+                    mainAdapter.setPage(page);
+                    kCard.reloadAdapterData();
                 }
                 Log.e(TAG, "Current page: " + page);
-                mainAdapter.setPage(page);
             }
         });
 
         right.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 int mediaCount = 0;
@@ -242,16 +258,17 @@ public class MyCardFragment extends Fragment {
                 Log.e(TAG,list.get(1) + " has " + mediaCount + " media items/pages");
                 //Log.e(TAG, "Right on " + page);
                 if(page != 1 && page <= mediaCount) {
-                    kCard.reloadAdapterData();
                     page++;
+                    mainAdapter.setPage(page);
+                    kCard.reloadAdapterData();
                 }
                 else if(page == 1 && page <= mediaCount) {
                     mainAdapter.setVidVisible(false);
-                    kCard.reloadAdapterData();
                     page++;
+                    mainAdapter.setPage(page);
+                    kCard.reloadAdapterData();
                 }
                 Log.e(TAG, "Current page: " + page +" " + list.get(1));
-                mainAdapter.setPage(page);
             }
         });
 
@@ -292,16 +309,20 @@ public class MyCardFragment extends Fragment {
 
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onCardSwipedLeft(int i) {
                 Log.e(TAG, "Left on: " + list.get(1));
                 list.remove(0);
+                updateMediaCount();
                 page = 1;
-                mainAdapter.setVidVisible(true);
                 mainAdapter.notifyDataSetChanged();
+                mainAdapter.setVidVisible(true);
+                mainAdapter.setPage(1);
                 kCard.reloadAdapterData();
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onCardSwipedRight(int i) {
                 Log.e(TAG, "Right on: " + list.get(1));
@@ -312,10 +333,12 @@ public class MyCardFragment extends Fragment {
                 if(!isLikedBy(list.get(1))){
                     Log.e(TAG, "No match");
                 }
+                updateMediaCount();
                 list.remove(0);
                 page = 1;
                 mainAdapter.notifyDataSetChanged();
                 mainAdapter.setVidVisible(true);
+                mainAdapter.setPage(1);
                 kCard.reloadAdapterData();
             }
 
