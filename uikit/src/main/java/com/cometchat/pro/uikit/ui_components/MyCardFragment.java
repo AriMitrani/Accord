@@ -168,6 +168,7 @@ public class MyCardFragment extends Fragment {
         //kCard.reloadAdapterData();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void initCardsFiltered(String filt){
         list.clear();
         list.add(""); //blank first card
@@ -184,7 +185,10 @@ public class MyCardFragment extends Fragment {
         }
         Log.e(TAG, "Filtered list " + list);
         Log.e(TAG, "Score list " + scoreList);
+        mainAdapter.setPage(1);
+        mainAdapter.setVidVisible(true);
         mainAdapter.notifyDataSetChanged();
+        updateMediaCount();
         kCard.reloadAdapterData();
     }
 
@@ -432,6 +436,7 @@ public class MyCardFragment extends Fragment {
         });
 
         bApply.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 Log.e(TAG, "Apply clicked");
