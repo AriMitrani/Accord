@@ -41,10 +41,11 @@
     <include layout="@layout/cometchat_edit_message_view"/>
 
     <include layout="@layout/cometchat_reply_message_view"/>
+
     <FrameLayout
         android:id="@+id/reactions_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/bottom_layout"

@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.fragment.app.FragmentManager;
@@ -163,6 +164,7 @@ public class CometChatComposeBox extends RelativeLayout implements View.OnClickL
         ivSend.setOnClickListener(this);
         ivDelete.setOnClickListener(this);
         ivMic.setOnClickListener(this);
+        ivMic.setVisibility(GONE);
 
 
         composeBoxActionFragment = new CometChatComposeBoxActions();
@@ -301,7 +303,7 @@ public class CometChatComposeBox extends RelativeLayout implements View.OnClickL
         FeatureRestriction.isVoiceNotesEnabled(new FeatureRestriction.OnSuccessListener() {
             @Override
             public void onSuccess(Boolean booleanVal) {
-                isAudioVisible = booleanVal;
+                isAudioVisible = false;
             }
         });
         FeatureRestriction.isLocationSharingEnabled(new FeatureRestriction.OnSuccessListener() {
@@ -350,6 +352,7 @@ public class CometChatComposeBox extends RelativeLayout implements View.OnClickL
         this.composeActionListener=composeActionListener;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onClick(View view) {
         if (view.getId()==R.id.ivDelete) {
@@ -382,6 +385,7 @@ public class CometChatComposeBox extends RelativeLayout implements View.OnClickL
                 isPlaying = false;
                 voiceMessage = false;
                 ivMic.setImageResource(R.drawable.ic_microphone_grey_selected);
+                ivMic.setVisibility(GONE);
             }
 
         }
@@ -486,6 +490,7 @@ public class CometChatComposeBox extends RelativeLayout implements View.OnClickL
             startRecording();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void startPlayingAudio(String path) {
         try {
 

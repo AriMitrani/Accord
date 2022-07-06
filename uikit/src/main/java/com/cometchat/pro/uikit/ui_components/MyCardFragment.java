@@ -95,7 +95,7 @@ public class MyCardFragment extends Fragment {
         scoreList = new ArrayList<Integer>();
         scoreList.add(1); //jomas
         scoreList.add(11); //bil
-        scoreList.add(10); //tay
+        scoreList.add(16); //tay
         scoreList.add(4); //joel
     }
 

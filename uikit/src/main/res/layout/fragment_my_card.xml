@@ -12,6 +12,18 @@
         android:layout_height="match_parent"
         tools:context=".CardActivity">
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Out of cards! Try removing some filters to see more potential bandmates."
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/kolCard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/kolCard" />
+
         <com.yalantis.library.Koloda
             android:id="@+id/kolCard"
             android:layout_width="0dp"

@@ -5,12 +5,16 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +29,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.emoji.bundled.BundledEmojiCompatConfig;
@@ -48,6 +54,10 @@ import com.cometchat.pro.uikit.ui_components.shared.CometChatSnackBar;
 import com.cometchat.pro.uikit.ui_components.MyProfileFragment;
 import com.cometchat.pro.uikit.ui_resources.utils.CometChatError;
 import com.cometchat.pro.uikit.ui_settings.UIKitSettings;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -75,6 +85,9 @@ import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Purpose - CometChatUnified class is main class used to launch the fully working chat application.
  * It consist of BottomNavigationBar which helps to navigate between different screens like
@@ -86,7 +99,7 @@ import com.parse.ParseUser;
  * Modified on  - 16th January 2020
  */
 public class CometChatUI extends AppCompatActivity implements
-        BottomNavigationView.OnNavigationItemSelectedListener,OnAlertDialogButtonClickListener {
+        BottomNavigationView.OnNavigationItemSelectedListener, OnAlertDialogButtonClickListener {
 
     //Used to bind the layout with class
     private static ActivityCometchatUnifiedBinding activityCometChatUnifiedBinding;
@@ -118,13 +131,18 @@ public class CometChatUI extends AppCompatActivity implements
     @VisibleForTesting
     public static AppCompatActivity activity;
 
+    private FusedLocationProviderClient fusedLocationClient;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
 
         activity = this;
         CometChatError.init(this);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this); //get location on login
 
         EmojiCompat.Config config = new BundledEmojiCompatConfig(getApplicationContext());
         EmojiCompat.init(config);
@@ -140,6 +158,97 @@ public class CometChatUI extends AppCompatActivity implements
         //It performs action on click of conversation item in CometChatConversationListScreen
         //Based on conversation item type it will perform the actions like open message screen for user and groups..
         setConversationClickListener();
+
+
+        //getting location
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(CometChatUI.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
+            //Log.e(TAG, "No location perms");
+            return;
+        }
+        else {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                Log.e(TAG, "Location is: " + location);
+                                Log.e(TAG, "Location lat: " + location.getLatitude());
+                                updateLocation(location.getLatitude(), location.getLongitude());
+                            }
+                        }
+                    });
+        }
+    }
+
+    @Override //what we do when location perms r granted
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        //Request location updates:
+                        fusedLocationClient.getLastLocation()
+                                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                                    @Override
+                                    public void onSuccess(Location location) {
+                                        // Got last known location. In some rare situations this can be null.
+                                        if (location != null) {
+                                            Log.e(TAG, "Location is: " + location);
+                                            updateLocation(location.getLatitude(), location.getLongitude());
+                                        }
+                                    }
+                                });
+                    }
+
+                } else {
+
+                    Log.e(TAG, "No location perms");
+
+                }
+                return;
+            }
+
+        }
+    }
+
+    public void updateLocation(double lat, double lon){
+        JSONObject metadata = CometChat.getLoggedInUser().getMetadata();
+        try {
+            metadata.put("Lat", lat);
+            metadata.put("Lon", lon);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                Log.e(TAG, "Location updated!");
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                Log.e(TAG, "location update failed", e);
+            }
+        });
     }
 
     private void setConversationClickListener() {
