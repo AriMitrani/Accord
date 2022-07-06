@@ -226,7 +226,8 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:src="@drawable/cc_rounded_date_button" />
+                        android:src="@drawable/cc_rounded_date_button"
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/iv2"
@@ -235,7 +236,8 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:src="@drawable/cc_rounded_date_button" />
+                        android:src="@drawable/cc_rounded_date_button"
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/iv3"
@@ -244,7 +246,8 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:src="@drawable/cc_rounded_date_button" />
+                        android:src="@drawable/cc_rounded_date_button"
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/iv4"
@@ -253,7 +256,8 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:src="@drawable/cc_rounded_date_button" />
+                        android:src="@drawable/cc_rounded_date_button"
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/iv5"
@@ -262,7 +266,8 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:src="@drawable/cc_rounded_date_button" />
+                        android:src="@drawable/cc_rounded_date_button"
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/iv6"
@@ -271,7 +276,8 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:src="@drawable/cc_rounded_date_button" />
+                        android:src="@drawable/cc_rounded_date_button"
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/iv7"
@@ -280,7 +286,8 @@
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:src="@drawable/cc_rounded_date_button" />
+                        android:src="@drawable/cc_rounded_date_button"
+                        android:visibility="invisible" />
 
                 </LinearLayout>
 

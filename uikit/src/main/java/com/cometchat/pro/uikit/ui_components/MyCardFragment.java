@@ -333,6 +333,7 @@ public class MyCardFragment extends Fragment {
                 if(isLikedBy(list.get(1))){
                     Log.e(TAG, "Match!");
                     sendIntroMessage(list.get(1));
+                    matchDialog();
                 }
                 if(!isLikedBy(list.get(1))){
                     Log.e(TAG, "No match");
@@ -397,6 +398,26 @@ public class MyCardFragment extends Fragment {
             @Override
             public void onError(CometChatException e) {
                 // cry rlly hard
+            }
+        });
+
+    }
+
+    public void matchDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog alert = builder.create();
+        View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.match_alert, (ViewGroup) getView(), false);
+        final Button bOk = (Button) viewInflated.findViewById(R.id.bOkMatch);
+        alert.setView(viewInflated);
+
+        alert.show();
+
+        bOk.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "Ok clicked");
+                alert.cancel();
             }
         });
 
