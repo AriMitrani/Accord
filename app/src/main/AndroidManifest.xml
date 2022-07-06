@@ -28,6 +28,9 @@
         android:theme="@style/Theme.Accord"
         tools:targetApi="31">
         <activity
+            android:name=".InstrumentActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreateAccountActivity"
             android:exported="false" />
         <activity

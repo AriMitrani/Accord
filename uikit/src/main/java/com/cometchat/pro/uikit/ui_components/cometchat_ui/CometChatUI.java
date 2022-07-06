@@ -607,6 +607,7 @@ public class CometChatUI extends AppCompatActivity implements
                 @Override
                 public void done(ParseException e) {
                     logoutComet();
+                    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             });

@@ -50,6 +50,11 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
     }
 
+    @Override
+    public void onBackPressed() {
+        //do nothing
+    }
+
     public void listeners(){
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
         tvNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), CreateAccountActivity.class);
+                Intent i = new Intent(getApplicationContext(), InstrumentActivity.class);
                 startActivity(i);
             }
         });
