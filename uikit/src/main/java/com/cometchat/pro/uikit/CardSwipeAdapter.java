@@ -34,6 +34,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -132,6 +136,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void setup(User user, View v){
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
@@ -154,6 +159,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvLocation = v.findViewById(R.id.tvLocation);
         tvLocation.setText(popLocation(user));
         tvAge = v.findViewById(R.id.tvAge);
+        tvAge.setText(popAge(user));
         vFile = v.findViewById(R.id.vFile);
         populateInstruments(user, v);
         initPageBar();
@@ -191,6 +197,21 @@ public class CardSwipeAdapter extends BaseAdapter {
         hideFirst(user);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String popAge(User user) {
+        int age = -1;
+        try {
+            String bday = user.getMetadata().getString("Birthday");
+            age = getAge(bday);
+        } catch (JSONException | java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        if(age == -1){
+            return "";
+        }
+        return age + "yo";
+    }
+
     public String popLocation(User user) {
         try {
             double lat = user.getMetadata().getDouble("Lat");
@@ -200,6 +221,29 @@ public class CardSwipeAdapter extends BaseAdapter {
             e.printStackTrace();
         }
         return "broke";
+    }
+
+    public int getAge(String date) throws java.text.ParseException { //must be in mm/dd/yyyy
+        if(date.isEmpty()){
+            return -1;
+        }
+        if(date.charAt(date.length()-1) == 'Y') {
+            // Log.e(TAG, "Missing date");
+            return -1;
+        }
+        SimpleDateFormat formatter =new SimpleDateFormat("MM/dd/yyyy");
+        Date dDate = formatter.parse(date);
+        Date currDate = Calendar.getInstance().getTime();
+        // Log.e(TAG, "Date: " + dDate);
+        // Log.e(TAG, "Current date: " + currDate);
+        SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy");
+        int years = Integer.parseInt(simpleDateformat.format(currDate))- Integer.parseInt(simpleDateformat.format(dDate));
+        if(years < 12 || years > 100){
+            // Log.e(TAG, "Please enter a valid date");
+            return -1;
+        }
+        Log.e(TAG, "Age: " + years);
+        return years;
     }
 
     private String getCityState(double lat, double lon){

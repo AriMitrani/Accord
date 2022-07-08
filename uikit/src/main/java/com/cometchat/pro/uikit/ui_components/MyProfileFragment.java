@@ -251,7 +251,7 @@ public class MyProfileFragment extends Fragment {
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.input_alert, (ViewGroup) getView(), false);
         TextInputLayout IL = (TextInputLayout) viewInflated.findViewById(R.id.textInputLayout);
         IL.setCounterEnabled(false);
-        final EditText etInput = (EditText) viewInflated.findViewById(R.id.etInput);
+        final EditText etInput = (EditText) viewInflated.findViewById(R.id.etBio);
         etInput.setHint("Name");
         final Button bChange = (Button) viewInflated.findViewById(R.id.bChange);
         bChange.setText("Change name");
@@ -278,7 +278,7 @@ public class MyProfileFragment extends Fragment {
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.input_alert, (ViewGroup) getView(), false);
         TextInputLayout IL = (TextInputLayout) viewInflated.findViewById(R.id.textInputLayout);
         IL.setCounterEnabled(true);
-        final EditText etInput = (EditText) viewInflated.findViewById(R.id.etInput);
+        final EditText etInput = (EditText) viewInflated.findViewById(R.id.etBio);
         etInput.setHint("Bio");
         final Button bChange = (Button) viewInflated.findViewById(R.id.bChange);
         bChange.setText("Change bio");
