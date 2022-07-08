@@ -59,6 +59,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     }
 
     public void queryUsers(String UID, String password){
+        String authKey = BuildConfig.AUTH_KEY_CHAT;
         JSONArray deckArr = new JSONArray();
         UsersRequest usersRequest = new UsersRequest.UsersRequestBuilder().build();
         usersRequest.fetchNext(new CometChat.CallbackListener<List<User>>() {
@@ -66,30 +67,30 @@ public class CreateAccountActivity extends AppCompatActivity {
             public void onSuccess(List<User> users) {
                 for(int i = 0; i < users.size(); i++){
                     deckArr.put(users.get(i).getUid());
+                    try {
+                        JSONArray currDeck = users.get(i).getMetadata().getJSONArray("Deck");
+                        Log.e(TAG, currDeck.toString());
+                        currDeck.put(UID); //Adding new user to the deck
+                        users.get(i).getMetadata().put("Deck", currDeck);
+                        Log.e(TAG, users.get(i).getMetadata().getJSONArray("Deck").toString());
+                        CometChat.updateUser(users.get(i), authKey, new CometChat.CallbackListener<User>() {
+                            @Override
+                            public void onSuccess(User user) {
+                                Log.e(TAG, "User updated");
+                            }
+
+                            @Override
+                            public void onError(CometChatException e) {
+
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
                 Log.e(TAG, "User list initialized");
-                try {
-                    metadata.put("Deck", deckArr);
-                    metadata.put("Bio", "Test bio");
-                    metadata.put("Birthday", "01012000");
-                    CometChat.getLoggedInUser().setMetadata(metadata);
-                    CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
-                        @Override
-                        public void onSuccess(User user) {
-                            Log.e(TAG, "Metadata upload worked: " + CometChat.getLoggedInUser().getMetadata());
-                            Log.e(TAG, "Full user: " + CometChat.getLoggedInUser());
-                            loginParseUser(UID, password);
-                        }
-
-                        @Override
-                        public void onError(CometChatException e) {
-                            Log.e(TAG, "Updating metadata failed");
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.e(TAG, "Metadata updated with deck: " + metadata);
+                pushMetadata(deckArr, UID, password);
+                //Log.e(TAG, "Metadata updated with deck: " + metadata);
             }
 
             @Override
@@ -97,6 +98,30 @@ public class CreateAccountActivity extends AppCompatActivity {
                 Log.e(TAG, "Issue creating userlist : " + e.getMessage());
             }
         });
+    }
+
+    public void pushMetadata(JSONArray deckArr, String UID, String password){
+        try {
+            metadata.put("Deck", deckArr);
+            metadata.put("Bio", "Test bio");
+            metadata.put("Birthday", "01012000");
+            CometChat.getLoggedInUser().setMetadata(metadata);
+            CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
+                @Override
+                public void onSuccess(User user) {
+                    Log.e(TAG, "Metadata upload worked: " + CometChat.getLoggedInUser().getMetadata());
+                    Log.e(TAG, "Full user: " + CometChat.getLoggedInUser());
+                    loginParseUser(UID, password);
+                }
+
+                @Override
+                public void onError(CometChatException e) {
+                    Log.e(TAG, "Updating metadata failed");
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setup(){
