@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
@@ -29,6 +30,7 @@ import com.cometchat.pro.models.User;
 import com.cometchat.pro.uikit.CardSwipeAdapter;
 import com.cometchat.pro.uikit.MediaAdapter;
 import com.cometchat.pro.uikit.MyMedia;
+import com.cometchat.pro.uikit.ProfPic;
 import com.cometchat.pro.uikit.R;
 import com.cometchat.pro.uikit.ui_components.users.user_list.CometChatUserList;
 import com.parse.FindCallback;
@@ -58,6 +60,7 @@ public class MyCardFragment extends Fragment {
     private CardSwipeAdapter mainAdapter;
     private List<String> list;
     private List<User> userList;
+    //private List<String> pfpList;
     private List<Integer> scoreList;
     public ImageView ivLogo;
     public final String TAG = "Card";
@@ -81,7 +84,7 @@ public class MyCardFragment extends Fragment {
         Log.e(TAG, "Logged in as: " + ParseUser.getCurrentUser().getUsername());
         Log.e(TAG, "Chat logged in as: " + CometChat.getLoggedInUser());
         try {
-            initUserList();
+            initUserList(); //also inits pfplist
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -101,14 +104,16 @@ public class MyCardFragment extends Fragment {
 
     public void initUserList() throws JSONException {
         userList = new ArrayList<User>();
+        //pfpList = new ArrayList<String>();
+        //pfpList.add("");
         JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
         for(int i = 0; i < Deck.length(); i++){
             CometChat.getUser(Deck.get(i).toString(), new CometChat.CallbackListener<User>() {
                 @Override
                 public void onSuccess(User user) {
                     addToList(user);
+                    //queryPFP(user.getUid());
                 }
-
                 @Override
                 public void onError(CometChatException e) {
 
@@ -117,9 +122,41 @@ public class MyCardFragment extends Fragment {
         }
     }
 
+    /*private void queryPFP(String UID) { //returns a URL
+        Log.e(TAG, "Setting pfp");
+        ParseQuery<ProfPic> query = ParseQuery.getQuery(ProfPic.class);
+        query.include(ProfPic.KEY_USER);
+        query.whereContains(ProfPic.KEY_USER, UID);
+        // start an asynchronous call for pfp
+        query.findInBackground(new FindCallback<ProfPic>() {
+            @Override
+            public void done(List<ProfPic> pics, ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting pfp", e);
+                    return;
+                }
+                if(pics.size() == 0) {
+                    //set pfp to default
+                    addToPFPList("");
+                }
+                else{
+                    //set pfp
+                    Log.e(TAG, "Setting existing PFP");
+                    addToPFPList(pics.get(0).getImage().getUrl());
+                }
+            }
+
+        });
+    }*/
+
     public void addToList(User user){
         userList.add(user);
     }
+
+    /*public void addToPFPList(String url){
+        pfpList.add(url);
+    }*/
 
     public int getPositionOfBestMatch(List<Integer> tempScoreList){
         int highestScore = Collections.max(tempScoreList);
@@ -140,6 +177,7 @@ public class MyCardFragment extends Fragment {
         bFilter = v.findViewById(R.id.bFilter);
         vidVisible = true;
         mainAdapter = new CardSwipeAdapter(getContext(), list, vidVisible, "");
+        //mainAdapter.setPfps(pfpList);
         initCards();
         kCard.setAdapter(mainAdapter);
         flushFirst(kCard);
@@ -273,6 +311,13 @@ public class MyCardFragment extends Fragment {
                     kCard.reloadAdapterData();
                 }
                 Log.e(TAG, "Current page: " + page +" " + list.get(1));
+            }
+        });
+
+        ivLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 

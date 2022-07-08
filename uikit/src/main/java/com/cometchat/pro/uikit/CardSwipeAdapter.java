@@ -36,6 +36,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -137,12 +138,17 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void setup(User user, View v){
+    public void setup(User user, View v, int pos){
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
         lTopBar = v.findViewById(R.id.lTopBar);
-        Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic);
+        //Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic);
+        try {
+            setPFP(user, v);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         ivInst1 = v.findViewById(R.id.ivInst1);
         ivInst2 = v.findViewById(R.id.ivInst2);
         ivInst3 = v.findViewById(R.id.ivInst3);
@@ -166,12 +172,18 @@ public class CardSwipeAdapter extends BaseAdapter {
         showFirst(user, v);
     }
 
-    public void setupHide(User user, View v){
+    public void setupHide(User user, View v, int pos){
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
         lTopBar = v.findViewById(R.id.lTopBar);
-        Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic);
+        //Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic); //COCKATOO
+        //pos = list.get(pos).
+        try {
+            setPFP(user, v);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         ivInst1 = v.findViewById(R.id.ivInst1);
         ivInst2 = v.findViewById(R.id.ivInst2);
         ivInst3 = v.findViewById(R.id.ivInst3);
@@ -244,6 +256,16 @@ public class CardSwipeAdapter extends BaseAdapter {
         }
         Log.e(TAG, "Age: " + years);
         return years;
+    }
+
+    private void setPFP(User user, View v) throws JSONException {
+        String pfpURl = user.getMetadata().getString("PFP");
+        Log.e(TAG, user.getName() + " has pfp " + pfpURl); //get pfp from metadata
+        if(pfpURl.isEmpty()){
+            Glide.with(v).load(R.drawable.circle).circleCrop().into(ivCardPic);
+        } else {
+            Glide.with(v).load(pfpURl).circleCrop().into(ivCardPic);
+        }
     }
 
     private String getCityState(double lat, double lon){
@@ -434,13 +456,14 @@ public class CardSwipeAdapter extends BaseAdapter {
         //Log.e(TAG, "Getting card user");
         // Log.e(TAG, "User at " + pos + " is " + list.get(pos));
         CometChat.getUser(list.get(pos), new CometChat.CallbackListener<User>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(User user) {
                 if(vidVisible){
-                    setup(user, v);
+                    setup(user, v, pos);
                 }
                 else{
-                    setupHide(user, v);
+                    setupHide(user, v, pos);
                 }
                 listeners(pos, user);
             }

@@ -22,6 +22,8 @@ import com.cometchat.pro.uikit.ui_resources.utils.sticker_header.StickyHeaderAda
 import com.cometchat.pro.uikit.ui_resources.utils.FontUtils;
 import com.cometchat.pro.uikit.ui_resources.utils.Utils;
 
+import org.json.JSONException;
+
 /**
  * Purpose - UserListAdapter is a subclass of RecyclerView Adapter which is used to display
  * the list of users. It helps to organize the users in recyclerView.
@@ -106,10 +108,18 @@ public class CometChatUsersAdapter extends RecyclerView.Adapter<CometChatUsersAd
 
         userViewHolder.userListRowBinding.txtUserName.setTypeface(fontUtils.getTypeFace(FontUtils.robotoMedium));
 
-        if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
-            userViewHolder.userListRowBinding.avUser.setInitials(user.getName());
-        } else {
-            userViewHolder.userListRowBinding.avUser.setAvatar(user.getAvatar());
+        try {
+            if (user.getAvatar() == null || user.getMetadata().getString("PFP").isEmpty()) {
+                userViewHolder.userListRowBinding.avUser.setInitials(user.getName());
+            } else {
+                try {
+                    userViewHolder.userListRowBinding.avUser.setAvatar(user.getMetadata().getString("PFP")); //COCKATOO
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         if(Utils.isDarkMode(context)) {
             userViewHolder.userListRowBinding.txtUserName.setTextColor(context.getResources().getColor(R.color.textColorWhite));

@@ -114,6 +114,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     public void pushMetadata(JSONArray deckArr, String UID, String password, String bday, String bio){
         try {
             metadata.put("Deck", deckArr);
+            metadata.put("PFP", "");
             metadata.put("Bio", bio);
             metadata.put("Birthday", bday);
             Log.e(TAG, "Bday: " + bday);

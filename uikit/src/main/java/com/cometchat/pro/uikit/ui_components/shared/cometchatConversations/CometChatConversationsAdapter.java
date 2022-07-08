@@ -37,6 +37,7 @@ import com.cometchat.pro.uikit.ui_settings.FeatureRestriction;
 import com.cometchat.pro.uikit.ui_resources.utils.Utils;
 import com.cometchat.pro.uikit.ui_settings.UIKitSettings;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -182,6 +183,11 @@ public class CometChatConversationsAdapter extends RecyclerView.Adapter<CometCha
             User conversationUser = ((User) conversation.getConversationWith());
             name = conversationUser.getName();
             avatar = conversationUser.getAvatar();
+            try {
+                avatar = conversationUser.getMetadata().getString("PFP"); //COCKATOO
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             status = conversationUser.getStatus();
             if (status.equals(CometChatConstants.USER_STATUS_ONLINE)) {
                 conversationViewHolder.conversationListRowBinding.userStatus.setVisibility(View.VISIBLE);

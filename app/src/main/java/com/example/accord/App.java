@@ -6,6 +6,7 @@ import com.cometchat.pro.core.AppSettings;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.uikit.MyMedia;
+import com.cometchat.pro.uikit.ProfPic;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -17,6 +18,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         initChat();
+        ParseObject.registerSubclass(ProfPic.class);
         initParse();
     }
 

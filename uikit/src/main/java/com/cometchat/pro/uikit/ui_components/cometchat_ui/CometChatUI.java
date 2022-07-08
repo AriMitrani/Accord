@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +48,7 @@ import com.cometchat.pro.models.Group;
 import com.cometchat.pro.models.MediaMessage;
 import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
+import com.cometchat.pro.uikit.BitmapScaler;
 import com.cometchat.pro.uikit.R;
 import com.cometchat.pro.uikit.databinding.ActivityCometchatUnifiedBinding;
 import com.cometchat.pro.uikit.ui_components.MyCardFragment;
@@ -652,5 +654,18 @@ public class CometChatUI extends AppCompatActivity implements
         config.setLocale(locale);
         resources.updateConfiguration(config, resources.getDisplayMetrics());
     }
+
+
+
+    /*@Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.e("Profile", resultCode + "");
+        if (resultCode==this.RESULT_OK){
+            super.onActivityResult(requestCode, resultCode, data);
+            Log.e("Profile2", resultCode + "");
+            setResult(RESULT_OK, data);
+        }
+
+    }*/
 
 }

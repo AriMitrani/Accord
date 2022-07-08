@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-feature android:name="android.hardware.camera"/>
 
     <queries>
 
@@ -34,6 +35,7 @@
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
+
     </queries>
 
 
@@ -43,7 +45,7 @@
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
         tools:node="merge"
-        tools:targetApi="m">
+        tools:targetApi="31">
         <activity android:name=".ui_components.chats.CometChatStartConversation"/>
         <activity android:name=".ui_components.messages.extensions.Collaborative.CometChatWebViewActivity" />
         <activity android:name=".ui_components.messages.extensions.Reactions.CometChatReactionInfoActivity" />
@@ -80,9 +82,9 @@
             </intent-filter>
         </activity>
 
-        <meta-data
+        <!--<meta-data
             android:name="com.cometchat.pro.uikit"
-            android:value="${file_provider}" />
+            android:value="${file_provider}" />-->
 
         <activity
             android:name=".ui_components.groups.create_group.CometChatCreateGroupActivity"
@@ -121,13 +123,15 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.codepath.accord"
+            android:authorities="com.example.accord.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_path" />
         </provider>
+
+
 
         <receiver
             android:name=".ui_components.calls.call_manager.ongoing_call.OngoingCallBroadcast"

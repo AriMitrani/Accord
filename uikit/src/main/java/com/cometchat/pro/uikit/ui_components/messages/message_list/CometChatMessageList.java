@@ -1650,7 +1650,11 @@ public class CometChatMessageList extends Fragment implements View.OnClickListen
                         isBlockedByMe = false;
                         composeBox.setVisibility(View.VISIBLE);
                         blockUserLayout.setVisibility(GONE);
-                        avatarUrl = user.getAvatar();
+                        try {
+                            avatarUrl = user.getMetadata().getString("PFP"); //COCKATOO
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         profileLink = user.getLink();
                         if (user.getStatus().equals(CometChatConstants.USER_STATUS_ONLINE)) {
                             tvStatus.setTextColor(getActivity().getResources().getColor(R.color.colorPrimary));
