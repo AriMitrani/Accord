@@ -7,6 +7,8 @@
         <entry key="app/src/main/res/layout/activity_card.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.21822916666666667" />
         <entry key="app/src/main/res/layout/activity_create_account.xml" value="0.2947916666666667" />
+        <entry key="app/src/main/res/layout/activity_genre.xml" value="0.2201795639162035" />
+        <entry key="app/src/main/res/layout/activity_genre_select.xml" value="0.33133817870884996" />
         <entry key="app/src/main/res/layout/activity_instrument.xml" value="0.335" />
         <entry key="app/src/main/res/layout/activity_launch.xml" value="0.29393115942028986" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.29393115942028986" />
@@ -124,5 +126,8 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="SuppressKotlinCodeStyleNotification">
+    <option name="disableForAll" value="true" />
   </component>
 </project>

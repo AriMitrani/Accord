@@ -3,7 +3,9 @@ package com.example.accord;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
+import org.parceler.Parcels;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +14,8 @@ import android.widget.RadioButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.invoke.MethodType;
 
 public class InstrumentActivity extends AppCompatActivity {
 
@@ -137,7 +141,6 @@ public class InstrumentActivity extends AppCompatActivity {
                 clDrums2.setVisibility(View.VISIBLE);
                 drums1.setSelected(true);
                 drums1.setChecked(true);
-                drums = true;
                 updateNext();
             }
         });
@@ -147,7 +150,11 @@ public class InstrumentActivity extends AppCompatActivity {
                 clDrums2.setVisibility(View.INVISIBLE);
                 clDrums.setVisibility(View.VISIBLE);
                 drums1.setSelected(false);
-                drums = false;
+                drums2.setSelected(false);
+                drums3.setSelected(false);
+                drums1.setChecked(false);
+                drums2.setChecked(false);
+                drums3.setChecked(false);
                 updateNext();
             }
         });
@@ -159,7 +166,6 @@ public class InstrumentActivity extends AppCompatActivity {
                 clGuitar2.setVisibility(View.VISIBLE);
                 guitar1.setSelected(true);
                 guitar1.setChecked(true);
-                guitar = true;
                 updateNext();
             }
         });
@@ -169,7 +175,11 @@ public class InstrumentActivity extends AppCompatActivity {
                 clGuitar2.setVisibility(View.INVISIBLE);
                 clGuitar.setVisibility(View.VISIBLE);
                 guitar1.setSelected(false);
-                guitar = false;
+                guitar2.setSelected(false);
+                guitar3.setSelected(false);
+                guitar1.setChecked(false);
+                guitar2.setChecked(false);
+                guitar3.setChecked(false);
                 updateNext();
             }
         });
@@ -181,7 +191,6 @@ public class InstrumentActivity extends AppCompatActivity {
                 clBass2.setVisibility(View.VISIBLE);
                 bass1.setSelected(true);
                 bass1.setChecked(true);
-                bass = true;
                 updateNext();
             }
         });
@@ -191,7 +200,11 @@ public class InstrumentActivity extends AppCompatActivity {
                 clBass2.setVisibility(View.INVISIBLE);
                 clBass.setVisibility(View.VISIBLE);
                 bass1.setSelected(false);
-                bass = false;
+                bass2.setSelected(false);
+                bass3.setSelected(false);
+                bass1.setChecked(false);
+                bass2.setChecked(false);
+                bass3.setChecked(false);
                 updateNext();
             }
         });
@@ -203,7 +216,6 @@ public class InstrumentActivity extends AppCompatActivity {
                 clVocals2.setVisibility(View.VISIBLE);
                 vocals1.setSelected(true);
                 vocals1.setChecked(true);
-                vocals = true;
                 updateNext();
             }
         });
@@ -213,7 +225,11 @@ public class InstrumentActivity extends AppCompatActivity {
                 clVocals2.setVisibility(View.INVISIBLE);
                 clVocals.setVisibility(View.VISIBLE);
                 vocals1.setSelected(false);
-                vocals = false;
+                vocals2.setSelected(false);
+                vocals3.setSelected(false);
+                vocals1.setChecked(false);
+                vocals2.setChecked(false);
+                vocals3.setChecked(false);
                 updateNext();
             }
         });
@@ -225,7 +241,6 @@ public class InstrumentActivity extends AppCompatActivity {
                 clKeys2.setVisibility(View.VISIBLE);
                 keys1.setSelected(true);
                 keys1.setChecked(true);
-                keys = true;
                 updateNext();
             }
         });
@@ -235,7 +250,11 @@ public class InstrumentActivity extends AppCompatActivity {
                 clKeys2.setVisibility(View.INVISIBLE);
                 clKeys.setVisibility(View.VISIBLE);
                 keys1.setSelected(false);
-                keys = false;
+                keys2.setSelected(false);
+                keys3.setSelected(false);
+                keys1.setChecked(false);
+                keys2.setChecked(false);
+                keys3.setChecked(false);
                 updateNext();
             }
         });
@@ -247,7 +266,6 @@ public class InstrumentActivity extends AppCompatActivity {
                 clProd2.setVisibility(View.VISIBLE);
                 prod1.setSelected(true);
                 prod1.setChecked(true);
-                prod = true;
                 updateNext();
             }
         });
@@ -257,7 +275,11 @@ public class InstrumentActivity extends AppCompatActivity {
                 clProd2.setVisibility(View.INVISIBLE);
                 clProd.setVisibility(View.VISIBLE);
                 prod1.setSelected(false);
-                prod = false;
+                prod2.setSelected(false);
+                prod3.setSelected(false);
+                prod1.setChecked(false);
+                prod2.setChecked(false);
+                prod3.setChecked(false);
                 updateNext();
             }
         });
@@ -281,7 +303,7 @@ public class InstrumentActivity extends AppCompatActivity {
         if(drums1.isSelected()){
             selected = true;
         }
-        else if(drums1.isSelected()){
+        else if(drums2.isSelected()){
             selected = true;
         }
         else if(drums3.isSelected()){
@@ -347,87 +369,73 @@ public class InstrumentActivity extends AppCompatActivity {
 
     public void createData() throws JSONException {
         Log.e(TAG, "Creating metadata");
-        JSONArray metadata = new JSONArray();
-        JSONObject bio = new JSONObject();
-        bio.put("Bio", "");
-        JSONObject lat = new JSONObject();
-        bio.put("Lat", 0);
-        JSONObject lon = new JSONObject();
-        bio.put("Lon", 0);
-        JSONObject deck = new JSONObject();
-        JSONArray deckArr = new JSONArray();
-        deck.put("Deck", deckArr);
-        JSONObject liked = new JSONObject();
+        JSONObject metadata = new JSONObject();
+        metadata.put("Lat", 0);
+        metadata.put("Lon", 0);
         JSONArray likedArr = new JSONArray();
-        liked.put("Liked", likedArr);
-        JSONObject genres = new JSONObject();
-        JSONArray genreArr = new JSONArray();
-        genres.put("Genres", genreArr);
-        JSONObject skills = new JSONObject();
+        metadata.put("Liked", likedArr);
+        /*metadata.put("Bio", "");
+        metadata.put("Birthday", 0);*/
         JSONArray skillsArr = new JSONArray();
-        skills.put("Skills", skillsArr);
-        metadata.put(bio);
-        metadata.put(lat);
-        metadata.put(lon);
-        metadata.put(deck);
-        metadata.put(liked);
-        metadata.put(genres);
-        metadata.put(skills);
+
+        if(drums1.isChecked()){
+            skillsArr.put("drums1");
+        }
+        else if(drums2.isChecked()){
+            skillsArr.put("drums2");
+        }
+        else if(drums3.isChecked()){
+            skillsArr.put("drums3");
+        }
+        if(guitar1.isChecked()){
+            skillsArr.put("guitar1");
+        }
+        else if(guitar2.isChecked()){
+            skillsArr.put("guitar2");
+        }
+        else if(guitar3.isChecked()){
+            skillsArr.put("guitar3");
+        }
+        if(bass1.isChecked()){
+            skillsArr.put("bass1");
+        }
+        else if(bass2.isChecked()){
+            skillsArr.put("bass2");
+        }
+        else if(bass3.isChecked()){
+            skillsArr.put("bass2");
+        }
+        if(vocals1.isChecked()){
+            skillsArr.put("vocals1");
+        }
+        else if(vocals2.isChecked()){
+            skillsArr.put("vocals2");
+        }
+        else if(vocals3.isChecked()){
+            skillsArr.put("vocals3");
+        }
+        if(keys1.isChecked()){
+            skillsArr.put("keys1");
+        }
+        else if(keys2.isChecked()){
+            skillsArr.put("keys2");
+        }
+        else if(keys3.isChecked()){
+            skillsArr.put("keys3");
+        }
+        if(prod1.isChecked()){
+            skillsArr.put("prod1");
+        }
+        else if(prod2.isChecked()){
+            skillsArr.put("prod2");
+        }
+        else if(prod3.isChecked()){
+            skillsArr.put("prod3");
+        }
+        metadata.put("Skills", skillsArr);
         Log.e(TAG, "Metadata: " + metadata);
-
-        if(drums1.isSelected()){
-
-        }
-        else if(drums1.isSelected()){
-
-        }
-        else if(drums3.isSelected()){
-
-        }
-        if(guitar1.isSelected()){
-
-        }
-        else if(guitar2.isSelected()){
-
-        }
-        else if(guitar3.isSelected()){
-
-        }
-        if(bass1.isSelected()){
-
-        }
-        else if(bass2.isSelected()){
-
-        }
-        else if(bass3.isSelected()){
-
-        }
-        if(vocals1.isSelected()){
-
-        }
-        else if(vocals2.isSelected()){
-
-        }
-        else if(vocals3.isSelected()){
-
-        }
-        if(keys1.isSelected()){
-
-        }
-        else if(keys2.isSelected()){
-
-        }
-        else if(keys3.isSelected()){
-
-        }
-        if(prod1.isSelected()){
-
-        }
-        else if(prod2.isSelected()){
-
-        }
-        else if(prod3.isSelected()){
-
-        }
+        Intent i = new Intent(this, GenreActivity.class);
+        i.putExtra("metadata", Parcels.wrap(metadata.toString()));
+        startActivity(i);
     }
 }
