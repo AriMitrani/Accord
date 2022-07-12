@@ -71,11 +71,13 @@ public class MyCardFragment extends Fragment {
     public int page = 1;
     public String filter;
     public Button bFilter;
+    public Button bAlg;
 
     public MyCardFragment() {
         // Required empty public constructor
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,42 +86,65 @@ public class MyCardFragment extends Fragment {
         Log.e(TAG, "Logged in as: " + ParseUser.getCurrentUser().getUsername());
         Log.e(TAG, "Chat logged in as: " + CometChat.getLoggedInUser());
         try {
-            initUserList(); //also inits pfplist
+            initScoreList();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        initScoreList();
+        try {
+            initUserList(); //also inits scorelist
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         setupMain(v);
         listeners();
         return v;
     }
 
-    private void initScoreList() {
+    private void initScoreList() throws JSONException {
         scoreList = new ArrayList<Integer>();
-        scoreList.add(1); //jomas
-        scoreList.add(11); //bil
-        scoreList.add(16); //tay
-        scoreList.add(4); //joel
-    }
-
-    public void initUserList() throws JSONException {
-        userList = new ArrayList<User>();
-        //pfpList = new ArrayList<String>();
-        //pfpList.add("");
         JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
         for(int i = 0; i < Deck.length(); i++){
-            CometChat.getUser(Deck.get(i).toString(), new CometChat.CallbackListener<User>() {
-                @Override
-                public void onSuccess(User user) {
-                    addToList(user);
-                    //queryPFP(user.getUid());
-                }
-                @Override
-                public void onError(CometChatException e) {
-
-                }
-            });
+            scoreList.add(0);
         }
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void initUserList() throws JSONException {
+        userList = new ArrayList<User>();
+        //scoreList = new ArrayList<Integer>();
+        JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
+        for(int i = 0; i < Deck.length()+1; i++){
+            if(i< Deck.length()){
+                CometChat.getUser(Deck.get(i).toString(), new CometChat.CallbackListener<User>() {
+                    @Override
+                    public void onSuccess(User user) {
+                        addToList(user); //add scores here
+                        int score = scoreAlg(user);
+                        int index = -1;
+                        for(int i = 0; i < userList.size(); i++){
+                            if(userList.get(i) == user){
+                                index = i;
+                            }
+                        }
+                        scoreList.set(index, score);
+                        Log.e(TAG, "Added score " + score + " to user " + user.getUid());
+                        //queryPFP(user.getUid());
+                    }
+                    @Override
+                    public void onError(CometChatException e) {
+
+                    }
+                });
+            }
+            else{
+                //initCardsFiltered("");
+            }
+        }
+    }
+
+    public int scoreAlg(User user){
+        return user.getUid().length();
     }
 
     /*private void queryPFP(String UID) { //returns a URL
@@ -152,7 +177,9 @@ public class MyCardFragment extends Fragment {
 
     public void addToList(User user){
         userList.add(user);
+        //scoreList.add(1);
     }
+
 
     /*public void addToPFPList(String url){
         pfpList.add(url);
@@ -161,6 +188,7 @@ public class MyCardFragment extends Fragment {
     public int getPositionOfBestMatch(List<Integer> tempScoreList){
         int highestScore = Collections.max(tempScoreList);
         int indx = tempScoreList.indexOf(highestScore);
+        Log.e(TAG, "Score list: " + tempScoreList + ", indx highest: " + indx);
         tempScoreList.set(indx, -1);
         return indx;
     }
@@ -175,6 +203,7 @@ public class MyCardFragment extends Fragment {
         left = v.findViewById(R.id.leftLayout);
         right = v.findViewById(R.id.rightLayout);
         bFilter = v.findViewById(R.id.bFilter);
+        bAlg = v.findViewById(R.id.bApplyAlg);
         vidVisible = true;
         mainAdapter = new CardSwipeAdapter(getContext(), list, vidVisible, "");
         //mainAdapter.setPfps(pfpList);
@@ -190,18 +219,22 @@ public class MyCardFragment extends Fragment {
             JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
             list.add(""); //blank first card
             List<Integer> tempScoreList = new ArrayList<Integer>();
+            Log.e("CHECK", "Scorelist size: " + scoreList.size());
             for(int i = 0; i< scoreList.size(); i++){
                 tempScoreList.add(scoreList.get(i));
             }
+            Log.e("CHECK", "Temp list: " + tempScoreList);
             for(int i = 0; i < Deck.length(); i++){
                 int maxIndx = getPositionOfBestMatch(tempScoreList);
+                Log.e(TAG, "Best match is at: " + maxIndx);
                 list.add(Deck.get(maxIndx).toString());
-                // Log.e(TAG, "Swipe user added:" + Deck.get(i).toString());
+                //Log.e(TAG, "Swipe user added:" + Deck.get(maxIndx).toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         updateMediaCount();
+        Log.e(TAG, "List being passed in: " + list);
         mainAdapter.notifyDataSetChanged();
         //kCard.reloadAdapterData();
     }
@@ -266,6 +299,89 @@ public class MyCardFragment extends Fragment {
         return false;
     }
 
+    public void removeMeFromDeck(String UID){
+        CometChat.getUser(UID, new CometChat.CallbackListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                try {
+                    // Log.e(TAG, "Removing from: " + user.getName());
+                    JSONArray userDeck = user.getMetadata().getJSONArray("Deck");
+                    // Log.e(TAG, "Deck: " + userDeck);
+                    String me = CometChat.getLoggedInUser().getUid();
+                    // Log.e(TAG, "Me: " + me);
+                    int pos = -1;
+                    for(int i = 0; i<userDeck.length(); i++){
+                        if(userDeck.get(i).equals(me)){
+                            pos = i;
+                        }
+                    }
+                    // Log.e(TAG, "I'm at " + pos);
+                    if(pos != -1){
+                        user.getMetadata().getJSONArray("Deck").remove(pos);
+                        CometChat.updateUser(user, "85e114ed71f14e3ce779b2673d876b9faa8bc5ff", new CometChat.CallbackListener<User>() {
+                            @Override
+                            public void onSuccess(User user) {
+                                Log.e(TAG, "Removed myself from deck of " + user.getName());
+                            }
+
+                            @Override
+                            public void onError(CometChatException e) {
+
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                Log.e(TAG, "Error removing: " + e.getMessage());
+            }
+        });
+    }
+
+    public void addToFavorites(String UID) throws JSONException {
+        CometChat.getLoggedInUser().getMetadata().getJSONArray("Liked").put(UID);
+        CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                Log.e(TAG, "Added to favorites: " + UID);
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+
+            }
+        });
+    }
+
+    public void removeFromMyDeck(String UID) throws JSONException {
+        JSONArray myDeck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
+        int pos = -1;
+        for(int i = 0; i<myDeck.length(); i++){
+            if(myDeck.get(i).equals(UID)){
+                pos = i;
+            }
+        }
+        // Log.e(TAG, "I'm at " + pos);
+        if(pos != -1) {
+            CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck").remove(pos);
+            CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
+                @Override
+                public void onSuccess(User user) {
+                    Log.e(TAG, "Removed from my deck: " + UID);
+                }
+
+                @Override
+                public void onError(CometChatException e) {
+
+                }
+            });
+        }
+    }
+
     public void listeners(){
         left.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -281,6 +397,7 @@ public class MyCardFragment extends Fragment {
                 else if(page != 1){
                     page--;
                     mainAdapter.setPage(page);
+                    mainAdapter.notifyDataSetChanged();
                     kCard.reloadAdapterData();
                 }
                 Log.e(TAG, "Current page: " + page);
@@ -315,9 +432,14 @@ public class MyCardFragment extends Fragment {
         });
 
         ivLogo.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
-
+                Log.e(TAG, "Scores: " + scoreList);
+                Log.e(TAG, "Users: " + userList);
+                Log.e(TAG, "User list: " + list);
+                //initCardsFiltered("");
+                //kCard.reloadAdapterData();
             }
         });
 
@@ -346,6 +468,14 @@ public class MyCardFragment extends Fragment {
             }
         });
 
+        bAlg.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View v) {
+                initCardsFiltered("");
+            }
+        });
+
         kCard.setKolodaListener(new KolodaListener() {
             @Override
             public void onNewTopCard(int i) {
@@ -362,6 +492,12 @@ public class MyCardFragment extends Fragment {
             @Override
             public void onCardSwipedLeft(int i) {
                 Log.e(TAG, "Left on: " + list.get(1));
+                /*try {
+                    removeMeFromDeck(list.get(1)); //passes the UID of the person I swiped left on
+                    removeFromMyDeck(list.get(1));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/ //uncomment when I want to actually update the decks
                 list.remove(0);
                 updateMediaCount();
                 page = 1;
@@ -377,11 +513,22 @@ public class MyCardFragment extends Fragment {
                 Log.e(TAG, "Right on: " + list.get(1));
                 if(isLikedBy(list.get(1))){
                     Log.e(TAG, "Match!");
+                    /*try {
+                        removeFromMyDeck(list.get(1));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
                     sendIntroMessage(list.get(1));
                     matchDialog();
                 }
                 if(!isLikedBy(list.get(1))){
                     Log.e(TAG, "No match");
+                    /*try {
+                        addToFavorites(list.get(1));
+                        removeFromMyDeck(list.get(1));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
                 }
                 updateMediaCount();
                 list.remove(0);

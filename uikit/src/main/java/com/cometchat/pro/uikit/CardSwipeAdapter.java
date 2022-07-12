@@ -1,12 +1,14 @@
 package com.cometchat.pro.uikit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -454,7 +456,8 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     public void getCardUser(int pos, View v){
         //Log.e(TAG, "Getting card user");
-        // Log.e(TAG, "User at " + pos + " is " + list.get(pos));
+        Log.e(TAG, "Whole list is: " + list);
+        Log.e(TAG, "User at " + pos + " is " + list.get(pos));
         CometChat.getUser(list.get(pos), new CometChat.CallbackListener<User>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -607,6 +610,9 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     public void loadVideo(MyMedia vid){
         String mediaUrl = vid.getVidURL();
+        //vFile.setMinimumHeight(1);
+        //vFile.getLayoutParams().height = 200;
+        //vFile.getLayoutParams().width = 200;
         vFile.setVideoPath(mediaUrl);
         vFile.requestFocus();
         vFile.start();
@@ -621,7 +627,15 @@ public class CardSwipeAdapter extends BaseAdapter {
         initPageBar(p);
         if (page > 1) {
             loadVideo(mediaList.get(page-2));
-            loadVideo(mediaList.get(page-2));
+            Handler handler;
+            handler=new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loadVideo(mediaList.get(page-2));
+                }
+            },1000);
+            //loadVideo(mediaList.get(page-2));
         }
     }
 

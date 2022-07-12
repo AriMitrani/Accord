@@ -31,8 +31,9 @@
             android:animateLayoutChanges="false"
             app:koloda_card_layout="@layout/card_layout_x"
             app:koloda_card_rotate_angle="0"
-            app:koloda_max_visible_cards="5"
-            app:layout_constraintBottom_toTopOf="@+id/bFilter"
+            app:koloda_max_visible_cards="1"
+            app:koloda_card_animation_alpha="false"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivLogo">
@@ -76,14 +77,35 @@
             app:layout_constraintStart_toStartOf="@+id/kolCard"
             app:layout_constraintTop_toTopOf="@+id/kolCard"></LinearLayout>
 
-        <Button
-            android:id="@+id/bFilter"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="add a filter"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/bFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#FF0000"
+                android:layout_margin="10dp"
+                android:text="add a filter"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/bApplyAlg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#FF0000"
+                android:text="Algorithm"
+                android:layout_margin="10dp"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

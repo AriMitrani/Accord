@@ -1,14 +1,21 @@
 package com.cometchat.pro.uikit.ui_components;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.core.content.FileProvider;
@@ -52,6 +59,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -69,7 +77,9 @@ public class MyProfileFragment extends Fragment {
     ImageView ivEditBio;
     TextView tvChangePFP;
     TextView tvLoc;
+    Uri imageUri;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    private static final int PICK_IMAGE = 100;
     public String photoFileName = "photo.jpg";
     File photoFile;
 
@@ -309,6 +319,24 @@ public class MyProfileFragment extends Fragment {
         });
     }
 
+    private void savePFP(String UID, ParseFile photoFile) {
+        ProfPic PFP = new ProfPic();
+        PFP.setUser(UID);
+        PFP.setImage(photoFile);
+        PFP.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Error saving prof pic: " + e);
+                }
+                Log.e(TAG, "Saved!");
+                //add to metadata
+                setPFP();
+                //ivPFP.setImageResource(0);
+            }
+        });
+    }
+
     private void metadataPFP(String fileURL){
         JSONObject metadata = CometChat.getLoggedInUser().getMetadata();
         try {
@@ -330,6 +358,42 @@ public class MyProfileFragment extends Fragment {
     }
 
     private void queryPFPs(String UID, File photoFile) {
+        //Boolean done = false;
+        Log.e(TAG, "Query started");
+        ParseQuery<ProfPic> query = ParseQuery.getQuery(ProfPic.class);
+        // include data referred by user key
+        query.include(ProfPic.KEY_USER);
+        //query.setLimit(20);
+        // order posts by creation date (newest first)
+        query.addDescendingOrder("createdAt");
+        query.whereContains(ProfPic.KEY_USER, UID);
+        // start an asynchronous call for posts
+        query.findInBackground(new FindCallback<ProfPic>() {
+            @Override
+            public void done(List<ProfPic> pics, ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting pfp", e);
+                    return;
+                }
+                Log.e(TAG, "# of pics: " + pics.size());
+                if(pics.size() == 0) {
+                    savePFP(UID, photoFile);
+                }
+                else{
+                    pics.get(0).deleteInBackground(new DeleteCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            savePFP(UID, photoFile);
+                        }
+                    });
+                }
+            }
+
+        });
+    }
+
+    private void queryPFPs(String UID, ParseFile photoFile) {
         //Boolean done = false;
         Log.e(TAG, "Query started");
         ParseQuery<ProfPic> query = ParseQuery.getQuery(ProfPic.class);
@@ -444,6 +508,7 @@ public class MyProfileFragment extends Fragment {
         bLibrary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                openGallery();
                 //changePFP(newUrl);
                 alert.cancel();
             }
@@ -521,8 +586,19 @@ public class MyProfileFragment extends Fragment {
         // So as long as the result is not null, it's safe to use the intent.
         if (intent.resolveActivity(getContext().getPackageManager()) != null) {
             // Start the image capture intent to take photo
-            Log.e(TAG, "Starting for result.");
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+    private void openGallery() {
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        photoFile = getPhotoFileUri(photoFileName);
+        Uri fileProvider = FileProvider.getUriForFile(Objects.requireNonNull(getActivity().getApplicationContext()),  "com.example.accord.provider", photoFile);
+        gallery.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+        if (gallery.resolveActivity(getContext().getPackageManager()) != null) {
+            // Start the image capture intent to take photo
+            Log.e(TAG, "Starting for result.");
+            startActivityForResult(gallery, PICK_IMAGE);
         }
     }
 
@@ -544,6 +620,7 @@ public class MyProfileFragment extends Fragment {
     }
 
 
+    @SuppressLint("Range")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         Log.e(TAG, "Result: " + resultCode);
@@ -551,9 +628,28 @@ public class MyProfileFragment extends Fragment {
         // Log.e(TAG, "Photo start.");
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == getActivity().RESULT_OK) {
+                String[] orientationColumn = {MediaStore.Images.Media.ORIENTATION};
+                Cursor cur = getActivity().managedQuery(imageUri, orientationColumn, null, null, null);
+                int orientation = -1;
+                if (cur != null && cur.moveToFirst()) {
+                    orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]));
+                }
                 // Log.e(TAG, "Photo ok.");
                 // by this point we have the camera photo on disk
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                switch(orientation) {
+                    case 90:
+                        takenImage = rotateImage(takenImage, 90);
+                        break;
+                    case 180:
+                        takenImage = rotateImage(takenImage, 180);
+                        break;
+                    case 270:
+                        takenImage = rotateImage(takenImage, 270);
+                        break;
+                    default:
+                        break;
+                }
                 // RESIZE BITMAP, see section below
                 Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(takenImage, 1000);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -592,6 +688,61 @@ public class MyProfileFragment extends Fragment {
                 Log.e(TAG, "Photo not taken code: " + resultCode);
             }
         }
+        if (requestCode == PICK_IMAGE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                imageUri = data.getData();
+                String[] orientationColumn = {MediaStore.Images.Media.ORIENTATION};
+                Cursor cur = getActivity().managedQuery(imageUri, orientationColumn, null, null, null);
+                int orientation = -1;
+                if (cur != null && cur.moveToFirst()) {
+                    orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]));
+                }
+                InputStream inStream = null;
+                try {
+                    inStream = getActivity().getContentResolver().openInputStream(imageUri);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                Bitmap bitmap = BitmapFactory.decodeStream(inStream);
+                switch(orientation) {
+                    case 90:
+                        bitmap = rotateImage(bitmap, 90);
+                        break;
+                    case 180:
+                        bitmap = rotateImage(bitmap, 180);
+                        break;
+                    case 270:
+                        bitmap = rotateImage(bitmap, 270);
+                        break;
+                    default:
+                        break;
+                }
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                byte[] imageByte = byteArrayOutputStream.toByteArray();
+                ParseFile parseFile = new ParseFile("pfp.png", imageByte);
+                parseFile.saveInBackground(new SaveCallback() {
+                    public void done(ParseException e) {
+                        // If successful add file to user and signUpInBackground
+                        if (null == e) {
+                            Log.e(TAG, "Here");
+                            queryPFPs(CometChat.getLoggedInUser().getUid(), parseFile);
+                        }
+
+                    }
+                });
+            } else { // Result was a failure
+                Log.e(TAG, "Photo not saved code: " + resultCode);
+            }
+                //Log.e(TAG, "Data: " + pf);
+        }
+    }
+
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix,
+                true);
     }
 
 }
