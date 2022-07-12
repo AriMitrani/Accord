@@ -116,6 +116,8 @@ public class CreateAccountActivity extends AppCompatActivity {
             metadata.put("Deck", deckArr);
             metadata.put("PFP", "");
             metadata.put("Bio", bio);
+            metadata.put("Right", 1);
+            metadata.put("Left", 1);
             metadata.put("Birthday", bday);
             Log.e(TAG, "Bday: " + bday);
             CometChat.getLoggedInUser().setMetadata(metadata);

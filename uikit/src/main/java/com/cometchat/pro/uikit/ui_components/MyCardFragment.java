@@ -2,6 +2,7 @@ package com.cometchat.pro.uikit.ui_components;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -42,10 +43,17 @@ import com.yalantis.library.KolodaListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -61,9 +69,9 @@ public class MyCardFragment extends Fragment {
     private List<String> list;
     private List<User> userList;
     //private List<String> pfpList;
-    private List<Integer> scoreList;
+    private List<Double> scoreList;
     public ImageView ivLogo;
-    public final String TAG = "Card";
+    public final String TAG = "CardFrag";
     public boolean vidVisible;
     public LinearLayout left;
     public LinearLayout right;
@@ -101,10 +109,10 @@ public class MyCardFragment extends Fragment {
     }
 
     private void initScoreList() throws JSONException {
-        scoreList = new ArrayList<Integer>();
+        scoreList = new ArrayList<Double>();
         JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
         for(int i = 0; i < Deck.length(); i++){
-            scoreList.add(0);
+            scoreList.add(0.0);
         }
 
     }
@@ -120,7 +128,14 @@ public class MyCardFragment extends Fragment {
                     @Override
                     public void onSuccess(User user) {
                         addToList(user); //add scores here
-                        int score = scoreAlg(user);
+                        double score = 0;
+                        try {
+                            score = scoreAlg(user, 0);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (java.text.ParseException e) {
+                            e.printStackTrace();
+                        }
                         int index = -1;
                         for(int i = 0; i < userList.size(); i++){
                             if(userList.get(i) == user){
@@ -143,8 +158,190 @@ public class MyCardFragment extends Fragment {
         }
     }
 
-    public int scoreAlg(User user){
-        return user.getUid().length();
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public double scoreAlg(User user, int distanceConstraint) throws JSONException, java.text.ParseException { //main algorithm
+        User me = CometChat.getLoggedInUser();
+        Log.e(TAG, "Current user: " + me.getMetadata());
+        Log.e(TAG, "Matching user: " + user.getMetadata());
+        double ageScore = 0;
+        double locationScore = 0;
+        double instrumentScore = 0;
+        double ELO = 0;
+        double genreScore = 0;
+
+        //Log.e(TAG, "Age test: " + me.getMetadata().getString("Birthday"));
+        int myAge = getAge(me.getMetadata().get("Birthday").toString());
+        int theirAge = getAge(user.getMetadata().get("Birthday").toString());
+        ageScore = setAgeScore(myAge, theirAge);
+        //Log.e(TAG, "Age score: " + ageScore);
+
+        locationScore = setLocationScore(me, user, distanceConstraint);
+        //Log.e(TAG, "Location score: " + locationScore);
+
+        instrumentScore = setInstrumentScore(me.getMetadata().getJSONArray("Skills"), user.getMetadata().getJSONArray("Skills"));
+        //Log.e(TAG, "Instrument score: " + instrumentScore);
+
+        ELO = setELO(user);
+        //Log.e(TAG, "ELO: " + ELO);
+
+        genreScore = setGenreScore(me.getMetadata().getJSONArray("Genres"), user.getMetadata().getJSONArray("Genres"));
+        //Log.e(TAG, "Genre score: " + genreScore);
+
+        double finalScore = (0.15*ageScore + 0.25*locationScore +0.3* instrumentScore + 0.1*ELO + 0.2*genreScore);
+        Log.e(TAG, user.getName() + " has a match score of " + finalScore);
+        return finalScore;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public int getAge(String date) throws java.text.ParseException { //must be in mm/dd/yyyy
+        SimpleDateFormat formatter =new SimpleDateFormat("MM/dd/yyyy");
+        Date dDate = formatter.parse(date);
+        Date currDate = Calendar.getInstance().getTime();
+        // Log.e(TAG, "Date: " + dDate);
+        // Log.e(TAG, "Current date: " + currDate);
+        //int years = Integer.parseInt(currDate - dDate);
+        return Period.between(convertToLocalDateViaInstant(dDate), convertToLocalDateViaInstant(currDate)).getYears();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+    public double setAgeScore(int ageMe, int ageThem){
+        int diff = ageMe-ageThem;
+        if(diff < 0) {
+            diff *= -1;
+        }
+        if(ageMe <= 17){
+            if(diff <= 1){
+                return 1;
+            }
+            if(ageThem >= 18 || diff >= 3){
+                return 0;
+            }
+            else{
+                return 0.5;
+            }
+        } else if (ageMe > 17 && ageMe <= 25){
+            if(ageThem <= 16){
+                return 0;
+            }
+            else if(diff <= 1){
+                return 1;
+            }
+            else if(diff <= 3){
+                return 0.5;
+            }
+            else{
+                return 0;
+            }
+        } else {
+            if(ageThem <= 23) {
+                return 0;
+            } else if (diff <=5){
+                return 1;
+            } else if (diff <= 10){
+                return 0.5;
+            } else {
+                return 0.3;
+            }
+        }
+    }
+
+    public double setLocationScore(User me, User you, int distanceConstraint) throws JSONException {
+        double distance = getDistance(me, you);
+        double diff = distance - distanceConstraint;
+        if(distance <= distanceConstraint){
+            return 1; //if it's in the user's desired range; default value is 0
+        } else if (diff >= 60) {
+            return 0;
+        } else {
+            return (1-diff/60);
+        }
+    }
+
+    public double setInstrumentScore(JSONArray mySkills, JSONArray theirSkills) throws JSONException {
+        if(mySkills.length() == 1 && theirSkills.length() == 1 && mySkills.get(0).equals(theirSkills.get(0))){ //if they play the same, single instrument
+            return 0.3;
+        } else {
+            double myAvg = 0;
+            double theirAvg = 0;
+            for(int i = 0; i<mySkills.length(); i++){
+                String skill = mySkills.get(i).toString();
+                double level = Integer.parseInt(skill.substring(skill.length() - 1));
+                myAvg += level;
+            }
+            myAvg /= mySkills.length();
+
+            for(int i = 0; i<theirSkills.length(); i++){
+                String skill = theirSkills.get(i).toString();
+                double level = Integer.parseInt(skill.substring(skill.length() - 1));
+                theirAvg += level;
+            }
+            theirAvg /= theirSkills.length();
+            // Log.e(TAG, "My avg: " + myAvg + ", their avg: " + theirAvg);
+
+            if(theirAvg > myAvg){
+                return myAvg/theirAvg;
+            } else {
+                return theirAvg/myAvg;
+            }
+        }
+    }
+
+    public double getDistance(User me, User you) throws JSONException { //in miles
+        Location startPoint=new Location("me");
+        startPoint.setLatitude(me.getMetadata().getDouble("Lat"));
+        startPoint.setLongitude(me.getMetadata().getDouble("Lon"));
+
+        Location endPoint=new Location("you");
+        endPoint.setLatitude(you.getMetadata().getDouble("Lat"));
+        endPoint.setLongitude(you.getMetadata().getDouble("Lon"));
+
+        double distance = startPoint.distanceTo(endPoint) * 0.000621371;
+        return distance;
+    }
+
+    public double setELO(User user) throws JSONException {
+        return user.getMetadata().getDouble("Right")/(user.getMetadata().getDouble("Left")*10);
+    }
+
+    public double setGenreScore(JSONArray myGenres, JSONArray theirGenres) throws JSONException {
+        if(myGenres.equals(theirGenres)){ //if all genres in common
+            return 1;
+        }
+
+        JSONArray allGenres = new JSONArray();
+        int sharedGenres = 0;
+        for (int i = 0; i < myGenres.length(); i++) {
+            allGenres.put(myGenres.getString(i));
+        }
+        for (int i = 0; i < theirGenres.length(); i++) {
+            if(!isInArray(theirGenres.getString(i), allGenres)) {
+                allGenres.put(theirGenres.getString(i));
+            } else {
+                sharedGenres++;
+            }
+        }
+
+        if(allGenres.length() == myGenres.length() || allGenres.length() == theirGenres.length()) { //one array completely encompasses the other
+            return 0.8;
+        }
+
+        return sharedGenres/allGenres.length();
+    }
+
+    public boolean isInArray(String string, JSONArray array) throws JSONException {
+        boolean inArr = false;
+        for (int i = 0; i < array.length(); i++) {
+            if(array.getString(i).equals(string)) {
+                inArr = true;
+            }
+        }
+        return inArr;
     }
 
     /*private void queryPFP(String UID) { //returns a URL
@@ -185,11 +382,11 @@ public class MyCardFragment extends Fragment {
         pfpList.add(url);
     }*/
 
-    public int getPositionOfBestMatch(List<Integer> tempScoreList){
-        int highestScore = Collections.max(tempScoreList);
+    public int getPositionOfBestMatch(List<Double> tempScoreList){
+        double highestScore = Collections.max(tempScoreList);
         int indx = tempScoreList.indexOf(highestScore);
-        Log.e(TAG, "Score list: " + tempScoreList + ", indx highest: " + indx);
-        tempScoreList.set(indx, -1);
+        //Log.e(TAG, "Score list: " + tempScoreList + ", indx highest: " + indx);
+        tempScoreList.set(indx, -1.0);
         return indx;
     }
 
@@ -218,15 +415,15 @@ public class MyCardFragment extends Fragment {
         try {
             JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
             list.add(""); //blank first card
-            List<Integer> tempScoreList = new ArrayList<Integer>();
-            Log.e("CHECK", "Scorelist size: " + scoreList.size());
+            List<Double> tempScoreList = new ArrayList<Double>();
+            //Log.e("CHECK", "Scorelist size: " + scoreList.size());
             for(int i = 0; i< scoreList.size(); i++){
                 tempScoreList.add(scoreList.get(i));
             }
             Log.e("CHECK", "Temp list: " + tempScoreList);
             for(int i = 0; i < Deck.length(); i++){
                 int maxIndx = getPositionOfBestMatch(tempScoreList);
-                Log.e(TAG, "Best match is at: " + maxIndx);
+                //Log.e(TAG, "Best match is at: " + maxIndx);
                 list.add(Deck.get(maxIndx).toString());
                 //Log.e(TAG, "Swipe user added:" + Deck.get(maxIndx).toString());
             }
@@ -234,7 +431,7 @@ public class MyCardFragment extends Fragment {
             e.printStackTrace();
         }
         updateMediaCount();
-        Log.e(TAG, "List being passed in: " + list);
+        //Log.e(TAG, "List being passed in: " + list);
         mainAdapter.notifyDataSetChanged();
         //kCard.reloadAdapterData();
     }
@@ -243,7 +440,7 @@ public class MyCardFragment extends Fragment {
     public void initCardsFiltered(String filt){
         list.clear();
         list.add(""); //blank first card
-        List<Integer> tempScoreList = new ArrayList<Integer>();
+        List<Double> tempScoreList = new ArrayList<Double>();
         for(int i = 0; i< scoreList.size(); i++){
             tempScoreList.add(scoreList.get(i));
         }
@@ -254,8 +451,8 @@ public class MyCardFragment extends Fragment {
                 list.add(user.getUid());
             }
         }
-        Log.e(TAG, "Filtered list " + list);
-        Log.e(TAG, "Score list " + scoreList);
+        //Log.e(TAG, "Filtered list " + list);
+        //Log.e(TAG, "Score list " + scoreList);
         mainAdapter.setPage(1);
         mainAdapter.setVidVisible(true);
         mainAdapter.notifyDataSetChanged();
@@ -331,6 +528,45 @@ public class MyCardFragment extends Fragment {
                         });
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+                Log.e(TAG, "Error removing: " + e.getMessage());
+            }
+        });
+    }
+
+    public void updateELO(String UID, String dir){
+        CometChat.getUser(UID, new CometChat.CallbackListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                try {
+                    JSONObject ELOTag;
+                    if(dir.equals("Left")){
+                        int left;
+                        left = (int) user.getMetadata().get("Left");
+                        user.getMetadata().put("Left", left+1);
+                    }
+                    else {
+                        int right;
+                        right = (int) user.getMetadata().get("Right");
+                        user.getMetadata().put("Right", right+1);
+                    }
+                        CometChat.updateUser(user, "85e114ed71f14e3ce779b2673d876b9faa8bc5ff", new CometChat.CallbackListener<User>() {
+                            @Override
+                            public void onSuccess(User user) {
+                                Log.e(TAG, "Updated ELO of " + user.getName());
+                            }
+
+                            @Override
+                            public void onError(CometChatException e) {
+
+                            }
+                        });
+                    } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -492,6 +728,7 @@ public class MyCardFragment extends Fragment {
             @Override
             public void onCardSwipedLeft(int i) {
                 Log.e(TAG, "Left on: " + list.get(1));
+                updateELO(list.get(1), "Left");
                 /*try {
                     removeMeFromDeck(list.get(1)); //passes the UID of the person I swiped left on
                     removeFromMyDeck(list.get(1));
@@ -511,6 +748,7 @@ public class MyCardFragment extends Fragment {
             @Override
             public void onCardSwipedRight(int i) {
                 Log.e(TAG, "Right on: " + list.get(1));
+                updateELO(list.get(1), "Right");
                 if(isLikedBy(list.get(1))){
                     Log.e(TAG, "Match!");
                     /*try {

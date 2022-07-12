@@ -38,6 +38,8 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -237,6 +239,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         return "broke";
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public int getAge(String date) throws java.text.ParseException { //must be in mm/dd/yyyy
         if(date.isEmpty()){
             return -1;
@@ -250,14 +253,20 @@ public class CardSwipeAdapter extends BaseAdapter {
         Date currDate = Calendar.getInstance().getTime();
         // Log.e(TAG, "Date: " + dDate);
         // Log.e(TAG, "Current date: " + currDate);
-        SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy");
-        int years = Integer.parseInt(simpleDateformat.format(currDate))- Integer.parseInt(simpleDateformat.format(dDate));
+        int years = Period.between(convertToLocalDateViaInstant(dDate), convertToLocalDateViaInstant(currDate)).getYears();
         if(years < 12 || years > 100){
             // Log.e(TAG, "Please enter a valid date");
             return -1;
         }
         Log.e(TAG, "Age: " + years);
         return years;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
     }
 
     private void setPFP(User user, View v) throws JSONException {
