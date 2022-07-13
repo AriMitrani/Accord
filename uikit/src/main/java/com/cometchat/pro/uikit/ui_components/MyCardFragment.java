@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
@@ -67,6 +68,7 @@ public class MyCardFragment extends Fragment {
     public Koloda kCard;
     private CardSwipeAdapter mainAdapter;
     private List<String> list;
+    private List<String> passedList;
     private List<User> userList;
     //private List<String> pfpList;
     private List<Double> scoreList;
@@ -80,6 +82,7 @@ public class MyCardFragment extends Fragment {
     public String filter;
     public Button bFilter;
     public Button bAlg;
+    public TextView tvBacking;
 
     public MyCardFragment() {
         // Required empty public constructor
@@ -397,12 +400,15 @@ public class MyCardFragment extends Fragment {
         //kCard.setAnimation(null);
         kCard.setLayoutAnimation(null);
         list = new ArrayList<String>();
+        passedList = new ArrayList<String>();
         left = v.findViewById(R.id.leftLayout);
         right = v.findViewById(R.id.rightLayout);
         bFilter = v.findViewById(R.id.bFilter);
+        tvBacking = v.findViewById(R.id.tvBacking);
+        moreCards();
         bAlg = v.findViewById(R.id.bApplyAlg);
         vidVisible = true;
-        mainAdapter = new CardSwipeAdapter(getContext(), list, vidVisible, "");
+        mainAdapter = new CardSwipeAdapter(getContext(), passedList, vidVisible, "");
         //mainAdapter.setPfps(pfpList);
         initCards();
         kCard.setAdapter(mainAdapter);
@@ -431,6 +437,9 @@ public class MyCardFragment extends Fragment {
             e.printStackTrace();
         }
         updateMediaCount();
+        passedList.clear();
+        passedList.add("");
+        passedList.add(list.get(1));
         //Log.e(TAG, "List being passed in: " + list);
         mainAdapter.notifyDataSetChanged();
         //kCard.reloadAdapterData();
@@ -453,6 +462,12 @@ public class MyCardFragment extends Fragment {
         }
         //Log.e(TAG, "Filtered list " + list);
         //Log.e(TAG, "Score list " + scoreList);
+        passedList.clear();
+        passedList.add("");
+        if(list.size() > 1){
+            passedList.add(list.get(1));
+        }
+
         mainAdapter.setPage(1);
         mainAdapter.setVidVisible(true);
         mainAdapter.notifyDataSetChanged();
@@ -740,7 +755,8 @@ public class MyCardFragment extends Fragment {
                 page = 1;
                 mainAdapter.setVidVisible(true);
                 mainAdapter.setPage(1);
-                mainAdapter.notifyDataSetChanged();
+                updatePassedList();
+                //mainAdapter.notifyDataSetChanged();
                 kCard.reloadAdapterData();
             }
 
@@ -774,7 +790,8 @@ public class MyCardFragment extends Fragment {
                 page = 1;
                 mainAdapter.setVidVisible(true);
                 mainAdapter.setPage(1);
-                mainAdapter.notifyDataSetChanged();
+                updatePassedList();
+               // mainAdapter.notifyDataSetChanged();
                 kCard.reloadAdapterData();
             }
 
@@ -808,6 +825,26 @@ public class MyCardFragment extends Fragment {
 
             }
         });
+    }
+
+    public void updatePassedList(){
+        passedList.clear();
+        passedList.add(list.get(0));
+        if(list.size() > 1){
+            passedList.add(list.get(1));
+            moreCards();
+        } else {
+            cardsRunOut();
+        }
+        mainAdapter.notifyDataSetChanged();
+    }
+
+    public void moreCards(){
+        tvBacking.setText("Keep swiping! Music is around the corner...");
+    }
+
+    public void cardsRunOut(){
+        tvBacking.setText("Out of cards! Try removing some filters to see more potential bandmates.");
     }
 
     public void sendIntroMessage(String username) {

@@ -13,7 +13,7 @@
         tools:context=".CardActivity">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tvBacking"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
