@@ -39,8 +39,11 @@ import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.User;
 import com.cometchat.pro.uikit.BitmapScaler;
 import com.cometchat.pro.uikit.BuildConfig;
+import com.cometchat.pro.uikit.MediaFragment;
 import com.cometchat.pro.uikit.ProfPic;
 import com.cometchat.pro.uikit.R;
+import com.cometchat.pro.uikit.ui_components.cometchat_ui.CometChatUI;
+import com.cometchat.pro.uikit.ui_components.messages.message_list.CometChatMessageListActivity;
 import com.google.android.material.textfield.TextInputLayout;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
@@ -71,6 +74,7 @@ public class MyProfileFragment extends Fragment {
     public final String TAG = "MyProfile";
     ImageView ivSettings;
     ImageView ivPFP;
+    ImageView ivButtonMedia;
     TextView tvName;
     TextView tvBio;
     ImageView ivEditName;
@@ -105,6 +109,7 @@ public class MyProfileFragment extends Fragment {
             Glide.with(this).load(CometChat.getLoggedInUser().getAvatar()).circleCrop().into(ivPFP);
         }*/
         setPFP();
+        ivButtonMedia = v.findViewById(R.id.ivButtonMedia);
         tvName = v.findViewById(R.id.tvName);
         tvName.setText(CometChat.getLoggedInUser().getName());
         tvBio = v.findViewById(R.id.tvBio);
@@ -271,6 +276,20 @@ public class MyProfileFragment extends Fragment {
             }
         });
 
+        ivButtonMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new MediaFragment();
+                if (fragment != null) {
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame, fragment).commit();
+                    //return true;
+                }
+                //return false;
+                /*Intent intent = new Intent(getActivity(), MediaFragment.class);
+                startActivity(intent);*/
+            }
+        });
+
     }
 
     public void changeNameDialog(){
@@ -328,6 +347,7 @@ public class MyProfileFragment extends Fragment {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Error saving prof pic: " + e);
+                    return;
                 }
                 Log.e(TAG, "Saved!");
                 //add to metadata
