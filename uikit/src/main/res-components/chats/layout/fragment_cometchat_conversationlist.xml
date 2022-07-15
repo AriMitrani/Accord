@@ -70,25 +70,30 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:alpha="0.6"
-            tools:visibility="visible"
-            android:visibility="gone"
             android:id="@+id/no_conversation_view"
-            android:layout_marginTop="24dp"
-            android:layout_gravity="center"
-            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp"
+            android:alpha="0.6"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
             <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
                 android:layout_gravity="center"
-                android:src="@drawable/no_conversation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:src="@drawable/logo" />
+
             <TextView
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:text="@string/no_conversations"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:gravity="center"
+                android:text="It's quiet in here... no matches?"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </LinearLayout>
         <com.cometchat.pro.uikit.ui_components.shared.cometchatConversations.CometChatConversations
             android:id="@+id/rv_conversation_list"

@@ -195,7 +195,7 @@ public class MediaFragment extends Fragment {
     }
 
     public void setClickVisual(){
-        ColorStateList white = new ColorStateList(new int[][]{{}}, new int[]{Color.WHITE});
+        ColorStateList white = new ColorStateList(new int[][]{{}}, new int[]{Color.parseColor("#FF424242")});
         ColorStateList gray = new ColorStateList(new int[][]{{}}, new int[]{Color.LTGRAY});
         backgroundOff = getContext().getResources().getDrawable(R.drawable.blank);
         if(clickOne == 1){

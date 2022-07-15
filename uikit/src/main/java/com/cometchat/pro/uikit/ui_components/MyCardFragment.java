@@ -79,7 +79,8 @@ public class MyCardFragment extends Fragment {
     public LinearLayout right;
     public int top;
     public int page = 1;
-    public String filter;
+    public String filterI;
+    public int filterL;
     public Button bFilter;
     public Button bAlg;
     public TextView tvBacking;
@@ -396,7 +397,8 @@ public class MyCardFragment extends Fragment {
 
     public void setupMain(View v){
         kCard = (Koloda) v.findViewById(R.id.kolCard);
-        filter = "";
+        filterI = "";
+        filterL = 500;
         //kCard.setAnimation(null);
         kCard.setLayoutAnimation(null);
         list = new ArrayList<String>();
@@ -446,7 +448,7 @@ public class MyCardFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void initCardsFiltered(String filt){
+    public void initCardsFiltered(String filtI, int filtL) throws JSONException {
         list.clear();
         list.add(""); //blank first card
         List<Double> tempScoreList = new ArrayList<Double>();
@@ -456,7 +458,7 @@ public class MyCardFragment extends Fragment {
         for(int i = 0; i < userList.size(); i++){
             int maxIndx = getPositionOfBestMatch(tempScoreList);
             User user = userList.get(maxIndx);
-            if(user.getMetadata().toString().contains(filt)){
+            if(user.getMetadata().toString().contains(filtI) && getDistance(CometChat.getLoggedInUser(), user) <= filterL){
                 list.add(user.getUid());
             }
         }
@@ -723,7 +725,11 @@ public class MyCardFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
-                initCardsFiltered("");
+                try {
+                    initCardsFiltered("", 500);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -898,6 +904,11 @@ public class MyCardFragment extends Fragment {
         final RadioButton rbGuitar = viewInflated.findViewById(R.id.rbGuitar);
         final RadioButton rbVocals = viewInflated.findViewById(R.id.rbVocals);
         final RadioButton rbDrum = viewInflated.findViewById(R.id.rdDrum);
+        final RadioButton rd5 = viewInflated.findViewById(R.id.rd5);
+        final RadioButton rd10 = viewInflated.findViewById(R.id.rd10);
+        final RadioButton rd20 = viewInflated.findViewById(R.id.rd20);
+        final RadioButton rd30 = viewInflated.findViewById(R.id.rd30);
+        final RadioButton rd50 = viewInflated.findViewById(R.id.rd50);
         alert.setView(viewInflated);
 
         alert.show();
@@ -905,21 +916,56 @@ public class MyCardFragment extends Fragment {
         rbGuitar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filter = "guitar";
+                filterI = "guitar";
             }
         });
 
         rbDrum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filter = "drum";
+                filterI = "drum";
             }
         });
 
         rbVocals.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filter = "vocal";
+                filterI = "vocal";
+            }
+        });
+
+        rd5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterL = 5;
+            }
+        });
+
+        rd10.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterL = 10;
+            }
+        });
+
+        rd20.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterL = 20;
+            }
+        });
+
+        rd30.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterL = 30;
+            }
+        });
+
+        rd50.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterL = 500;
             }
         });
 
@@ -928,7 +974,11 @@ public class MyCardFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.e(TAG, "Apply clicked");
-                initCardsFiltered(filter);
+                try {
+                    initCardsFiltered(filterI, filterL);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 alert.cancel();
             }
         });

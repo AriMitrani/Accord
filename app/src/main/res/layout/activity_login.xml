@@ -67,8 +67,8 @@
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/launch_logo"
-        tools:srcCompat="@drawable/launch_logo" />
+        app:srcCompat="@drawable/logo"
+        tools:srcCompat="@drawable/logo" />
 
     <TextView
         android:id="@+id/tvBottomText"
