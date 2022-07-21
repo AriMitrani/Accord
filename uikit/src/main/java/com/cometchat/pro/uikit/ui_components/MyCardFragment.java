@@ -1,17 +1,9 @@
 package com.cometchat.pro.uikit.ui_components;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,23 +13,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.cometchat.pro.uikit.CardSwipeAdapter;
-import com.cometchat.pro.uikit.MediaAdapter;
-import com.cometchat.pro.uikit.MyMedia;
-import com.cometchat.pro.uikit.ProfPic;
 import com.cometchat.pro.uikit.R;
-import com.cometchat.pro.uikit.ui_components.users.user_list.CometChatUserList;
-import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.yalantis.library.Koloda;
 import com.yalantis.library.KolodaListener;
@@ -52,16 +40,9 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class MyCardFragment extends Fragment {
 
@@ -115,7 +96,7 @@ public class MyCardFragment extends Fragment {
     private void initScoreList() throws JSONException {
         scoreList = new ArrayList<Double>();
         JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
-        for(int i = 0; i < Deck.length(); i++){
+        for (int i = 0; i < Deck.length(); i++) {
             scoreList.add(0.0);
         }
 
@@ -126,8 +107,8 @@ public class MyCardFragment extends Fragment {
         userList = new ArrayList<User>();
         //scoreList = new ArrayList<Integer>();
         JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
-        for(int i = 0; i < Deck.length()+1; i++){
-            if(i< Deck.length()){
+        for (int i = 0; i < Deck.length() + 1; i++) {
+            if (i < Deck.length()) {
                 CometChat.getUser(Deck.get(i).toString(), new CometChat.CallbackListener<User>() {
                     @Override
                     public void onSuccess(User user) {
@@ -141,8 +122,8 @@ public class MyCardFragment extends Fragment {
                             e.printStackTrace();
                         }
                         int index = -1;
-                        for(int i = 0; i < userList.size(); i++){
-                            if(userList.get(i) == user){
+                        for (int i = 0; i < userList.size(); i++) {
+                            if (userList.get(i) == user) {
                                 index = i;
                             }
                         }
@@ -150,13 +131,13 @@ public class MyCardFragment extends Fragment {
                         Log.e(TAG, "Added score " + score + " to user " + user.getUid());
                         //queryPFP(user.getUid());
                     }
+
                     @Override
                     public void onError(CometChatException e) {
 
                     }
                 });
-            }
-            else{
+            } else {
                 //initCardsFiltered("");
             }
         }
@@ -191,14 +172,14 @@ public class MyCardFragment extends Fragment {
         genreScore = setGenreScore(me.getMetadata().getJSONArray("Genres"), user.getMetadata().getJSONArray("Genres"));
         //Log.e(TAG, "Genre score: " + genreScore);
 
-        double finalScore = (0.15*ageScore + 0.25*locationScore +0.3* instrumentScore + 0.1*ELO + 0.2*genreScore);
+        double finalScore = (0.15 * ageScore + 0.25 * locationScore + 0.3 * instrumentScore + 0.1 * ELO + 0.2 * genreScore);
         Log.e(TAG, user.getName() + " has a match score of " + finalScore);
         return finalScore;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public int getAge(String date) throws java.text.ParseException { //must be in mm/dd/yyyy
-        SimpleDateFormat formatter =new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         Date dDate = formatter.parse(date);
         Date currDate = Calendar.getInstance().getTime();
         // Log.e(TAG, "Date: " + dDate);
@@ -214,40 +195,36 @@ public class MyCardFragment extends Fragment {
                 .toLocalDate();
     }
 
-    public double setAgeScore(int ageMe, int ageThem){
-        int diff = ageMe-ageThem;
-        if(diff < 0) {
+    public double setAgeScore(int ageMe, int ageThem) {
+        int diff = ageMe - ageThem;
+        if (diff < 0) {
             diff *= -1;
         }
-        if(ageMe <= 17){
-            if(diff <= 1){
+        if (ageMe <= 17) {
+            if (diff <= 1) {
                 return 1;
             }
-            if(ageThem >= 18 || diff >= 3){
+            if (ageThem >= 18 || diff >= 3) {
                 return 0;
-            }
-            else{
+            } else {
                 return 0.5;
             }
-        } else if (ageMe > 17 && ageMe <= 25){
-            if(ageThem <= 16){
+        } else if (ageMe > 17 && ageMe <= 25) {
+            if (ageThem <= 16) {
                 return 0;
-            }
-            else if(diff <= 1){
+            } else if (diff <= 1) {
                 return 1;
-            }
-            else if(diff <= 3){
+            } else if (diff <= 3) {
                 return 0.5;
-            }
-            else{
+            } else {
                 return 0;
             }
         } else {
-            if(ageThem <= 23) {
+            if (ageThem <= 23) {
                 return 0;
-            } else if (diff <=5){
+            } else if (diff <= 5) {
                 return 1;
-            } else if (diff <= 10){
+            } else if (diff <= 10) {
                 return 0.5;
             } else {
                 return 0.3;
@@ -258,29 +235,29 @@ public class MyCardFragment extends Fragment {
     public double setLocationScore(User me, User you, int distanceConstraint) throws JSONException {
         double distance = getDistance(me, you);
         double diff = distance - distanceConstraint;
-        if(distance <= distanceConstraint){
+        if (distance <= distanceConstraint) {
             return 1; //if it's in the user's desired range; default value is 0
         } else if (diff >= 60) {
             return 0;
         } else {
-            return (1-diff/60);
+            return (1 - diff / 60);
         }
     }
 
     public double setInstrumentScore(JSONArray mySkills, JSONArray theirSkills) throws JSONException {
-        if(mySkills.length() == 1 && theirSkills.length() == 1 && mySkills.get(0).equals(theirSkills.get(0))){ //if they play the same, single instrument
+        if (mySkills.length() == 1 && theirSkills.length() == 1 && mySkills.get(0).equals(theirSkills.get(0))) { //if they play the same, single instrument
             return 0.3;
         } else {
             double myAvg = 0;
             double theirAvg = 0;
-            for(int i = 0; i<mySkills.length(); i++){
+            for (int i = 0; i < mySkills.length(); i++) {
                 String skill = mySkills.get(i).toString();
                 double level = Integer.parseInt(skill.substring(skill.length() - 1));
                 myAvg += level;
             }
             myAvg /= mySkills.length();
 
-            for(int i = 0; i<theirSkills.length(); i++){
+            for (int i = 0; i < theirSkills.length(); i++) {
                 String skill = theirSkills.get(i).toString();
                 double level = Integer.parseInt(skill.substring(skill.length() - 1));
                 theirAvg += level;
@@ -288,20 +265,20 @@ public class MyCardFragment extends Fragment {
             theirAvg /= theirSkills.length();
             // Log.e(TAG, "My avg: " + myAvg + ", their avg: " + theirAvg);
 
-            if(theirAvg > myAvg){
-                return myAvg/theirAvg;
+            if (theirAvg > myAvg) {
+                return myAvg / theirAvg;
             } else {
-                return theirAvg/myAvg;
+                return theirAvg / myAvg;
             }
         }
     }
 
     public double getDistance(User me, User you) throws JSONException { //in miles
-        Location startPoint=new Location("me");
+        Location startPoint = new Location("me");
         startPoint.setLatitude(me.getMetadata().getDouble("Lat"));
         startPoint.setLongitude(me.getMetadata().getDouble("Lon"));
 
-        Location endPoint=new Location("you");
+        Location endPoint = new Location("you");
         endPoint.setLatitude(you.getMetadata().getDouble("Lat"));
         endPoint.setLongitude(you.getMetadata().getDouble("Lon"));
 
@@ -310,11 +287,11 @@ public class MyCardFragment extends Fragment {
     }
 
     public double setELO(User user) throws JSONException {
-        return user.getMetadata().getDouble("Right")/(user.getMetadata().getDouble("Left")*10);
+        return user.getMetadata().getDouble("Right") / (user.getMetadata().getDouble("Left") * 10);
     }
 
     public double setGenreScore(JSONArray myGenres, JSONArray theirGenres) throws JSONException {
-        if(myGenres.equals(theirGenres)){ //if all genres in common
+        if (myGenres.equals(theirGenres)) { //if all genres in common
             return 1;
         }
 
@@ -324,24 +301,24 @@ public class MyCardFragment extends Fragment {
             allGenres.put(myGenres.getString(i));
         }
         for (int i = 0; i < theirGenres.length(); i++) {
-            if(!isInArray(theirGenres.getString(i), allGenres)) {
+            if (!isInArray(theirGenres.getString(i), allGenres)) {
                 allGenres.put(theirGenres.getString(i));
             } else {
                 sharedGenres++;
             }
         }
 
-        if(allGenres.length() == myGenres.length() || allGenres.length() == theirGenres.length()) { //one array completely encompasses the other
+        if (allGenres.length() == myGenres.length() || allGenres.length() == theirGenres.length()) { //one array completely encompasses the other
             return 0.8;
         }
 
-        return sharedGenres/allGenres.length();
+        return sharedGenres / allGenres.length();
     }
 
     public boolean isInArray(String string, JSONArray array) throws JSONException {
         boolean inArr = false;
         for (int i = 0; i < array.length(); i++) {
-            if(array.getString(i).equals(string)) {
+            if (array.getString(i).equals(string)) {
                 inArr = true;
             }
         }
@@ -376,7 +353,7 @@ public class MyCardFragment extends Fragment {
         });
     }*/
 
-    public void addToList(User user){
+    public void addToList(User user) {
         userList.add(user);
         //scoreList.add(1);
     }
@@ -386,7 +363,7 @@ public class MyCardFragment extends Fragment {
         pfpList.add(url);
     }*/
 
-    public int getPositionOfBestMatch(List<Double> tempScoreList){
+    public int getPositionOfBestMatch(List<Double> tempScoreList) {
         double highestScore = Collections.max(tempScoreList);
         int indx = tempScoreList.indexOf(highestScore);
         //Log.e(TAG, "Score list: " + tempScoreList + ", indx highest: " + indx);
@@ -395,7 +372,7 @@ public class MyCardFragment extends Fragment {
     }
 
 
-    public void setupMain(View v){
+    public void setupMain(View v) {
         kCard = (Koloda) v.findViewById(R.id.kolCard);
         filterI = "";
         filterL = 500;
@@ -418,18 +395,18 @@ public class MyCardFragment extends Fragment {
         ivLogo = v.findViewById(R.id.ivLogo);
     }
 
-    public void initCards(){
+    public void initCards() {
         list.clear();
         try {
             JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
             list.add(""); //blank first card
             List<Double> tempScoreList = new ArrayList<Double>();
             //Log.e("CHECK", "Scorelist size: " + scoreList.size());
-            for(int i = 0; i< scoreList.size(); i++){
+            for (int i = 0; i < scoreList.size(); i++) {
                 tempScoreList.add(scoreList.get(i));
             }
             Log.e("CHECK", "Temp list: " + tempScoreList);
-            for(int i = 0; i < Deck.length(); i++){
+            for (int i = 0; i < Deck.length(); i++) {
                 int maxIndx = getPositionOfBestMatch(tempScoreList);
                 //Log.e(TAG, "Best match is at: " + maxIndx);
                 list.add(Deck.get(maxIndx).toString());
@@ -441,7 +418,11 @@ public class MyCardFragment extends Fragment {
         updateMediaCount();
         passedList.clear();
         passedList.add("");
-        passedList.add(list.get(1));
+        if (list.size() > 1) {
+            passedList.add(list.get(1));
+        } else {
+            cardsRunOut();
+        }
         //Log.e(TAG, "List being passed in: " + list);
         mainAdapter.notifyDataSetChanged();
         //kCard.reloadAdapterData();
@@ -452,13 +433,13 @@ public class MyCardFragment extends Fragment {
         list.clear();
         list.add(""); //blank first card
         List<Double> tempScoreList = new ArrayList<Double>();
-        for(int i = 0; i< scoreList.size(); i++){
+        for (int i = 0; i < scoreList.size(); i++) {
             tempScoreList.add(scoreList.get(i));
         }
-        for(int i = 0; i < userList.size(); i++){
+        for (int i = 0; i < userList.size(); i++) {
             int maxIndx = getPositionOfBestMatch(tempScoreList);
             User user = userList.get(maxIndx);
-            if(user.getMetadata().toString().contains(filtI) && getDistance(CometChat.getLoggedInUser(), user) <= filterL){
+            if (user.getMetadata().toString().contains(filtI) && getDistance(CometChat.getLoggedInUser(), user) <= filterL) {
                 list.add(user.getUid());
             }
         }
@@ -466,25 +447,24 @@ public class MyCardFragment extends Fragment {
         //Log.e(TAG, "Score list " + scoreList);
         passedList.clear();
         passedList.add("");
-        if(list.size() > 1){
+        if (list.size() > 1) {
             passedList.add(list.get(1));
+            mainAdapter.setPage(1);
+            mainAdapter.setVidVisible(true);
+            mainAdapter.notifyDataSetChanged();
+            updateMediaCount();
         }
-
-        mainAdapter.setPage(1);
-        mainAdapter.setVidVisible(true);
-        mainAdapter.notifyDataSetChanged();
-        updateMediaCount();
         kCard.reloadAdapterData();
     }
 
 
-    public void flushFirst(Koloda kCard){
+    public void flushFirst(Koloda kCard) {
         kCard.reloadAdapterData();
     }
 
-    public void updateMediaCount(){
+    public void updateMediaCount() {
         try {
-            if(list.size()>1){
+            if (list.size() > 1) {
                 int mediaCount = mainAdapter.queryMedia(list.get(1));
                 mainAdapter.setVisiblePages(mediaCount);
             }
@@ -495,16 +475,15 @@ public class MyCardFragment extends Fragment {
 
     public boolean isLikedBy(String username) {
         User user = new User();
-        for(int i = 0; i< userList.size(); i++){
-            if(userList.get(i).getUid().equals(username)){
+        for (int i = 0; i < userList.size(); i++) {
+            if (userList.get(i).getUid().equals(username)) {
                 user = userList.get(i);
             }
         }
         try {
-            if(user.getMetadata().getJSONArray("Liked").toString().contains(CometChat.getLoggedInUser().getUid())){
+            if (user.getMetadata().getJSONArray("Liked").toString().contains(CometChat.getLoggedInUser().getUid())) {
                 return true;
-            }
-            else{
+            } else {
                 return false;
             }
         } catch (JSONException e) {
@@ -513,7 +492,7 @@ public class MyCardFragment extends Fragment {
         return false;
     }
 
-    public void removeMeFromDeck(String UID){
+    public void removeMeFromDeck(String UID) {
         CometChat.getUser(UID, new CometChat.CallbackListener<User>() {
             @Override
             public void onSuccess(User user) {
@@ -524,13 +503,13 @@ public class MyCardFragment extends Fragment {
                     String me = CometChat.getLoggedInUser().getUid();
                     // Log.e(TAG, "Me: " + me);
                     int pos = -1;
-                    for(int i = 0; i<userDeck.length(); i++){
-                        if(userDeck.get(i).equals(me)){
+                    for (int i = 0; i < userDeck.length(); i++) {
+                        if (userDeck.get(i).equals(me)) {
                             pos = i;
                         }
                     }
                     // Log.e(TAG, "I'm at " + pos);
-                    if(pos != -1){
+                    if (pos != -1) {
                         user.getMetadata().getJSONArray("Deck").remove(pos);
                         CometChat.updateUser(user, "85e114ed71f14e3ce779b2673d876b9faa8bc5ff", new CometChat.CallbackListener<User>() {
                             @Override
@@ -556,34 +535,33 @@ public class MyCardFragment extends Fragment {
         });
     }
 
-    public void updateELO(String UID, String dir){
+    public void updateELO(String UID, String dir) {
         CometChat.getUser(UID, new CometChat.CallbackListener<User>() {
             @Override
             public void onSuccess(User user) {
                 try {
                     JSONObject ELOTag;
-                    if(dir.equals("Left")){
+                    if (dir.equals("Left")) {
                         int left;
                         left = (int) user.getMetadata().get("Left");
-                        user.getMetadata().put("Left", left+1);
-                    }
-                    else {
+                        user.getMetadata().put("Left", left + 1);
+                    } else {
                         int right;
                         right = (int) user.getMetadata().get("Right");
-                        user.getMetadata().put("Right", right+1);
+                        user.getMetadata().put("Right", right + 1);
                     }
-                        CometChat.updateUser(user, "85e114ed71f14e3ce779b2673d876b9faa8bc5ff", new CometChat.CallbackListener<User>() {
-                            @Override
-                            public void onSuccess(User user) {
-                                Log.e(TAG, "Updated ELO of " + user.getName());
-                            }
+                    CometChat.updateUser(user, "85e114ed71f14e3ce779b2673d876b9faa8bc5ff", new CometChat.CallbackListener<User>() {
+                        @Override
+                        public void onSuccess(User user) {
+                            Log.e(TAG, "Updated ELO of " + user.getName());
+                        }
 
-                            @Override
-                            public void onError(CometChatException e) {
+                        @Override
+                        public void onError(CometChatException e) {
 
-                            }
-                        });
-                    } catch (JSONException e) {
+                        }
+                    });
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -613,13 +591,13 @@ public class MyCardFragment extends Fragment {
     public void removeFromMyDeck(String UID) throws JSONException {
         JSONArray myDeck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
         int pos = -1;
-        for(int i = 0; i<myDeck.length(); i++){
-            if(myDeck.get(i).equals(UID)){
+        for (int i = 0; i < myDeck.length(); i++) {
+            if (myDeck.get(i).equals(UID)) {
                 pos = i;
             }
         }
         // Log.e(TAG, "I'm at " + pos);
-        if(pos != -1) {
+        if (pos != -1) {
             CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck").remove(pos);
             CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
                 @Override
@@ -635,19 +613,18 @@ public class MyCardFragment extends Fragment {
         }
     }
 
-    public void listeners(){
+    public void listeners() {
         left.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 //Log.e(TAG, "Left on " + page);
-                if(page-1 == 1){
+                if (page - 1 == 1) {
                     mainAdapter.setVidVisible(true);
                     page--;
                     mainAdapter.setPage(page);
                     kCard.reloadAdapterData();
-                }
-                else if(page != 1){
+                } else if (page != 1) {
                     page--;
                     mainAdapter.setPage(page);
                     mainAdapter.notifyDataSetChanged();
@@ -667,20 +644,19 @@ public class MyCardFragment extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                Log.e(TAG,list.get(1) + " has " + mediaCount + " media items/pages");
+                Log.e(TAG, list.get(1) + " has " + mediaCount + " media items/pages");
                 //Log.e(TAG, "Right on " + page);
-                if(page != 1 && page <= mediaCount) {
+                if (page != 1 && page <= mediaCount) {
                     page++;
                     mainAdapter.setPage(page);
                     kCard.reloadAdapterData();
-                }
-                else if(page == 1 && page <= mediaCount) {
+                } else if (page == 1 && page <= mediaCount) {
                     mainAdapter.setVidVisible(false);
                     page++;
                     mainAdapter.setPage(page);
                     kCard.reloadAdapterData();
                 }
-                Log.e(TAG, "Current page: " + page +" " + list.get(1));
+                Log.e(TAG, "Current page: " + page + " " + list.get(1));
             }
         });
 
@@ -750,12 +726,12 @@ public class MyCardFragment extends Fragment {
             public void onCardSwipedLeft(int i) {
                 Log.e(TAG, "Left on: " + list.get(1));
                 updateELO(list.get(1), "Left");
-                /*try {
+                try {
                     removeMeFromDeck(list.get(1)); //passes the UID of the person I swiped left on
                     removeFromMyDeck(list.get(1));
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }*/ //uncomment when I want to actually update the decks
+                } //uncomment when I want to actually update the decks
                 list.remove(0);
                 updateMediaCount();
                 page = 1;
@@ -771,24 +747,24 @@ public class MyCardFragment extends Fragment {
             public void onCardSwipedRight(int i) {
                 Log.e(TAG, "Right on: " + list.get(1));
                 updateELO(list.get(1), "Right");
-                if(isLikedBy(list.get(1))){
+                if (isLikedBy(list.get(1))) {
                     Log.e(TAG, "Match!");
-                    /*try {
+                    try {
                         removeFromMyDeck(list.get(1));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    }*/
+                    }
                     sendIntroMessage(list.get(1));
                     matchDialog();
                 }
-                if(!isLikedBy(list.get(1))){
+                if (!isLikedBy(list.get(1))) {
                     Log.e(TAG, "No match");
-                    /*try {
+                    try {
                         addToFavorites(list.get(1));
                         removeFromMyDeck(list.get(1));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                    }*/
+                    }
                 }
                 updateMediaCount();
                 list.remove(0);
@@ -797,7 +773,7 @@ public class MyCardFragment extends Fragment {
                 mainAdapter.setVidVisible(true);
                 mainAdapter.setPage(1);
                 updatePassedList();
-               // mainAdapter.notifyDataSetChanged();
+                // mainAdapter.notifyDataSetChanged();
                 kCard.reloadAdapterData();
             }
 
@@ -833,10 +809,10 @@ public class MyCardFragment extends Fragment {
         });
     }
 
-    public void updatePassedList(){
+    public void updatePassedList() {
         passedList.clear();
         passedList.add(list.get(0));
-        if(list.size() > 1){
+        if (list.size() > 1) {
             passedList.add(list.get(1));
             moreCards();
         } else {
@@ -845,18 +821,18 @@ public class MyCardFragment extends Fragment {
         mainAdapter.notifyDataSetChanged();
     }
 
-    public void moreCards(){
+    public void moreCards() {
         tvBacking.setText("Keep swiping! Music is around the corner...");
     }
 
-    public void cardsRunOut(){
+    public void cardsRunOut() {
         tvBacking.setText("Out of cards! Try removing some filters to see more potential bandmates.");
     }
 
     public void sendIntroMessage(String username) {
         User user = new User();
-        for(int i = 0; i< userList.size(); i++){
-            if(userList.get(i).getUid().equals(username)){
+        for (int i = 0; i < userList.size(); i++) {
+            if (userList.get(i).getUid().equals(username)) {
                 user = userList.get(i);
             }
         }
@@ -876,7 +852,7 @@ public class MyCardFragment extends Fragment {
 
     }
 
-    public void matchDialog(){
+    public void matchDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog alert = builder.create();
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.match_alert, (ViewGroup) getView(), false);
@@ -896,7 +872,7 @@ public class MyCardFragment extends Fragment {
 
     }
 
-    public void filterDialog(){
+    public void filterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog alert = builder.create();
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.filter_alert, (ViewGroup) getView(), false);
