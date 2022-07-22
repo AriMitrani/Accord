@@ -40,14 +40,14 @@ public class DateInputMask implements TextWatcher {
         //Fix for pressing delete next to a forward slash
         if (clean.equals(cleanC)) sel--;
 
-        if (clean.length() < 8){
+        if (clean.length() < 8) {
             clean = clean + ddmmyyyy.substring(clean.length());
-        }else{
+        } else {
             //This part makes sure that when we finish entering numbers
             //the date is correct, fixing it otherwise
-            int day  = Integer.parseInt(clean.substring(0,2));
-            int mon  = Integer.parseInt(clean.substring(2,4));
-            int year = Integer.parseInt(clean.substring(4,8));
+            int day = Integer.parseInt(clean.substring(0, 2));
+            int mon = Integer.parseInt(clean.substring(2, 4));
+            int year = Integer.parseInt(clean.substring(4, 8));
 
             /*mon = mon < 1 ? 1 : mon > 12 ? 12 : mon;
             cal.set(Calendar.MONTH, mon-1);

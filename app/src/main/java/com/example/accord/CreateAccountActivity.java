@@ -2,15 +2,14 @@ package com.example.accord;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.core.UsersRequest;
@@ -28,7 +27,6 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +57,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         //COCKATOO add user to all decks
     }
 
-    public void initMetadata(){
+    public void initMetadata() {
         String mString = Parcels.unwrap(getIntent().getParcelableExtra("metadata"));
         try {
             metadata = new JSONObject(mString);
@@ -69,14 +67,14 @@ public class CreateAccountActivity extends AppCompatActivity {
         Log.e(TAG, String.valueOf(metadata));
     }
 
-    public void queryUsers(String UID, String password, String bday, String bio){
+    public void queryUsers(String UID, String password, String bday, String bio) {
         String authKey = BuildConfig.AUTH_KEY_CHAT;
         JSONArray deckArr = new JSONArray();
         UsersRequest usersRequest = new UsersRequest.UsersRequestBuilder().build();
         usersRequest.fetchNext(new CometChat.CallbackListener<List<User>>() {
             @Override
             public void onSuccess(List<User> users) {
-                for(int i = 0; i < users.size(); i++){
+                for (int i = 0; i < users.size(); i++) {
                     deckArr.put(users.get(i).getUid());
                     try {
                         JSONArray currDeck = users.get(i).getMetadata().getJSONArray("Deck");
@@ -111,7 +109,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
-    public void pushMetadata(JSONArray deckArr, String UID, String password, String bday, String bio){
+    public void pushMetadata(JSONArray deckArr, String UID, String password, String bday, String bio) {
         try {
             metadata.put("Deck", deckArr);
             metadata.put("PFP", "");
@@ -139,7 +137,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         }
     }
 
-    public void setup(){
+    public void setup() {
         clCreate = findViewById(R.id.clCreate);
         clCreate.setVisibility(View.VISIBLE);
         clWait = findViewById(R.id.clWait);
@@ -156,7 +154,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         tvCreateError.setText("");
     }
 
-    public void listeners(){
+    public void listeners() {
         bCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,18 +176,15 @@ public class CreateAccountActivity extends AppCompatActivity {
                     Log.e(TAG, "Field missing");
                     tvCreateError.setText("Please fill out missing field(s)");
                     return;
-                }
-                else if(!pass.equals(confirmPass)){
+                } else if (!pass.equals(confirmPass)) {
                     Log.e(TAG, "Passwords do not match");
                     tvCreateError.setText("Passwords do not match");
                     return;
-                }
-                else if(bio.length() > 140){
+                } else if (bio.length() > 140) {
                     Log.e(TAG, "Bio too long");
                     tvCreateError.setText("Bio is too long");
                     return;
-                }
-                else if(age < 0){
+                } else if (age < 0) {
                     Log.e(TAG, "Invalid birthday");
                     tvCreateError.setText("Invalid birthday. Users must be between 12-100.");
                     return;
@@ -207,21 +202,21 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     public int valiDate(String date) throws java.text.ParseException { //must be in mm/dd/yyyy
         //Log.e(TAG, "Date: " + date);
-        if(date.isEmpty()){
+        if (date.isEmpty()) {
             return -1;
         }
-        if(date.charAt(date.length()-1) == 'Y') {
+        if (date.charAt(date.length() - 1) == 'Y') {
             // Log.e(TAG, "Missing date");
             return -1;
         }
-        SimpleDateFormat formatter =new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         Date dDate = formatter.parse(date);
         Date currDate = Calendar.getInstance().getTime();
         // Log.e(TAG, "Date: " + dDate);
         // Log.e(TAG, "Current date: " + currDate);
         SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy");
-        int years = Integer.parseInt(simpleDateformat.format(currDate))- Integer.parseInt(simpleDateformat.format(dDate));
-        if(years < 12 || years > 100){
+        int years = Integer.parseInt(simpleDateformat.format(currDate)) - Integer.parseInt(simpleDateformat.format(dDate));
+        if (years < 12 || years > 100) {
             // Log.e(TAG, "Please enter a valid date");
             return -1;
         }
@@ -229,7 +224,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         return years;
     }
 
-    public void createUser(String name, String username, String pass, String birthday, String bio){
+    public void createUser(String name, String username, String pass, String birthday, String bio) {
         // Log.e(TAG, "Creating account");
         ParseUser user = new ParseUser();
         user.setUsername(username);
@@ -253,7 +248,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
-    public void createChatUser(String username, String name, String pass, String bday, String bio){
+    public void createChatUser(String username, String name, String pass, String bday, String bio) {
         String authKey = BuildConfig.AUTH_KEY_CHAT;
         com.cometchat.pro.models.User user = new com.cometchat.pro.models.User();
         user.setUid(username); // Replace with the UID for the user to be created
@@ -273,7 +268,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
-    public void login(String username, String password, String bday, String bio){
+    public void login(String username, String password, String bday, String bio) {
         loginChatUser(username, password, bday, bio);
     }
 
@@ -296,7 +291,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
-    public void loginChatUser(String UID, String password, String bday, String bio){
+    public void loginChatUser(String UID, String password, String bday, String bio) {
         String authKey = BuildConfig.AUTH_KEY_CHAT;
         if (CometChat.getLoggedInUser() == null) {
             CometChat.login(UID, authKey, new CometChat.CallbackListener<User>() {

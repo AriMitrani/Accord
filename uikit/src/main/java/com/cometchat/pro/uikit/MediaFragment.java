@@ -3,20 +3,12 @@ package com.cometchat.pro.uikit;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +16,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.MediaController;
 import android.widget.VideoView;
+
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.models.User;
@@ -35,13 +31,9 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 public class MediaFragment extends Fragment {
@@ -103,11 +95,11 @@ public class MediaFragment extends Fragment {
         return vids.size();
     }
 
-    public void setupView(View v, int vids){
+    public void setupView(View v, int vids) {
         //backgroundOff = v.getBackground();
         AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
-        currentUser=ParseUser.getCurrentUser();
+        currentUser = ParseUser.getCurrentUser();
         vv1 = v.findViewById(R.id.vv1);
         cv1 = v.findViewById(R.id.cv1);
         bDel1 = v.findViewById(R.id.bDel1);
@@ -131,7 +123,7 @@ public class MediaFragment extends Fragment {
         playMedia(vids);
     }
 
-    public void notClickable(){
+    public void notClickable() {
         cv1.setClickable(false);
         cv2.setClickable(false);
         cv3.setClickable(false);
@@ -140,7 +132,7 @@ public class MediaFragment extends Fragment {
         cv6.setClickable(false);
     }
 
-    public void hideAll(){
+    public void hideAll() {
         vv1.setVisibility(View.GONE);
         vv1.stopPlayback();
         bDel1.setVisibility(View.GONE);
@@ -161,44 +153,44 @@ public class MediaFragment extends Fragment {
         bDel6.setVisibility(View.GONE);
     }
 
-    public void playMedia(int vids){
+    public void playMedia(int vids) {
         Log.e(TAG, "Media list size: " + mediaList.size() + ", vids: " + vids);
         //Log.e(TAG, "Media list 0: " + mediaList.get(0).getVidURL() + ", vids: " + vids);
-        if(vids >= 1){
+        if (vids >= 1) {
             playVid(vv1, bDel1, Uri.parse(mediaList.get(0).getVidURL()));
             clickOne = 2;
         } else {
             clickOne = 1;
         }
-        if(vids >= 2){
+        if (vids >= 2) {
             playVid(vv2, bDel2, Uri.parse(mediaList.get(1).getVidURL()));
             clickOne = 3;
         }
-        if(vids >= 3){
+        if (vids >= 3) {
             playVid(vv3, bDel3, Uri.parse(mediaList.get(2).getVidURL()));
             clickOne = 4;
         }
-        if(vids >= 4){
-            playVid(vv4,bDel4, Uri.parse(mediaList.get(3).getVidURL()));
+        if (vids >= 4) {
+            playVid(vv4, bDel4, Uri.parse(mediaList.get(3).getVidURL()));
             clickOne = 5;
         }
-        if(vids >= 5){
-            playVid(vv5, bDel5,Uri.parse(mediaList.get(4).getVidURL()));
+        if (vids >= 5) {
+            playVid(vv5, bDel5, Uri.parse(mediaList.get(4).getVidURL()));
             clickOne = 6;
         }
-        if(vids >= 6){
-            playVid(vv6, bDel6,Uri.parse(mediaList.get(5).getVidURL()));
+        if (vids >= 6) {
+            playVid(vv6, bDel6, Uri.parse(mediaList.get(5).getVidURL()));
             clickOne = -1;
         }
         setClickVisual();
         Log.e(TAG, "Clickone: " + clickOne);
     }
 
-    public void setClickVisual(){
+    public void setClickVisual() {
         ColorStateList white = new ColorStateList(new int[][]{{}}, new int[]{Color.parseColor("#FF424242")});
         ColorStateList gray = new ColorStateList(new int[][]{{}}, new int[]{Color.LTGRAY});
         backgroundOff = getContext().getResources().getDrawable(R.drawable.blank);
-        if(clickOne == 1){
+        if (clickOne == 1) {
             cv1.setBackground(getContext().getResources().getDrawable(R.drawable.plus));
             cv1.setBackgroundTintList(gray);
         } else {
@@ -206,7 +198,7 @@ public class MediaFragment extends Fragment {
             cv1.setBackgroundTintList(white);
             cv1.setCardElevation(0);
         }
-        if(clickOne == 2){
+        if (clickOne == 2) {
             cv2.setBackground(getContext().getResources().getDrawable(R.drawable.plus));
             cv2.setBackgroundTintList(gray);
         } else {
@@ -214,7 +206,7 @@ public class MediaFragment extends Fragment {
             cv2.setBackgroundTintList(white);
             cv2.setCardElevation(0);
         }
-        if(clickOne == 3){
+        if (clickOne == 3) {
             cv3.setBackground(getContext().getResources().getDrawable(R.drawable.plus));
             cv3.setBackgroundTintList(gray);
         } else {
@@ -222,7 +214,7 @@ public class MediaFragment extends Fragment {
             cv3.setBackgroundTintList(white);
             cv3.setCardElevation(0);
         }
-        if(clickOne == 4){
+        if (clickOne == 4) {
             cv4.setBackground(getContext().getResources().getDrawable(R.drawable.plus));
             cv4.setBackgroundTintList(gray);
         } else {
@@ -230,7 +222,7 @@ public class MediaFragment extends Fragment {
             cv4.setBackgroundTintList(white);
             cv4.setCardElevation(0);
         }
-        if(clickOne == 5){
+        if (clickOne == 5) {
             cv5.setBackground(getContext().getResources().getDrawable(R.drawable.plus));
             cv5.setBackgroundTintList(gray);
         } else {
@@ -238,7 +230,7 @@ public class MediaFragment extends Fragment {
             cv5.setBackgroundTintList(white);
             cv5.setCardElevation(0);
         }
-        if(clickOne == 6){
+        if (clickOne == 6) {
             cv6.setBackground(getContext().getResources().getDrawable(R.drawable.plus));
             cv6.setBackgroundTintList(gray);
         } else {
@@ -248,11 +240,11 @@ public class MediaFragment extends Fragment {
         }
     }
 
-    public void listeners(){
+    public void listeners() {
         cv1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickOne == 1){
+                if (clickOne == 1) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
                     startActivityForResult(i, 45); //for video
@@ -263,7 +255,7 @@ public class MediaFragment extends Fragment {
         cv2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickOne == 2){
+                if (clickOne == 2) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
                     startActivityForResult(i, 45); //for video
@@ -274,7 +266,7 @@ public class MediaFragment extends Fragment {
         cv3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickOne == 3){
+                if (clickOne == 3) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
                     startActivityForResult(i, 45); //for video
@@ -285,7 +277,7 @@ public class MediaFragment extends Fragment {
         cv4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickOne == 4){
+                if (clickOne == 4) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
                     startActivityForResult(i, 45); //for video
@@ -296,7 +288,7 @@ public class MediaFragment extends Fragment {
         cv5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickOne == 5){
+                if (clickOne == 5) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
                     startActivityForResult(i, 45); //for video
@@ -307,7 +299,7 @@ public class MediaFragment extends Fragment {
         cv6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickOne == 6){
+                if (clickOne == 6) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
                     startActivityForResult(i, 45); //for video
@@ -424,7 +416,7 @@ public class MediaFragment extends Fragment {
         });
     }
 
-    public void playVid(VideoView view, Button bDel, Uri uri){
+    public void playVid(VideoView view, Button bDel, Uri uri) {
         view.setVideoURI(uri);
         view.setVisibility(View.VISIBLE);
         bDel.setVisibility(View.VISIBLE);
@@ -434,9 +426,9 @@ public class MediaFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 45 && resultCode == -1){
+        if (requestCode == 45 && resultCode == -1) {
             Uri vid = data.getData();
-            if(vid != null){
+            if (vid != null) {
                 Log.e(TAG, "Uri: " + vid);
                 byte[] bytes = convertVideoToBytes(vid);
                 Log.e(TAG, "Bytes: " + String.valueOf(bytes == null));
@@ -445,7 +437,7 @@ public class MediaFragment extends Fragment {
                 videoF.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        if(e != null){
+                        if (e != null) {
                             Log.e(TAG, "Error saving parsefile " + e);
                             return;
                         }

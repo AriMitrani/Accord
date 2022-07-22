@@ -1,29 +1,18 @@
 package com.cometchat.pro.uikit.ui_components;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
-import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,24 +22,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.User;
 import com.cometchat.pro.uikit.BitmapScaler;
-import com.cometchat.pro.uikit.BuildConfig;
 import com.cometchat.pro.uikit.MediaFragment;
 import com.cometchat.pro.uikit.ProfPic;
 import com.cometchat.pro.uikit.R;
-import com.cometchat.pro.uikit.ui_components.cometchat_ui.CometChatUI;
-import com.cometchat.pro.uikit.ui_components.messages.message_list.CometChatMessageListActivity;
 import com.google.android.material.textfield.TextInputLayout;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.jetbrains.annotations.Nullable;
@@ -100,7 +88,7 @@ public class MyProfileFragment extends Fragment {
         return v;
     }
 
-    public void setup(View v){
+    public void setup(View v) {
         ivSettings = v.findViewById(R.id.ivSettings);
         ivPFP = v.findViewById(R.id.ivPFP);
         Log.e(TAG, "PFP user: " + CometChat.getLoggedInUser().getName());
@@ -113,7 +101,7 @@ public class MyProfileFragment extends Fragment {
         tvName = v.findViewById(R.id.tvName);
         tvName.setText(CometChat.getLoggedInUser().getName());
         tvBio = v.findViewById(R.id.tvBio);
-        if(CometChat.getLoggedInUser().getMetadata() != null){ //it's null if its not initialized, won't be a problem at completion but for now it prevents a crash
+        if (CometChat.getLoggedInUser().getMetadata() != null) { //it's null if its not initialized, won't be a problem at completion but for now it prevents a crash
             try {
                 tvBio.setText(CometChat.getLoggedInUser().getMetadata().getString("Bio"));
             } catch (JSONException e) {
@@ -139,11 +127,11 @@ public class MyProfileFragment extends Fragment {
         return "broke";
     }
 
-    private String getCityState(double lat, double lon){
+    private String getCityState(double lat, double lon) {
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(this.getContext(), Locale.getDefault());
-        if(lat == 0 && lon == 0){
+        if (lat == 0 && lon == 0) {
             return "No Location";
         }
 
@@ -156,7 +144,7 @@ public class MyProfileFragment extends Fragment {
             // Log.e(TAG, "Lat: " + lat);
             // Log.e(TAG, "Location city: " + city);
             // Log.e(TAG, "Location state: " + state);
-            if(city==null || state==null){
+            if (city == null || state == null) {
                 return "No Location";
             }
             return city + ", " + toStateCode(state);
@@ -166,83 +154,83 @@ public class MyProfileFragment extends Fragment {
         return "";
     }
 
-    public String toStateCode(String state){
+    public String toStateCode(String state) {
         Map<String, String> states = new HashMap<String, String>();
-        states.put("Alabama","AL");
-        states.put("Alaska","AK");
-        states.put("Alberta","AB");
-        states.put("American Samoa","AS");
-        states.put("Arizona","AZ");
-        states.put("Arkansas","AR");
-        states.put("Armed Forces (AE)","AE");
-        states.put("Armed Forces Americas","AA");
-        states.put("Armed Forces Pacific","AP");
-        states.put("British Columbia","BC");
-        states.put("California","CA");
-        states.put("Colorado","CO");
-        states.put("Connecticut","CT");
-        states.put("Delaware","DE");
-        states.put("District Of Columbia","DC");
-        states.put("Florida","FL");
-        states.put("Georgia","GA");
-        states.put("Guam","GU");
-        states.put("Hawaii","HI");
-        states.put("Idaho","ID");
-        states.put("Illinois","IL");
-        states.put("Indiana","IN");
-        states.put("Iowa","IA");
-        states.put("Kansas","KS");
-        states.put("Kentucky","KY");
-        states.put("Louisiana","LA");
-        states.put("Maine","ME");
-        states.put("Manitoba","MB");
-        states.put("Maryland","MD");
-        states.put("Massachusetts","MA");
-        states.put("Michigan","MI");
-        states.put("Minnesota","MN");
-        states.put("Mississippi","MS");
-        states.put("Missouri","MO");
-        states.put("Montana","MT");
-        states.put("Nebraska","NE");
-        states.put("Nevada","NV");
-        states.put("New Brunswick","NB");
-        states.put("New Hampshire","NH");
-        states.put("New Jersey","NJ");
-        states.put("New Mexico","NM");
-        states.put("New York","NY");
-        states.put("Newfoundland","NF");
-        states.put("North Carolina","NC");
-        states.put("North Dakota","ND");
-        states.put("Northwest Territories","NT");
-        states.put("Nova Scotia","NS");
-        states.put("Nunavut","NU");
-        states.put("Ohio","OH");
-        states.put("Oklahoma","OK");
-        states.put("Ontario","ON");
-        states.put("Oregon","OR");
-        states.put("Pennsylvania","PA");
-        states.put("Prince Edward Island","PE");
-        states.put("Puerto Rico","PR");
-        states.put("Quebec","QC");
-        states.put("Rhode Island","RI");
-        states.put("Saskatchewan","SK");
-        states.put("South Carolina","SC");
-        states.put("South Dakota","SD");
-        states.put("Tennessee","TN");
-        states.put("Texas","TX");
-        states.put("Utah","UT");
-        states.put("Vermont","VT");
-        states.put("Virgin Islands","VI");
-        states.put("Virginia","VA");
-        states.put("Washington","WA");
-        states.put("West Virginia","WV");
-        states.put("Wisconsin","WI");
-        states.put("Wyoming","WY");
-        states.put("Yukon Territory","YT");
+        states.put("Alabama", "AL");
+        states.put("Alaska", "AK");
+        states.put("Alberta", "AB");
+        states.put("American Samoa", "AS");
+        states.put("Arizona", "AZ");
+        states.put("Arkansas", "AR");
+        states.put("Armed Forces (AE)", "AE");
+        states.put("Armed Forces Americas", "AA");
+        states.put("Armed Forces Pacific", "AP");
+        states.put("British Columbia", "BC");
+        states.put("California", "CA");
+        states.put("Colorado", "CO");
+        states.put("Connecticut", "CT");
+        states.put("Delaware", "DE");
+        states.put("District Of Columbia", "DC");
+        states.put("Florida", "FL");
+        states.put("Georgia", "GA");
+        states.put("Guam", "GU");
+        states.put("Hawaii", "HI");
+        states.put("Idaho", "ID");
+        states.put("Illinois", "IL");
+        states.put("Indiana", "IN");
+        states.put("Iowa", "IA");
+        states.put("Kansas", "KS");
+        states.put("Kentucky", "KY");
+        states.put("Louisiana", "LA");
+        states.put("Maine", "ME");
+        states.put("Manitoba", "MB");
+        states.put("Maryland", "MD");
+        states.put("Massachusetts", "MA");
+        states.put("Michigan", "MI");
+        states.put("Minnesota", "MN");
+        states.put("Mississippi", "MS");
+        states.put("Missouri", "MO");
+        states.put("Montana", "MT");
+        states.put("Nebraska", "NE");
+        states.put("Nevada", "NV");
+        states.put("New Brunswick", "NB");
+        states.put("New Hampshire", "NH");
+        states.put("New Jersey", "NJ");
+        states.put("New Mexico", "NM");
+        states.put("New York", "NY");
+        states.put("Newfoundland", "NF");
+        states.put("North Carolina", "NC");
+        states.put("North Dakota", "ND");
+        states.put("Northwest Territories", "NT");
+        states.put("Nova Scotia", "NS");
+        states.put("Nunavut", "NU");
+        states.put("Ohio", "OH");
+        states.put("Oklahoma", "OK");
+        states.put("Ontario", "ON");
+        states.put("Oregon", "OR");
+        states.put("Pennsylvania", "PA");
+        states.put("Prince Edward Island", "PE");
+        states.put("Puerto Rico", "PR");
+        states.put("Quebec", "QC");
+        states.put("Rhode Island", "RI");
+        states.put("Saskatchewan", "SK");
+        states.put("South Carolina", "SC");
+        states.put("South Dakota", "SD");
+        states.put("Tennessee", "TN");
+        states.put("Texas", "TX");
+        states.put("Utah", "UT");
+        states.put("Vermont", "VT");
+        states.put("Virgin Islands", "VI");
+        states.put("Virginia", "VA");
+        states.put("Washington", "WA");
+        states.put("West Virginia", "WV");
+        states.put("Wisconsin", "WI");
+        states.put("Wyoming", "WY");
+        states.put("Yukon Territory", "YT");
         return states.get(state);
     }
 
-    public void listeners(){
+    public void listeners() {
         ivEditName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -292,7 +280,7 @@ public class MyProfileFragment extends Fragment {
 
     }
 
-    public void changeNameDialog(){
+    public void changeNameDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog alert = builder.create();
         //builder.setTitle("Change name");
@@ -311,7 +299,7 @@ public class MyProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String newName = etInput.getText().toString().trim();
-                if(!newName.isEmpty()){
+                if (!newName.isEmpty()) {
                     Log.e(TAG, newName);
                     changeName(newName);
                     alert.cancel();
@@ -357,7 +345,7 @@ public class MyProfileFragment extends Fragment {
         });
     }
 
-    private void metadataPFP(String fileURL){
+    private void metadataPFP(String fileURL) {
         JSONObject metadata = CometChat.getLoggedInUser().getMetadata();
         try {
             metadata.put("PFP", fileURL);
@@ -397,10 +385,9 @@ public class MyProfileFragment extends Fragment {
                     return;
                 }
                 Log.e(TAG, "# of pics: " + pics.size());
-                if(pics.size() == 0) {
+                if (pics.size() == 0) {
                     savePFP(UID, photoFile);
-                }
-                else{
+                } else {
                     pics.get(0).deleteInBackground(new DeleteCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -433,10 +420,9 @@ public class MyProfileFragment extends Fragment {
                     return;
                 }
                 Log.e(TAG, "# of pics: " + pics.size());
-                if(pics.size() == 0) {
+                if (pics.size() == 0) {
                     savePFP(UID, photoFile);
-                }
-                else{
+                } else {
                     pics.get(0).deleteInBackground(new DeleteCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -463,11 +449,10 @@ public class MyProfileFragment extends Fragment {
                     Log.e(TAG, "Issue with getting pfp", e);
                     return;
                 }
-                if(pics.size() == 0) {
+                if (pics.size() == 0) {
                     //set pfp to default
                     Glide.with(getContext()).load(R.drawable.circle).circleCrop().into(ivPFP);
-                }
-                else{
+                } else {
                     //set pfp
                     Log.e(TAG, "Setting existing PFP");
                     String pfpFile = pics.get(0).getImage().getUrl();
@@ -479,7 +464,7 @@ public class MyProfileFragment extends Fragment {
         });
     }
 
-    public void changeBioDialog(){
+    public void changeBioDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog alert = builder.create();
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.input_alert, (ViewGroup) getView(), false);
@@ -497,7 +482,7 @@ public class MyProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String newBio = etInput.getText().toString().trim();
-                if(!newBio.isEmpty() && newBio.length() <= 140){
+                if (!newBio.isEmpty() && newBio.length() <= 140) {
                     Log.e(TAG, newBio);
                     changeBio(newBio);
                     alert.cancel();
@@ -506,7 +491,7 @@ public class MyProfileFragment extends Fragment {
         });
     }
 
-    public void changePFPDialog(){
+    public void changePFPDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog alert = builder.create();
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.pfp_alert, (ViewGroup) getView(), false);
@@ -536,7 +521,7 @@ public class MyProfileFragment extends Fragment {
 
     }
 
-    public void changeBio(String bio){
+    public void changeBio(String bio) {
         JSONObject metadata = CometChat.getLoggedInUser().getMetadata();
         try {
             metadata.put("Bio", bio);
@@ -557,7 +542,7 @@ public class MyProfileFragment extends Fragment {
         });
     }
 
-    public void changeName(String name){
+    public void changeName(String name) {
         CometChat.getLoggedInUser().setName(name);
         CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
             @Override
@@ -599,7 +584,7 @@ public class MyProfileFragment extends Fragment {
         // wrap File object into a content provider
         // required for API >= 24
         // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        Uri fileProvider = FileProvider.getUriForFile(Objects.requireNonNull(getActivity().getApplicationContext()),  "com.example.accord.provider", photoFile);
+        Uri fileProvider = FileProvider.getUriForFile(Objects.requireNonNull(getActivity().getApplicationContext()), "com.example.accord.provider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
         // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
@@ -613,7 +598,7 @@ public class MyProfileFragment extends Fragment {
     private void openGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         photoFile = getPhotoFileUri(photoFileName);
-        Uri fileProvider = FileProvider.getUriForFile(Objects.requireNonNull(getActivity().getApplicationContext()),  "com.example.accord.provider", photoFile);
+        Uri fileProvider = FileProvider.getUriForFile(Objects.requireNonNull(getActivity().getApplicationContext()), "com.example.accord.provider", photoFile);
         gallery.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
         if (gallery.resolveActivity(getContext().getPackageManager()) != null) {
             // Start the image capture intent to take photo
@@ -657,7 +642,7 @@ public class MyProfileFragment extends Fragment {
                 // Log.e(TAG, "Photo ok.");
                 // by this point we have the camera photo on disk
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                switch(orientation) {
+                switch (orientation) {
                     case 90:
                         takenImage = rotateImage(takenImage, 90);
                         break;
@@ -724,7 +709,7 @@ public class MyProfileFragment extends Fragment {
                     e.printStackTrace();
                 }
                 Bitmap bitmap = BitmapFactory.decodeStream(inStream);
-                switch(orientation) {
+                switch (orientation) {
                     case 90:
                         bitmap = rotateImage(bitmap, 90);
                         break;
@@ -754,7 +739,7 @@ public class MyProfileFragment extends Fragment {
             } else { // Result was a failure
                 Log.e(TAG, "Photo not saved code: " + resultCode);
             }
-                //Log.e(TAG, "Data: " + pf);
+            //Log.e(TAG, "Data: " + pf);
         }
     }
 

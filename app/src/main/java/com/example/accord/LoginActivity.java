@@ -1,7 +1,5 @@
 package com.example.accord;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void setup(){
+    public void setup() {
         bLogin = findViewById(R.id.bLogin);
         tvNew = findViewById(R.id.tvNew);
         etUsername = findViewById(R.id.etUsername);
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         //do nothing
     }
 
-    public void listeners(){
+    public void listeners() {
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,14 +72,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void goMainActivity(){
+    public void goMainActivity() {
         Intent i = new Intent(this, CometChatUI.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(i);
         finish();
     }
 
-    public void login(String username, String password){
+    public void login(String username, String password) {
         loginParseUser(username, password);
     }
 
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void loginChatUser(String UID){
+    public void loginChatUser(String UID) {
         String authKey = BuildConfig.AUTH_KEY_CHAT;
         if (CometChat.getLoggedInUser() == null) {
             CometChat.login(UID, authKey, new CometChat.CallbackListener<User>() {

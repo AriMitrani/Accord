@@ -1,21 +1,19 @@
 package com.example.accord;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.content.Intent;
 import android.os.Bundle;
-import org.parceler.Parcels;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.invoke.MethodType;
+import org.parceler.Parcels;
 
 public class InstrumentActivity extends AppCompatActivity {
 
@@ -77,7 +75,7 @@ public class InstrumentActivity extends AppCompatActivity {
         listeners();
     }
 
-    public void setup(){
+    public void setup() {
         clDrums = findViewById(R.id.clDrum);
         clGuitar = findViewById(R.id.clGuitar);
         clBass = findViewById(R.id.clBass);
@@ -133,7 +131,7 @@ public class InstrumentActivity extends AppCompatActivity {
 
     }
 
-    public void listeners(){
+    public void listeners() {
         clDrums.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -298,71 +296,58 @@ public class InstrumentActivity extends AppCompatActivity {
 
     }
 
-    public boolean selectedListener(){
+    public boolean selectedListener() {
         boolean selected = false;
-        if(drums1.isSelected()){
+        if (drums1.isSelected()) {
+            selected = true;
+        } else if (drums2.isSelected()) {
+            selected = true;
+        } else if (drums3.isSelected()) {
             selected = true;
         }
-        else if(drums2.isSelected()){
+        if (guitar1.isSelected()) {
+            selected = true;
+        } else if (guitar2.isSelected()) {
+            selected = true;
+        } else if (guitar3.isSelected()) {
             selected = true;
         }
-        else if(drums3.isSelected()){
+        if (bass1.isSelected()) {
+            selected = true;
+        } else if (bass2.isSelected()) {
+            selected = true;
+        } else if (bass3.isSelected()) {
             selected = true;
         }
-        if(guitar1.isSelected()){
+        if (vocals1.isSelected()) {
+            selected = true;
+        } else if (vocals2.isSelected()) {
+            selected = true;
+        } else if (vocals3.isSelected()) {
             selected = true;
         }
-        else if(guitar2.isSelected()){
+        if (keys1.isSelected()) {
+            selected = true;
+        } else if (keys2.isSelected()) {
+            selected = true;
+        } else if (keys3.isSelected()) {
             selected = true;
         }
-        else if(guitar3.isSelected()){
+        if (prod1.isSelected()) {
             selected = true;
-        }
-        if(bass1.isSelected()){
+        } else if (prod2.isSelected()) {
             selected = true;
-        }
-        else if(bass2.isSelected()){
-            selected = true;
-        }
-        else if(bass3.isSelected()){
-            selected = true;
-        }
-        if(vocals1.isSelected()){
-            selected = true;
-        }
-        else if(vocals2.isSelected()){
-            selected = true;
-        }
-        else if(vocals3.isSelected()){
-            selected = true;
-        }
-        if(keys1.isSelected()){
-            selected = true;
-        }
-        else if(keys2.isSelected()){
-            selected = true;
-        }
-        else if(keys3.isSelected()){
-            selected = true;
-        }
-        if(prod1.isSelected()){
-            selected = true;
-        }
-        else if(prod2.isSelected()){
-            selected = true;
-        }
-        else if(prod3.isSelected()){
+        } else if (prod3.isSelected()) {
             selected = true;
         }
         return selected;
     }
 
-    public void updateNext(){
+    public void updateNext() {
         boolean selected = selectedListener();
         if (selected) {
             bNext.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             bNext.setVisibility(View.GONE);
         }
     }
@@ -378,63 +363,51 @@ public class InstrumentActivity extends AppCompatActivity {
         metadata.put("Birthday", 0);*/
         JSONArray skillsArr = new JSONArray();
 
-        if(drums1.isChecked()){
+        if (drums1.isChecked()) {
             skillsArr.put("drums1");
-        }
-        else if(drums2.isChecked()){
+        } else if (drums2.isChecked()) {
             skillsArr.put("drums2");
-        }
-        else if(drums3.isChecked()){
+        } else if (drums3.isChecked()) {
             skillsArr.put("drums3");
         }
-        if(guitar1.isChecked()){
+        if (guitar1.isChecked()) {
             skillsArr.put("guitar1");
-        }
-        else if(guitar2.isChecked()){
+        } else if (guitar2.isChecked()) {
             skillsArr.put("guitar2");
-        }
-        else if(guitar3.isChecked()){
+        } else if (guitar3.isChecked()) {
             skillsArr.put("guitar3");
         }
-        if(bass1.isChecked()){
+        if (bass1.isChecked()) {
             skillsArr.put("bass1");
-        }
-        else if(bass2.isChecked()){
+        } else if (bass2.isChecked()) {
+            skillsArr.put("bass2");
+        } else if (bass3.isChecked()) {
             skillsArr.put("bass2");
         }
-        else if(bass3.isChecked()){
-            skillsArr.put("bass2");
-        }
-        if(vocals1.isChecked()){
+        if (vocals1.isChecked()) {
             skillsArr.put("vocals1");
-        }
-        else if(vocals2.isChecked()){
+        } else if (vocals2.isChecked()) {
             skillsArr.put("vocals2");
-        }
-        else if(vocals3.isChecked()){
+        } else if (vocals3.isChecked()) {
             skillsArr.put("vocals3");
         }
-        if(keys1.isChecked()){
+        if (keys1.isChecked()) {
             skillsArr.put("keys1");
-        }
-        else if(keys2.isChecked()){
+        } else if (keys2.isChecked()) {
             skillsArr.put("keys2");
-        }
-        else if(keys3.isChecked()){
+        } else if (keys3.isChecked()) {
             skillsArr.put("keys3");
         }
-        if(prod1.isChecked()){
+        if (prod1.isChecked()) {
             skillsArr.put("prod1");
-        }
-        else if(prod2.isChecked()){
+        } else if (prod2.isChecked()) {
             skillsArr.put("prod2");
-        }
-        else if(prod3.isChecked()){
+        } else if (prod3.isChecked()) {
             skillsArr.put("prod3");
         }
         metadata.put("Skills", skillsArr);
         Log.e(TAG, "Metadata: " + metadata);
-        Intent i = new Intent(this, GenreActivity.class);
+        Intent i = new Intent(this, GenreSelect.class);
         i.putExtra("metadata", Parcels.wrap(metadata.toString()));
         startActivity(i);
     }

@@ -1,14 +1,8 @@
 package com.cometchat.pro.uikit;
 
-import android.util.Log;
-
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 @ParseClassName("ProfPic")
 public class ProfPic extends ParseObject {

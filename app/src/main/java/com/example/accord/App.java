@@ -1,4 +1,5 @@
 package com.example.accord;
+
 import android.app.Application;
 import android.util.Log;
 
@@ -22,20 +23,21 @@ public class App extends Application {
         initParse();
     }
 
-    public void initChat(){
+    public void initChat() {
         String region = BuildConfig.REGION;
         String appID = BuildConfig.APP_ID_CHAT;
-        AppSettings appSettings=new AppSettings.AppSettingsBuilder()
+        AppSettings appSettings = new AppSettings.AppSettingsBuilder()
                 .subscribePresenceForAllUsers()
                 .setRegion(region)
                 .autoEstablishSocketConnection(true)
                 .build();
 
-        CometChat.init(this, appID,appSettings, new CometChat.CallbackListener<String>() {
+        CometChat.init(this, appID, appSettings, new CometChat.CallbackListener<String>() {
             @Override
             public void onSuccess(String successMessage) {
                 Log.d(TAG, "Initialization completed successfully");
             }
+
             @Override
             public void onError(CometChatException e) {
                 Log.d(TAG, "Initialization failed with exception: " + e.getMessage());
@@ -44,7 +46,7 @@ public class App extends Application {
         ParseObject.registerSubclass(MyMedia.class);
     }
 
-    public void initParse(){
+    public void initParse() {
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(BuildConfig.B4A_APP_ID)
                 .clientKey(BuildConfig.B4A_CLIENT_KEY)

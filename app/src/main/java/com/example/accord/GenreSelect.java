@@ -1,13 +1,13 @@
 package com.example.accord;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,7 +54,7 @@ public class GenreSelect extends AppCompatActivity {
         listeners();
     }
 
-    public void initMetadata(){
+    public void initMetadata() {
         String mString = Parcels.unwrap(getIntent().getParcelableExtra("metadata"));
         try {
             metadata = new JSONObject(mString);
@@ -64,7 +64,7 @@ public class GenreSelect extends AppCompatActivity {
         Log.e(TAG, String.valueOf(metadata));
     }
 
-    public void setup(){
+    public void setup() {
         selectCount = 0;
         bNext = findViewById(R.id.bContinue);
         bNext.setVisibility(View.GONE);
@@ -94,16 +94,15 @@ public class GenreSelect extends AppCompatActivity {
         bPunkRock.setBackgroundColor(Color.DKGRAY);
     }
 
-    public void listeners(){
+    public void listeners() {
         bPop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pop) {
+                if (pop) {
                     pop = false;
                     bPop.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     pop = true;
                     bPop.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -115,12 +114,11 @@ public class GenreSelect extends AppCompatActivity {
         bRock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(rock) {
+                if (rock) {
                     rock = false;
                     bRock.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     rock = true;
                     bRock.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -132,12 +130,11 @@ public class GenreSelect extends AppCompatActivity {
         bCountry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(country) {
+                if (country) {
                     country = false;
                     bCountry.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     country = true;
                     bCountry.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -149,12 +146,11 @@ public class GenreSelect extends AppCompatActivity {
         bMetal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(metal) {
+                if (metal) {
                     metal = false;
                     bMetal.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     metal = true;
                     bMetal.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -166,12 +162,11 @@ public class GenreSelect extends AppCompatActivity {
         bRap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(rap) {
+                if (rap) {
                     rap = false;
                     bRap.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     rap = true;
                     bRap.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -183,12 +178,11 @@ public class GenreSelect extends AppCompatActivity {
         bHipHop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hipHop) {
+                if (hipHop) {
                     hipHop = false;
                     bHipHop.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     hipHop = true;
                     bHipHop.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -200,12 +194,11 @@ public class GenreSelect extends AppCompatActivity {
         bPopPunk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(popPunk) {
+                if (popPunk) {
                     popPunk = false;
                     bPopPunk.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     popPunk = true;
                     bPopPunk.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -217,12 +210,11 @@ public class GenreSelect extends AppCompatActivity {
         bFolk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(folk) {
+                if (folk) {
                     folk = false;
-                     bFolk.setBackgroundColor(Color.DKGRAY);
+                    bFolk.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     folk = true;
                     bFolk.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -234,12 +226,11 @@ public class GenreSelect extends AppCompatActivity {
         bEDM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(EDM) {
+                if (EDM) {
                     EDM = false;
                     bEDM.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     EDM = true;
                     bEDM.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -251,12 +242,11 @@ public class GenreSelect extends AppCompatActivity {
         bLatin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(latin) {
+                if (latin) {
                     latin = false;
                     bLatin.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     latin = true;
                     bLatin.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -268,12 +258,11 @@ public class GenreSelect extends AppCompatActivity {
         bMuscial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(musical) {
+                if (musical) {
                     musical = false;
                     bMuscial.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     musical = true;
                     bMuscial.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -285,12 +274,11 @@ public class GenreSelect extends AppCompatActivity {
         bPunkRock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(punkRock) {
+                if (punkRock) {
                     punkRock = false;
                     bPunkRock.setBackgroundColor(Color.DKGRAY);
                     selectCount--;
-                }
-                else if(selectCount < 5){
+                } else if (selectCount < 5) {
                     punkRock = true;
                     bPunkRock.setBackgroundColor(Color.RED);
                     selectCount++;
@@ -311,11 +299,10 @@ public class GenreSelect extends AppCompatActivity {
         });
     }
 
-    public void checkCount(){
-        if(selectCount == 0){
+    public void checkCount() {
+        if (selectCount == 0) {
             bNext.setVisibility(View.GONE);
-        }
-        else{
+        } else {
             bNext.setVisibility(View.VISIBLE);
         }
     }
@@ -323,40 +310,40 @@ public class GenreSelect extends AppCompatActivity {
     public void createData() throws JSONException {
         Log.e(TAG, "Creating metadata");
         JSONArray genreArr = new JSONArray();
-        if(rock){
+        if (rock) {
             genreArr.put("rock");
         }
-        if(pop){
+        if (pop) {
             genreArr.put("pop");
         }
-        if(country){
+        if (country) {
             genreArr.put("country");
         }
-        if(metal){
+        if (metal) {
             genreArr.put("metal");
         }
-        if(rap){
+        if (rap) {
             genreArr.put("rap");
         }
-        if(hipHop){
+        if (hipHop) {
             genreArr.put("hiphop");
         }
-        if(popPunk){
+        if (popPunk) {
             genreArr.put("poppunk");
         }
-        if(folk){
+        if (folk) {
             genreArr.put("folk");
         }
-        if(EDM){
+        if (EDM) {
             genreArr.put("edm");
         }
-        if(latin){
+        if (latin) {
             genreArr.put("latin");
         }
-        if(musical){
+        if (musical) {
             genreArr.put("musical");
         }
-        if(punkRock){
+        if (punkRock) {
             genreArr.put("punkrock");
         }
         metadata.put("Genres", genreArr);

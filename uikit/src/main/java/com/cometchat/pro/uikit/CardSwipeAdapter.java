@@ -1,7 +1,6 @@
 package com.cometchat.pro.uikit;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -26,11 +25,8 @@ import com.bumptech.glide.Glide;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.User;
-import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +36,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,8 +44,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class CardSwipeAdapter extends BaseAdapter {
-    private Context context;
-    private List<String> list;
     public final String TAG = "CardSwipeAdapter";
     public TextView tvCardName;
     public ImageView ivCardPic;
@@ -74,11 +67,13 @@ public class CardSwipeAdapter extends BaseAdapter {
     public VideoView vFile;
     public boolean vidVisible;
     public List<MyMedia> mediaList;
-    String filter;
     public boolean passesFilter;
     public String namePass;
     public LinearLayout lTopBar;
     public int visiblePages;
+    String filter;
+    private final Context context;
+    private final List<String> list;
 
     public CardSwipeAdapter(Context context, List<String> list, boolean vidVisible, String filter) {
         this.context = context;
@@ -91,23 +86,23 @@ public class CardSwipeAdapter extends BaseAdapter {
         visiblePages = 1;
     }
 
-    public void setVidVisible(boolean v){
+    public void setVidVisible(boolean v) {
         vidVisible = v;
     }
 
-    public void setFilter(String f){
-        filter = f;
-    }
-
-    public String getFilter(){
+    public String getFilter() {
         return filter;
     }
 
-    public boolean doesPassFilter(){
+    public void setFilter(String f) {
+        filter = f;
+    }
+
+    public boolean doesPassFilter() {
         return passesFilter;
     }
 
-    public String getNamePass(){
+    public String getNamePass() {
         return namePass;
     }
 
@@ -131,7 +126,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         //Log.e(TAG, "Getting view");
         // Log.e(TAG, "Getting view " + position + " and vis is " + vidVisible);
         View view;
-        if(convertView == null){
+        if (convertView == null) {
             view = LayoutInflater.from(parent.getContext()).inflate(LayoutID, parent, false);
             getCardUser(position, view);
         } else {
@@ -142,7 +137,7 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void setup(User user, View v, int pos){
+    public void setup(User user, View v, int pos) {
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
@@ -176,7 +171,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         showFirst(user, v);
     }
 
-    public void setupHide(User user, View v, int pos){
+    public void setupHide(User user, View v, int pos) {
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
@@ -222,7 +217,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         } catch (JSONException | java.text.ParseException e) {
             e.printStackTrace();
         }
-        if(age == -1){
+        if (age == -1) {
             return "";
         }
         return age + "yo";
@@ -241,20 +236,20 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public int getAge(String date) throws java.text.ParseException { //must be in mm/dd/yyyy
-        if(date.isEmpty()){
+        if (date.isEmpty()) {
             return -1;
         }
-        if(date.charAt(date.length()-1) == 'Y') {
+        if (date.charAt(date.length() - 1) == 'Y') {
             // Log.e(TAG, "Missing date");
             return -1;
         }
-        SimpleDateFormat formatter =new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         Date dDate = formatter.parse(date);
         Date currDate = Calendar.getInstance().getTime();
         // Log.e(TAG, "Date: " + dDate);
         // Log.e(TAG, "Current date: " + currDate);
         int years = Period.between(convertToLocalDateViaInstant(dDate), convertToLocalDateViaInstant(currDate)).getYears();
-        if(years < 12 || years > 100){
+        if (years < 12 || years > 100) {
             // Log.e(TAG, "Please enter a valid date");
             return -1;
         }
@@ -272,29 +267,29 @@ public class CardSwipeAdapter extends BaseAdapter {
     private void setPFP(User user, View v) throws JSONException {
         String pfpURl = user.getMetadata().getString("PFP");
         Log.e(TAG, user.getName() + " has pfp " + pfpURl); //get pfp from metadata
-        if(pfpURl.isEmpty()){
+        if (pfpURl.isEmpty()) {
             Glide.with(v).load(R.drawable.circle).circleCrop().into(ivCardPic);
         } else {
             Glide.with(v).load(pfpURl).circleCrop().into(ivCardPic);
         }
     }
 
-    private String getCityState(double lat, double lon){
+    private String getCityState(double lat, double lon) {
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(context.getApplicationContext(), Locale.getDefault());
-        if(lat == 0 && lon == 0){
+        if (lat == 0 && lon == 0) {
             return "No Location";
         }
 
         try {
-            addresses = geocoder. getFromLocation(lat, lon, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = geocoder.getFromLocation(lat, lon, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
             //String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
             Log.e(TAG, "Location city: " + city);
             Log.e(TAG, "Location state: " + state);
-            if(city==null || state==null){
+            if (city == null || state == null) {
                 return "No Location";
             }
             return city + ", " + toStateCode(state);
@@ -304,87 +299,87 @@ public class CardSwipeAdapter extends BaseAdapter {
         return "";
     }
 
-    public String toStateCode(String state){
+    public String toStateCode(String state) {
         Map<String, String> states = new HashMap<String, String>();
-        states.put("Alabama","AL");
-        states.put("Alaska","AK");
-        states.put("Alberta","AB");
-        states.put("American Samoa","AS");
-        states.put("Arizona","AZ");
-        states.put("Arkansas","AR");
-        states.put("Armed Forces (AE)","AE");
-        states.put("Armed Forces Americas","AA");
-        states.put("Armed Forces Pacific","AP");
-        states.put("British Columbia","BC");
-        states.put("California","CA");
-        states.put("Colorado","CO");
-        states.put("Connecticut","CT");
-        states.put("Delaware","DE");
-        states.put("District Of Columbia","DC");
-        states.put("Florida","FL");
-        states.put("Georgia","GA");
-        states.put("Guam","GU");
-        states.put("Hawaii","HI");
-        states.put("Idaho","ID");
-        states.put("Illinois","IL");
-        states.put("Indiana","IN");
-        states.put("Iowa","IA");
-        states.put("Kansas","KS");
-        states.put("Kentucky","KY");
-        states.put("Louisiana","LA");
-        states.put("Maine","ME");
-        states.put("Manitoba","MB");
-        states.put("Maryland","MD");
-        states.put("Massachusetts","MA");
-        states.put("Michigan","MI");
-        states.put("Minnesota","MN");
-        states.put("Mississippi","MS");
-        states.put("Missouri","MO");
-        states.put("Montana","MT");
-        states.put("Nebraska","NE");
-        states.put("Nevada","NV");
-        states.put("New Brunswick","NB");
-        states.put("New Hampshire","NH");
-        states.put("New Jersey","NJ");
-        states.put("New Mexico","NM");
-        states.put("New York","NY");
-        states.put("Newfoundland","NF");
-        states.put("North Carolina","NC");
-        states.put("North Dakota","ND");
-        states.put("Northwest Territories","NT");
-        states.put("Nova Scotia","NS");
-        states.put("Nunavut","NU");
-        states.put("Ohio","OH");
-        states.put("Oklahoma","OK");
-        states.put("Ontario","ON");
-        states.put("Oregon","OR");
-        states.put("Pennsylvania","PA");
-        states.put("Prince Edward Island","PE");
-        states.put("Puerto Rico","PR");
-        states.put("Quebec","QC");
-        states.put("Rhode Island","RI");
-        states.put("Saskatchewan","SK");
-        states.put("South Carolina","SC");
-        states.put("South Dakota","SD");
-        states.put("Tennessee","TN");
-        states.put("Texas","TX");
-        states.put("Utah","UT");
-        states.put("Vermont","VT");
-        states.put("Virgin Islands","VI");
-        states.put("Virginia","VA");
-        states.put("Washington","WA");
-        states.put("West Virginia","WV");
-        states.put("Wisconsin","WI");
-        states.put("Wyoming","WY");
-        states.put("Yukon Territory","YT");
+        states.put("Alabama", "AL");
+        states.put("Alaska", "AK");
+        states.put("Alberta", "AB");
+        states.put("American Samoa", "AS");
+        states.put("Arizona", "AZ");
+        states.put("Arkansas", "AR");
+        states.put("Armed Forces (AE)", "AE");
+        states.put("Armed Forces Americas", "AA");
+        states.put("Armed Forces Pacific", "AP");
+        states.put("British Columbia", "BC");
+        states.put("California", "CA");
+        states.put("Colorado", "CO");
+        states.put("Connecticut", "CT");
+        states.put("Delaware", "DE");
+        states.put("District Of Columbia", "DC");
+        states.put("Florida", "FL");
+        states.put("Georgia", "GA");
+        states.put("Guam", "GU");
+        states.put("Hawaii", "HI");
+        states.put("Idaho", "ID");
+        states.put("Illinois", "IL");
+        states.put("Indiana", "IN");
+        states.put("Iowa", "IA");
+        states.put("Kansas", "KS");
+        states.put("Kentucky", "KY");
+        states.put("Louisiana", "LA");
+        states.put("Maine", "ME");
+        states.put("Manitoba", "MB");
+        states.put("Maryland", "MD");
+        states.put("Massachusetts", "MA");
+        states.put("Michigan", "MI");
+        states.put("Minnesota", "MN");
+        states.put("Mississippi", "MS");
+        states.put("Missouri", "MO");
+        states.put("Montana", "MT");
+        states.put("Nebraska", "NE");
+        states.put("Nevada", "NV");
+        states.put("New Brunswick", "NB");
+        states.put("New Hampshire", "NH");
+        states.put("New Jersey", "NJ");
+        states.put("New Mexico", "NM");
+        states.put("New York", "NY");
+        states.put("Newfoundland", "NF");
+        states.put("North Carolina", "NC");
+        states.put("North Dakota", "ND");
+        states.put("Northwest Territories", "NT");
+        states.put("Nova Scotia", "NS");
+        states.put("Nunavut", "NU");
+        states.put("Ohio", "OH");
+        states.put("Oklahoma", "OK");
+        states.put("Ontario", "ON");
+        states.put("Oregon", "OR");
+        states.put("Pennsylvania", "PA");
+        states.put("Prince Edward Island", "PE");
+        states.put("Puerto Rico", "PR");
+        states.put("Quebec", "QC");
+        states.put("Rhode Island", "RI");
+        states.put("Saskatchewan", "SK");
+        states.put("South Carolina", "SC");
+        states.put("South Dakota", "SD");
+        states.put("Tennessee", "TN");
+        states.put("Texas", "TX");
+        states.put("Utah", "UT");
+        states.put("Vermont", "VT");
+        states.put("Virgin Islands", "VI");
+        states.put("Virginia", "VA");
+        states.put("Washington", "WA");
+        states.put("West Virginia", "WV");
+        states.put("Wisconsin", "WI");
+        states.put("Wyoming", "WY");
+        states.put("Yukon Territory", "YT");
         return states.get(state);
     }
 
-    public void setVisiblePages(int n){
-        visiblePages = n+1;
+    public void setVisiblePages(int n) {
+        visiblePages = n + 1;
     }
 
-    public void clearPageBar(){
+    public void clearPageBar() {
         iv1.setColorFilter(null);
         iv2.setColorFilter(null);
         iv3.setColorFilter(null);
@@ -395,7 +390,7 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void initPageBar(int newPage){
+    public void initPageBar(int newPage) {
         // Log.e(TAG, "Initializing top bar with " + visiblePages + " pages");
         iv1.setVisibility(View.GONE);
         iv2.setVisibility(View.GONE);
@@ -404,32 +399,32 @@ public class CardSwipeAdapter extends BaseAdapter {
         iv5.setVisibility(View.GONE);
         iv6.setVisibility(View.GONE);
         iv7.setVisibility(View.GONE);
-        if(visiblePages >= 1){
+        if (visiblePages >= 1) {
             iv1.setVisibility(View.VISIBLE);
             //iv1.setColorFilter(Color.argb(100, 255, 0, 0));
         }
-        if(visiblePages >= 2){
+        if (visiblePages >= 2) {
             iv2.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 3){
+        if (visiblePages >= 3) {
             iv3.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 4){
+        if (visiblePages >= 4) {
             iv4.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 5){
+        if (visiblePages >= 5) {
             iv5.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 6){
+        if (visiblePages >= 6) {
             iv6.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 7){
+        if (visiblePages >= 7) {
             iv7.setVisibility(View.VISIBLE);
         }
         updateTopMenu(newPage);
     }
 
-    public void initPageBar(){
+    public void initPageBar() {
         // Log.e(TAG, "Initializing top bar with " + visiblePages + " pages");
         iv1.setVisibility(View.GONE);
         iv2.setVisibility(View.GONE);
@@ -438,32 +433,32 @@ public class CardSwipeAdapter extends BaseAdapter {
         iv5.setVisibility(View.GONE);
         iv6.setVisibility(View.GONE);
         iv7.setVisibility(View.GONE);
-        if(visiblePages >= 1){
+        if (visiblePages >= 1) {
             iv1.setVisibility(View.VISIBLE);
             //iv1.setColorFilter(Color.argb(100, 255, 0, 0));
         }
-        if(visiblePages >= 2){
+        if (visiblePages >= 2) {
             iv2.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 3){
+        if (visiblePages >= 3) {
             iv3.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 4){
+        if (visiblePages >= 4) {
             iv4.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 5){
+        if (visiblePages >= 5) {
             iv5.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 6){
+        if (visiblePages >= 6) {
             iv6.setVisibility(View.VISIBLE);
         }
-        if(visiblePages >= 7){
+        if (visiblePages >= 7) {
             iv7.setVisibility(View.VISIBLE);
         }
         updateTopMenu(page);
     }
 
-    public void getCardUser(int pos, View v){
+    public void getCardUser(int pos, View v) {
         //Log.e(TAG, "Getting card user");
         Log.e(TAG, "Whole list is: " + list);
         Log.e(TAG, "User at " + pos + " is " + list.get(pos));
@@ -471,14 +466,14 @@ public class CardSwipeAdapter extends BaseAdapter {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(User user) {
-                if(vidVisible){
+                if (vidVisible) {
                     setup(user, v, pos);
-                }
-                else{
+                } else {
                     setupHide(user, v, pos);
                 }
                 listeners(pos, user);
             }
+
             @Override
             public void onError(CometChatException e) {
                 Log.e(TAG, "No user to populate card");
@@ -486,32 +481,30 @@ public class CardSwipeAdapter extends BaseAdapter {
         });
     }
 
-    public void populateInstruments(User user, View v){
+    public void populateInstruments(User user, View v) {
         try {
             JSONArray SkillArr = user.getMetadata().getJSONArray("Skills");
-            if(SkillArr.length() >= 1){
+            if (SkillArr.length() >= 1) {
                 ivInst1.setVisibility(View.VISIBLE);
                 rb1.setVisibility(View.VISIBLE);
                 rb1.setRating(matchLevel(SkillArr.get(0).toString()));
                 Glide.with(v).load(matchInst(SkillArr.get(0).toString())).into(ivInst1);
             }
-            if(SkillArr.length() >= 2){
+            if (SkillArr.length() >= 2) {
                 ivInst2.setVisibility(View.VISIBLE);
                 rb2.setVisibility(View.VISIBLE);
                 rb2.setRating(matchLevel(SkillArr.get(1).toString()));
                 Glide.with(v).load(matchInst(SkillArr.get(1).toString())).into(ivInst2);
-            }
-            else{
+            } else {
                 ivInst2.setVisibility(View.INVISIBLE);
                 rb2.setVisibility(View.INVISIBLE);
             }
-            if(SkillArr.length() >= 3){
+            if (SkillArr.length() >= 3) {
                 ivInst3.setVisibility(View.VISIBLE);
                 rb3.setVisibility(View.VISIBLE);
                 rb3.setRating(matchLevel(SkillArr.get(2).toString()));
                 Glide.with(v).load(matchInst(SkillArr.get(2).toString())).into(ivInst3);
-            }
-            else {
+            } else {
                 ivInst3.setVisibility(View.INVISIBLE);
                 rb3.setVisibility(View.INVISIBLE);
             }
@@ -520,24 +513,24 @@ public class CardSwipeAdapter extends BaseAdapter {
         }
     }
 
-    public Drawable matchInst(String inst){
-        if(inst.contains("bass")){
+    public Drawable matchInst(String inst) {
+        if (inst.contains("bass")) {
             return context.getResources().getDrawable(R.drawable.bass);
             //Log.e(TAG, "bass");
         }
-        if(inst.contains("drums")){
+        if (inst.contains("drums")) {
             return context.getResources().getDrawable(R.drawable.drums);
             //Log.e(TAG, "drums");
         }
-        if(inst.contains("guitar")){
+        if (inst.contains("guitar")) {
             return context.getResources().getDrawable(R.drawable.guitar);
             //Log.e(TAG, "guitar");
         }
-        if(inst.contains("vocals")){
+        if (inst.contains("vocals")) {
             return context.getResources().getDrawable(R.drawable.mic);
             //Log.e(TAG, "vocals");
         }
-        if(inst.contains("keys")){
+        if (inst.contains("keys")) {
             return context.getResources().getDrawable(R.drawable.keys);
             //Log.e(TAG, "keys");
         }
@@ -545,20 +538,20 @@ public class CardSwipeAdapter extends BaseAdapter {
         return context.getResources().getDrawable(R.drawable.drums);
     }
 
-    public int matchLevel(String inst){
-        if(inst.contains("1")){
+    public int matchLevel(String inst) {
+        if (inst.contains("1")) {
             return 1;
         }
-        if(inst.contains("2")){
+        if (inst.contains("2")) {
             return 2;
         }
-        if(inst.contains("3")){
+        if (inst.contains("3")) {
             return 3;
         }
         return 0;
     }
 
-    public void listeners(int pos, User user){
+    public void listeners(int pos, User user) {
         vFile.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -568,7 +561,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         });
     }
 
-    public void hideFirst(User user){
+    public void hideFirst(User user) {
         Log.e(TAG, "hiding");
         tvCardName.setVisibility(View.INVISIBLE);
         ivCardPic.setVisibility(View.INVISIBLE);
@@ -589,7 +582,7 @@ public class CardSwipeAdapter extends BaseAdapter {
         //vFile.setVideoPath();
     }
 
-    public void showFirst(User user, View v){
+    public void showFirst(User user, View v) {
         tvCardName.setVisibility(View.VISIBLE);
         ivCardPic.setVisibility(View.VISIBLE);
         populateInstruments(user, v);
@@ -617,7 +610,7 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
 
-    public void loadVideo(MyMedia vid){
+    public void loadVideo(MyMedia vid) {
         String mediaUrl = vid.getVidURL();
         //vFile.setMinimumHeight(1);
         //vFile.getLayoutParams().height = 200;
@@ -630,20 +623,20 @@ public class CardSwipeAdapter extends BaseAdapter {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void setPage(int p){
+    public void setPage(int p) {
         page = p;
         Log.e(TAG, "Page adapter: " + page);
         initPageBar(p);
         if (page > 1) {
-            loadVideo(mediaList.get(page-2));
+            loadVideo(mediaList.get(page - 2));
             Handler handler;
-            handler=new Handler();
+            handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    loadVideo(mediaList.get(page-2));
+                    loadVideo(mediaList.get(page - 2));
                 }
-            },1000);
+            }, 1000);
             //loadVideo(mediaList.get(page-2));
         }
     }
@@ -651,33 +644,33 @@ public class CardSwipeAdapter extends BaseAdapter {
     public void updateTopMenu(int p) {
         //Log.e(TAG, "Updating menu to page " + p);
         //clearPageBar();
-        if(p == 1){
+        if (p == 1) {
             iv1.setColorFilter(Color.argb(100, 10, 10, 10));
         }
-        if(p == 2){
+        if (p == 2) {
             //Log.e(TAG, "here page " + p);
             iv2.setColorFilter(Color.argb(100, 10, 10, 10));
         }
-        if(p == 3){
+        if (p == 3) {
             iv3.setColorFilter(Color.argb(100, 10, 10, 10));
         }
-        if(p == 4){
+        if (p == 4) {
             iv4.setColorFilter(Color.argb(100, 10, 10, 10));
         }
-        if(p == 5){
+        if (p == 5) {
             iv5.setColorFilter(Color.argb(100, 10, 10, 10));
         }
-        if(p == 6){
+        if (p == 6) {
             iv6.setColorFilter(Color.argb(100, 10, 10, 10));
         }
-        if(p == 7){
+        if (p == 7) {
             iv7.setColorFilter(Color.argb(100, 10, 10, 10));
         }
     }
 
-    public void test(int p){
+    public void test(int p) {
         if (page > 1) {
-            loadVideo(mediaList.get(page-2));
+            loadVideo(mediaList.get(page - 2));
         }
     }
 

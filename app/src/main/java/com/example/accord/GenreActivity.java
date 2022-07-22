@@ -1,22 +1,14 @@
 package com.example.accord;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.media.session.MediaSession;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.android.volley.RequestQueue;
-import com.google.gson.Gson;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -24,20 +16,6 @@ import com.spotify.sdk.android.auth.AuthorizationResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
-
-/*import com.spotify.android.appremote.api.ConnectionParams;
-import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
-
-import com.spotify.protocol.client.Subscription;
-import com.spotify.protocol.types.PlayerState;
-import com.spotify.protocol.types.Track;*/
-
-import java.util.HashMap;
-import java.util.Map;
-
-import kaaes.spotify.webapi.android.SpotifyApi;
-import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopTracksRequest;
 
 
 public class GenreActivity extends AppCompatActivity {
@@ -81,7 +59,7 @@ public class GenreActivity extends AppCompatActivity {
         // Aaand we will finish off here.
     }
 
-    public void initMetadata(){
+    public void initMetadata() {
         String mString = Parcels.unwrap(getIntent().getParcelableExtra("metadata"));
         try {
             metadata = new JSONObject(mString);
@@ -91,12 +69,12 @@ public class GenreActivity extends AppCompatActivity {
         Log.e(TAG, String.valueOf(metadata));
     }
 
-    public void setup(){
+    public void setup() {
         bSpotify = findViewById(R.id.bSpotify);
         tvGenre = findViewById(R.id.tvGenre);
     }
 
-    public void listeners(){
+    public void listeners() {
         bSpotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,14 +113,14 @@ public class GenreActivity extends AppCompatActivity {
             switch (response.getType()) {
                 case TOKEN:
                     // Handle successful response
-                    Log.e(TAG,"Auth token: " + response.getAccessToken());
-                    Log.e(TAG,"Auth full response: " + response.describeContents());
+                    Log.e(TAG, "Auth token: " + response.getAccessToken());
+                    Log.e(TAG, "Auth full response: " + response.describeContents());
                     //getUserAuth();
                     break;
 
                 // Auth flow returned an error
                 case ERROR:
-                    Log.e(TAG,"Auth error: " + response.getError());
+                    Log.e(TAG, "Auth error: " + response.getError());
                     // Handle error response
                     break;
 
