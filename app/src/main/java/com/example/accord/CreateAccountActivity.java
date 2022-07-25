@@ -234,16 +234,20 @@ public class CreateAccountActivity extends AppCompatActivity {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Error creating user: " + e);
+
                 }
-                if (String.valueOf(e).equals("com.parse.ParseRequest$ParseRequestException: Account already exists for this username")) {
+                if (String.valueOf(e).equals("com.parse.ParseRequest$ParseRequestException: Account already exists for this username.")) {
                     Log.e(TAG, "Username taken");
+                    setup();
                     //Display to user
                 } else if (String.valueOf(e).equals("com.parse.ParseRequest$ParseRequestException: Account already exists for this email address.")) {
                     Log.e(TAG, "Email taken");
+                    setup();
                     //Display to user
+                } else {
+                    Log.e(TAG, "Parse User created!");
+                    createChatUser(username, name, pass, birthday, bio);
                 }
-                Log.e(TAG, "Parse User created!");
-                createChatUser(username, name, pass, birthday, bio);
             }
         });
     }

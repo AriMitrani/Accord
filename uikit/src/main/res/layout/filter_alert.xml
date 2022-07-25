@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:text="Less than 5 miles away"
+                android:text="Within 5 miles"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <RadioButton
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:text="5-10 miles away" />
+                android:text=" Less than 10 miles away" />
 
             <RadioButton
                 android:id="@+id/rd20"
@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:text="10-20 miles away" />
+                android:text=" Less than 20 miles away" />
 
             <RadioButton
                 android:id="@+id/rd30"
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:text="30-50 miles away" />
+                android:text=" Less than  50 miles away" />
 
             <RadioButton
                 android:id="@+id/rd50"
@@ -120,22 +120,36 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:text="50+ miles away" />
+                android:text="50 or more miles away" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/bApplyFilters"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Apply" />
+
+                <Button
+                    android:id="@+id/bClearFilters"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Clear Filters" />
+
+            </LinearLayout>
 
 
         </RadioGroup>
 
-
-        <Button
-            android:id="@+id/bApplyFilters"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Apply"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

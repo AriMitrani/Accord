@@ -439,7 +439,7 @@ public class MyCardFragment extends Fragment {
         for (int i = 0; i < userList.size(); i++) {
             int maxIndx = getPositionOfBestMatch(tempScoreList);
             User user = userList.get(maxIndx);
-            if (user.getMetadata().toString().contains(filtI) && getDistance(CometChat.getLoggedInUser(), user) <= filterL) {
+            if (user.getMetadata().toString().contains(filtI) && getDistance(CometChat.getLoggedInUser(), user) <= filtL) {
                 list.add(user.getUid());
             }
         }
@@ -453,6 +453,9 @@ public class MyCardFragment extends Fragment {
             mainAdapter.setVidVisible(true);
             mainAdapter.notifyDataSetChanged();
             updateMediaCount();
+        }
+        else {
+            cardsRunOut();
         }
         kCard.reloadAdapterData();
     }
@@ -675,25 +678,7 @@ public class MyCardFragment extends Fragment {
         bFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*if(filter.equals("drums")){
-                    filter = "";
-                    Log.e(TAG, "Filter off");
-                }
-                else{
-                    filter = "drums";
-                    Log.e(TAG, "Filter drums");
-                }*/
-                /*if(mainAdapter.doesPassFilter() == true){
-                    Log.e(TAG,"Pass " + mainAdapter.getNamePass());
-                }
-                else{
-                    Log.e(TAG,"No" + mainAdapter.getNamePass());
-                }*/
                 filterDialog();
-                /*for(int i = 0; i< userList.size(); i++){
-                    Log.e(TAG, "User " + userList.get(i));
-                }
-                initCardsFiltered("drum");*/
             }
         });
 
@@ -712,13 +697,10 @@ public class MyCardFragment extends Fragment {
         kCard.setKolodaListener(new KolodaListener() {
             @Override
             public void onNewTopCard(int i) {
-                //top = i+1;
-                // Log.e(TAG, "Top page: " + list.get(1));
             }
 
             @Override
             public void onCardDrag(int i, @NonNull View view, float v) {
-
             }
 
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -731,7 +713,7 @@ public class MyCardFragment extends Fragment {
                     removeFromMyDeck(list.get(1));
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } //uncomment when I want to actually update the decks
+                }
                 list.remove(0);
                 updateMediaCount();
                 page = 1;
@@ -788,8 +770,6 @@ public class MyCardFragment extends Fragment {
 
             @Override
             public void onCardSingleTap(int i) {
-                Log.e(TAG, "Tap sw");
-                mainAdapter.test(page);
             }
 
             @Override
@@ -877,6 +857,7 @@ public class MyCardFragment extends Fragment {
         AlertDialog alert = builder.create();
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.filter_alert, (ViewGroup) getView(), false);
         final Button bApply = (Button) viewInflated.findViewById(R.id.bApplyFilters);
+        final Button bClear = (Button) viewInflated.findViewById(R.id.bClearFilters);
         final RadioButton rbGuitar = viewInflated.findViewById(R.id.rbGuitar);
         final RadioButton rbVocals = viewInflated.findViewById(R.id.rbVocals);
         final RadioButton rbDrum = viewInflated.findViewById(R.id.rdDrum);
@@ -952,6 +933,20 @@ public class MyCardFragment extends Fragment {
                 Log.e(TAG, "Apply clicked");
                 try {
                     initCardsFiltered(filterI, filterL);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                alert.cancel();
+            }
+        });
+
+        bClear.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "Clear clicked");
+                try {
+                    initCardsFiltered("", 500);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

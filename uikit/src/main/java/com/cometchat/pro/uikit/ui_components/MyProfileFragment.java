@@ -695,47 +695,51 @@ public class MyProfileFragment extends Fragment {
         }
         if (requestCode == PICK_IMAGE) {
             if (resultCode == getActivity().RESULT_OK) {
-                imageUri = data.getData();
-                String[] orientationColumn = {MediaStore.Images.Media.ORIENTATION};
-                Cursor cur = getActivity().managedQuery(imageUri, orientationColumn, null, null, null);
-                int orientation = -1;
-                if (cur != null && cur.moveToFirst()) {
-                    orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]));
-                }
-                InputStream inStream = null;
                 try {
-                    inStream = getActivity().getContentResolver().openInputStream(imageUri);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                Bitmap bitmap = BitmapFactory.decodeStream(inStream);
-                switch (orientation) {
-                    case 90:
-                        bitmap = rotateImage(bitmap, 90);
-                        break;
-                    case 180:
-                        bitmap = rotateImage(bitmap, 180);
-                        break;
-                    case 270:
-                        bitmap = rotateImage(bitmap, 270);
-                        break;
-                    default:
-                        break;
-                }
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                byte[] imageByte = byteArrayOutputStream.toByteArray();
-                ParseFile parseFile = new ParseFile("pfp.png", imageByte);
-                parseFile.saveInBackground(new SaveCallback() {
-                    public void done(ParseException e) {
-                        // If successful add file to user and signUpInBackground
-                        if (null == e) {
-                            Log.e(TAG, "Here");
-                            queryPFPs(CometChat.getLoggedInUser().getUid(), parseFile);
-                        }
-
+                    imageUri = data.getData();
+                    String[] orientationColumn = {MediaStore.Images.Media.ORIENTATION};
+                    Cursor cur = getActivity().managedQuery(imageUri, orientationColumn, null, null, null);
+                    int orientation = -1;
+                    if (cur != null && cur.moveToFirst()) {
+                        orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]));
                     }
-                });
+                    InputStream inStream = null;
+                    try {
+                        inStream = getActivity().getContentResolver().openInputStream(imageUri);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeStream(inStream);
+                    switch (orientation) {
+                        case 90:
+                            bitmap = rotateImage(bitmap, 90);
+                            break;
+                        case 180:
+                            bitmap = rotateImage(bitmap, 180);
+                            break;
+                        case 270:
+                            bitmap = rotateImage(bitmap, 270);
+                            break;
+                        default:
+                            break;
+                    }
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                    byte[] imageByte = byteArrayOutputStream.toByteArray();
+                    ParseFile parseFile = new ParseFile("pfp.png", imageByte);
+                    parseFile.saveInBackground(new SaveCallback() {
+                        public void done(ParseException e) {
+                            // If successful add file to user and signUpInBackground
+                            if (null == e) {
+                                Log.e(TAG, "Here");
+                                queryPFPs(CometChat.getLoggedInUser().getUid(), parseFile);
+                            }
+
+                        }
+                    });
+                } catch (Exception e){
+                    Log.e(TAG, "Photo save error code: " + e);
+                }
             } else { // Result was a failure
                 Log.e(TAG, "Photo not saved code: " + resultCode);
             }
