@@ -15,10 +15,6 @@ public class MyMedia extends ParseObject {
     public MyMedia() {
     }
 
-    /*public String getVidURL(){
-        return getParseFile(KEY_FILE).getUrl();
-    }*/
-
     public String getVidURL() {
         return getParseFile(KEY_FILE).getUrl();
     }

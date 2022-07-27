@@ -30,13 +30,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Log.e(TAG, "Login launched");
         setup();
         listeners();
 
-        // createChatUser(ParseUser.getCurrentUser().getUsername(), ParseUser.getCurrentUser().getString("fullName"));
-
-        if (ParseUser.getCurrentUser() != null) { //if someone is already logged in, skip login screen
+        //if someone is already logged in, skip login screen
+        if (ParseUser.getCurrentUser() != null) {
             loginChatUser(ParseUser.getCurrentUser().getUsername());
             goMainActivity();
         }
@@ -84,17 +82,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginParseUser(String username, String password) {
-        Log.i(TAG, "Logging in " + username);
 
         //this statement logs the user into parse
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
-                if (e != null) { //e is error code, if it is null the parse login worked
-                    Log.i(TAG, "Issue with login", e);
+                if (e != null) {
+                    //e is error code, if it is null the parse login worked
                     return;
                 }
-                Log.i(TAG, "Login worked");
                 loginChatUser(username);
             }
         });
@@ -107,18 +103,16 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(User user) {
-                    Log.d(TAG, "Login Successful : " + user.toString());
-                    goMainActivity(); //function we define to go from login screen to main if login success
+                    //function we define to go from login screen to main if login success
+                    goMainActivity();
                 }
 
                 @Override
                 public void onError(CometChatException e) {
-                    Log.d(TAG, "Login failed with exception: " + e.getMessage());
                 }
             });
         } else {
             Log.d(TAG, "User already logged in: " + UID);
-            // goMainActivity();
         }
     }
 

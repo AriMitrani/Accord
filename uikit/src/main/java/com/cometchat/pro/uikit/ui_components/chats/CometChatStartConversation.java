@@ -1,15 +1,14 @@
 package com.cometchat.pro.uikit.ui_components.chats;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.cometchat.pro.uikit.R;
 import com.cometchat.pro.uikit.ui_components.groups.group_list.CometChatGroupList;
@@ -34,7 +33,7 @@ public class CometChatStartConversation extends AppCompatActivity {
     private String conversationType = UIKitSettings.getConversationsMode().toString();
 
     public static void launch(Context context) {
-        context.startActivity(new Intent(context,CometChatStartConversation.class));
+        context.startActivity(new Intent(context, CometChatStartConversation.class));
     }
 
     @Override
@@ -77,7 +76,7 @@ public class CometChatStartConversation extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition()==0) {
+                if (tab.getPosition() == 0) {
                     title.setText(getString(R.string.select_user));
                 } else {
                     title.setText(getString(R.string.select_group));

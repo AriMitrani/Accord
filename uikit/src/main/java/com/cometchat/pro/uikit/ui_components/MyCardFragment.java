@@ -1,6 +1,7 @@
 package com.cometchat.pro.uikit.ui_components;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.cometchat.pro.uikit.CardSwipeAdapter;
 import com.cometchat.pro.uikit.R;
+import com.cometchat.pro.uikit.ui_components.messages.message_list.CometChatMessageListActivity;
+import com.cometchat.pro.uikit.ui_resources.constants.UIKitConstants;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.yalantis.library.Koloda;
@@ -32,7 +35,6 @@ import com.yalantis.library.KolodaListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -51,7 +53,6 @@ public class MyCardFragment extends Fragment {
     private List<String> list;
     private List<String> passedList;
     private List<User> userList;
-    //private List<String> pfpList;
     private List<Double> scoreList;
     public ImageView ivLogo;
     public final String TAG = "CardFrag";
@@ -84,7 +85,7 @@ public class MyCardFragment extends Fragment {
             e.printStackTrace();
         }
         try {
-            initUserList(); //also inits scorelist
+            initUserList();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -105,14 +106,13 @@ public class MyCardFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void initUserList() throws JSONException {
         userList = new ArrayList<User>();
-        //scoreList = new ArrayList<Integer>();
         JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
         for (int i = 0; i < Deck.length() + 1; i++) {
             if (i < Deck.length()) {
                 CometChat.getUser(Deck.get(i).toString(), new CometChat.CallbackListener<User>() {
                     @Override
                     public void onSuccess(User user) {
-                        addToList(user); //add scores here
+                        addToList(user);
                         double score = 0;
                         try {
                             score = scoreAlg(user, 0);
@@ -129,7 +129,6 @@ public class MyCardFragment extends Fragment {
                         }
                         scoreList.set(index, score);
                         Log.e(TAG, "Added score " + score + " to user " + user.getUid());
-                        //queryPFP(user.getUid());
                     }
 
                     @Override
@@ -137,8 +136,6 @@ public class MyCardFragment extends Fragment {
 
                     }
                 });
-            } else {
-                //initCardsFiltered("");
             }
         }
     }
@@ -146,45 +143,34 @@ public class MyCardFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public double scoreAlg(User user, int distanceConstraint) throws JSONException, java.text.ParseException { //main algorithm
         User me = CometChat.getLoggedInUser();
-        Log.e(TAG, "Current user: " + me.getMetadata());
-        Log.e(TAG, "Matching user: " + user.getMetadata());
         double ageScore = 0;
         double locationScore = 0;
         double instrumentScore = 0;
         double ELO = 0;
         double genreScore = 0;
 
-        //Log.e(TAG, "Age test: " + me.getMetadata().getString("Birthday"));
         int myAge = getAge(me.getMetadata().get("Birthday").toString());
         int theirAge = getAge(user.getMetadata().get("Birthday").toString());
         ageScore = setAgeScore(myAge, theirAge);
-        //Log.e(TAG, "Age score: " + ageScore);
 
         locationScore = setLocationScore(me, user, distanceConstraint);
-        //Log.e(TAG, "Location score: " + locationScore);
 
         instrumentScore = setInstrumentScore(me.getMetadata().getJSONArray("Skills"), user.getMetadata().getJSONArray("Skills"));
-        //Log.e(TAG, "Instrument score: " + instrumentScore);
 
         ELO = setELO(user);
-        //Log.e(TAG, "ELO: " + ELO);
 
         genreScore = setGenreScore(me.getMetadata().getJSONArray("Genres"), user.getMetadata().getJSONArray("Genres"));
-        //Log.e(TAG, "Genre score: " + genreScore);
 
         double finalScore = (0.15 * ageScore + 0.25 * locationScore + 0.3 * instrumentScore + 0.1 * ELO + 0.2 * genreScore);
-        Log.e(TAG, user.getName() + " has a match score of " + finalScore);
         return finalScore;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public int getAge(String date) throws java.text.ParseException { //must be in mm/dd/yyyy
+    public int getAge(String date) throws java.text.ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         Date dDate = formatter.parse(date);
         Date currDate = Calendar.getInstance().getTime();
-        // Log.e(TAG, "Date: " + dDate);
-        // Log.e(TAG, "Current date: " + currDate);
-        //int years = Integer.parseInt(currDate - dDate);
+
         return Period.between(convertToLocalDateViaInstant(dDate), convertToLocalDateViaInstant(currDate)).getYears();
     }
 
@@ -236,7 +222,7 @@ public class MyCardFragment extends Fragment {
         double distance = getDistance(me, you);
         double diff = distance - distanceConstraint;
         if (distance <= distanceConstraint) {
-            return 1; //if it's in the user's desired range; default value is 0
+            return 1;
         } else if (diff >= 60) {
             return 0;
         } else {
@@ -263,7 +249,6 @@ public class MyCardFragment extends Fragment {
                 theirAvg += level;
             }
             theirAvg /= theirSkills.length();
-            // Log.e(TAG, "My avg: " + myAvg + ", their avg: " + theirAvg);
 
             if (theirAvg > myAvg) {
                 return myAvg / theirAvg;
@@ -291,7 +276,7 @@ public class MyCardFragment extends Fragment {
     }
 
     public double setGenreScore(JSONArray myGenres, JSONArray theirGenres) throws JSONException {
-        if (myGenres.equals(theirGenres)) { //if all genres in common
+        if (myGenres.equals(theirGenres)) {
             return 1;
         }
 
@@ -325,48 +310,13 @@ public class MyCardFragment extends Fragment {
         return inArr;
     }
 
-    /*private void queryPFP(String UID) { //returns a URL
-        Log.e(TAG, "Setting pfp");
-        ParseQuery<ProfPic> query = ParseQuery.getQuery(ProfPic.class);
-        query.include(ProfPic.KEY_USER);
-        query.whereContains(ProfPic.KEY_USER, UID);
-        // start an asynchronous call for pfp
-        query.findInBackground(new FindCallback<ProfPic>() {
-            @Override
-            public void done(List<ProfPic> pics, ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting pfp", e);
-                    return;
-                }
-                if(pics.size() == 0) {
-                    //set pfp to default
-                    addToPFPList("");
-                }
-                else{
-                    //set pfp
-                    Log.e(TAG, "Setting existing PFP");
-                    addToPFPList(pics.get(0).getImage().getUrl());
-                }
-            }
-
-        });
-    }*/
-
     public void addToList(User user) {
         userList.add(user);
-        //scoreList.add(1);
     }
-
-
-    /*public void addToPFPList(String url){
-        pfpList.add(url);
-    }*/
 
     public int getPositionOfBestMatch(List<Double> tempScoreList) {
         double highestScore = Collections.max(tempScoreList);
         int indx = tempScoreList.indexOf(highestScore);
-        //Log.e(TAG, "Score list: " + tempScoreList + ", indx highest: " + indx);
         tempScoreList.set(indx, -1.0);
         return indx;
     }
@@ -376,7 +326,6 @@ public class MyCardFragment extends Fragment {
         kCard = (Koloda) v.findViewById(R.id.kolCard);
         filterI = "";
         filterL = 500;
-        //kCard.setAnimation(null);
         kCard.setLayoutAnimation(null);
         list = new ArrayList<String>();
         passedList = new ArrayList<String>();
@@ -388,7 +337,6 @@ public class MyCardFragment extends Fragment {
         bAlg = v.findViewById(R.id.bApplyAlg);
         vidVisible = true;
         mainAdapter = new CardSwipeAdapter(getContext(), passedList, vidVisible, "");
-        //mainAdapter.setPfps(pfpList);
         initCards();
         kCard.setAdapter(mainAdapter);
         flushFirst(kCard);
@@ -399,18 +347,14 @@ public class MyCardFragment extends Fragment {
         list.clear();
         try {
             JSONArray Deck = CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck");
-            list.add(""); //blank first card
+            list.add("");
             List<Double> tempScoreList = new ArrayList<Double>();
-            //Log.e("CHECK", "Scorelist size: " + scoreList.size());
             for (int i = 0; i < scoreList.size(); i++) {
                 tempScoreList.add(scoreList.get(i));
             }
-            Log.e("CHECK", "Temp list: " + tempScoreList);
             for (int i = 0; i < Deck.length(); i++) {
                 int maxIndx = getPositionOfBestMatch(tempScoreList);
-                //Log.e(TAG, "Best match is at: " + maxIndx);
                 list.add(Deck.get(maxIndx).toString());
-                //Log.e(TAG, "Swipe user added:" + Deck.get(maxIndx).toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -423,15 +367,13 @@ public class MyCardFragment extends Fragment {
         } else {
             cardsRunOut();
         }
-        //Log.e(TAG, "List being passed in: " + list);
         mainAdapter.notifyDataSetChanged();
-        //kCard.reloadAdapterData();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void initCardsFiltered(String filtI, int filtL) throws JSONException {
         list.clear();
-        list.add(""); //blank first card
+        list.add("");
         List<Double> tempScoreList = new ArrayList<Double>();
         for (int i = 0; i < scoreList.size(); i++) {
             tempScoreList.add(scoreList.get(i));
@@ -443,8 +385,6 @@ public class MyCardFragment extends Fragment {
                 list.add(user.getUid());
             }
         }
-        //Log.e(TAG, "Filtered list " + list);
-        //Log.e(TAG, "Score list " + scoreList);
         passedList.clear();
         passedList.add("");
         if (list.size() > 1) {
@@ -453,8 +393,7 @@ public class MyCardFragment extends Fragment {
             mainAdapter.setVidVisible(true);
             mainAdapter.notifyDataSetChanged();
             updateMediaCount();
-        }
-        else {
+        } else {
             cardsRunOut();
         }
         kCard.reloadAdapterData();
@@ -500,29 +439,24 @@ public class MyCardFragment extends Fragment {
             @Override
             public void onSuccess(User user) {
                 try {
-                    // Log.e(TAG, "Removing from: " + user.getName());
                     JSONArray userDeck = user.getMetadata().getJSONArray("Deck");
-                    // Log.e(TAG, "Deck: " + userDeck);
                     String me = CometChat.getLoggedInUser().getUid();
-                    // Log.e(TAG, "Me: " + me);
                     int pos = -1;
                     for (int i = 0; i < userDeck.length(); i++) {
                         if (userDeck.get(i).equals(me)) {
                             pos = i;
                         }
                     }
-                    // Log.e(TAG, "I'm at " + pos);
                     if (pos != -1) {
                         user.getMetadata().getJSONArray("Deck").remove(pos);
                         CometChat.updateUser(user, "85e114ed71f14e3ce779b2673d876b9faa8bc5ff", new CometChat.CallbackListener<User>() {
                             @Override
                             public void onSuccess(User user) {
-                                Log.e(TAG, "Removed myself from deck of " + user.getName());
                             }
 
                             @Override
                             public void onError(CometChatException e) {
-
+                                e.printStackTrace();
                             }
                         });
                     }
@@ -533,7 +467,7 @@ public class MyCardFragment extends Fragment {
 
             @Override
             public void onError(CometChatException e) {
-                Log.e(TAG, "Error removing: " + e.getMessage());
+                e.printStackTrace();
             }
         });
     }
@@ -543,7 +477,6 @@ public class MyCardFragment extends Fragment {
             @Override
             public void onSuccess(User user) {
                 try {
-                    JSONObject ELOTag;
                     if (dir.equals("Left")) {
                         int left;
                         left = (int) user.getMetadata().get("Left");
@@ -556,12 +489,11 @@ public class MyCardFragment extends Fragment {
                     CometChat.updateUser(user, "85e114ed71f14e3ce779b2673d876b9faa8bc5ff", new CometChat.CallbackListener<User>() {
                         @Override
                         public void onSuccess(User user) {
-                            Log.e(TAG, "Updated ELO of " + user.getName());
                         }
 
                         @Override
                         public void onError(CometChatException e) {
-
+                            e.printStackTrace();
                         }
                     });
                 } catch (JSONException e) {
@@ -571,7 +503,7 @@ public class MyCardFragment extends Fragment {
 
             @Override
             public void onError(CometChatException e) {
-                Log.e(TAG, "Error removing: " + e.getMessage());
+                e.printStackTrace();
             }
         });
     }
@@ -586,7 +518,7 @@ public class MyCardFragment extends Fragment {
 
             @Override
             public void onError(CometChatException e) {
-
+                e.printStackTrace();
             }
         });
     }
@@ -599,18 +531,17 @@ public class MyCardFragment extends Fragment {
                 pos = i;
             }
         }
-        // Log.e(TAG, "I'm at " + pos);
         if (pos != -1) {
             CometChat.getLoggedInUser().getMetadata().getJSONArray("Deck").remove(pos);
             CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
                 @Override
                 public void onSuccess(User user) {
-                    Log.e(TAG, "Removed from my deck: " + UID);
+
                 }
 
                 @Override
                 public void onError(CometChatException e) {
-
+                    e.printStackTrace();
                 }
             });
         }
@@ -621,19 +552,19 @@ public class MyCardFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                //Log.e(TAG, "Left on " + page);
-                if (page - 1 == 1) {
-                    mainAdapter.setVidVisible(true);
-                    page--;
-                    mainAdapter.setPage(page);
-                    kCard.reloadAdapterData();
-                } else if (page != 1) {
-                    page--;
-                    mainAdapter.setPage(page);
-                    mainAdapter.notifyDataSetChanged();
-                    kCard.reloadAdapterData();
+                if (list.size() > 1) {
+                    if (page - 1 == 1) {
+                        mainAdapter.setVidVisible(true);
+                        page--;
+                        mainAdapter.setPage(page);
+                        kCard.reloadAdapterData();
+                    } else if (page != 1) {
+                        page--;
+                        mainAdapter.setPage(page);
+                        mainAdapter.notifyDataSetChanged();
+                        kCard.reloadAdapterData();
+                    }
                 }
-                Log.e(TAG, "Current page: " + page);
             }
         });
 
@@ -641,37 +572,24 @@ public class MyCardFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                int mediaCount = 0;
-                try {
-                    mediaCount = mainAdapter.queryMedia(list.get(1));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                if (list.size() > 1) {
+                    int mediaCount = 0;
+                    try {
+                        mediaCount = mainAdapter.queryMedia(list.get(1));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if (page != 1 && page <= mediaCount) {
+                        page++;
+                        mainAdapter.setPage(page);
+                        kCard.reloadAdapterData();
+                    } else if (page == 1 && page <= mediaCount) {
+                        mainAdapter.setVidVisible(false);
+                        page++;
+                        mainAdapter.setPage(page);
+                        kCard.reloadAdapterData();
+                    }
                 }
-                Log.e(TAG, list.get(1) + " has " + mediaCount + " media items/pages");
-                //Log.e(TAG, "Right on " + page);
-                if (page != 1 && page <= mediaCount) {
-                    page++;
-                    mainAdapter.setPage(page);
-                    kCard.reloadAdapterData();
-                } else if (page == 1 && page <= mediaCount) {
-                    mainAdapter.setVidVisible(false);
-                    page++;
-                    mainAdapter.setPage(page);
-                    kCard.reloadAdapterData();
-                }
-                Log.e(TAG, "Current page: " + page + " " + list.get(1));
-            }
-        });
-
-        ivLogo.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "Scores: " + scoreList);
-                Log.e(TAG, "Users: " + userList);
-                Log.e(TAG, "User list: " + list);
-                //initCardsFiltered("");
-                //kCard.reloadAdapterData();
             }
         });
 
@@ -706,10 +624,9 @@ public class MyCardFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onCardSwipedLeft(int i) {
-                Log.e(TAG, "Left on: " + list.get(1));
                 updateELO(list.get(1), "Left");
                 try {
-                    removeMeFromDeck(list.get(1)); //passes the UID of the person I swiped left on
+                    removeMeFromDeck(list.get(1));
                     removeFromMyDeck(list.get(1));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -720,27 +637,23 @@ public class MyCardFragment extends Fragment {
                 mainAdapter.setVidVisible(true);
                 mainAdapter.setPage(1);
                 updatePassedList();
-                //mainAdapter.notifyDataSetChanged();
                 kCard.reloadAdapterData();
             }
 
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onCardSwipedRight(int i) {
-                Log.e(TAG, "Right on: " + list.get(1));
                 updateELO(list.get(1), "Right");
                 if (isLikedBy(list.get(1))) {
-                    Log.e(TAG, "Match!");
                     try {
                         removeFromMyDeck(list.get(1));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     sendIntroMessage(list.get(1));
-                    matchDialog();
+                    matchDialog(list.get(1));
                 }
                 if (!isLikedBy(list.get(1))) {
-                    Log.e(TAG, "No match");
                     try {
                         addToFavorites(list.get(1));
                         removeFromMyDeck(list.get(1));
@@ -755,7 +668,6 @@ public class MyCardFragment extends Fragment {
                 mainAdapter.setVidVisible(true);
                 mainAdapter.setPage(1);
                 updatePassedList();
-                // mainAdapter.notifyDataSetChanged();
                 kCard.reloadAdapterData();
             }
 
@@ -821,27 +733,27 @@ public class MyCardFragment extends Fragment {
         CometChat.sendMessage(textMessage, new CometChat.CallbackListener<TextMessage>() {
             @Override
             public void onSuccess(TextMessage textMessage) {
-                //go to fragment!
             }
 
             @Override
             public void onError(CometChatException e) {
-                // cry rlly hard
+                e.printStackTrace();
             }
         });
 
     }
 
-    public void matchDialog() {
+    public void matchDialog(String matchID) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog alert = builder.create();
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.match_alert, (ViewGroup) getView(), false);
-        final Button bOk = (Button) viewInflated.findViewById(R.id.bOkMatch);
+        final Button bQuitAlert = (Button) viewInflated.findViewById(R.id.bOkMatch);
+        final Button bGoToChat = (Button) viewInflated.findViewById(R.id.bGoChat);
         alert.setView(viewInflated);
 
         alert.show();
 
-        bOk.setOnClickListener(new View.OnClickListener() {
+        bQuitAlert.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
@@ -850,6 +762,37 @@ public class MyCardFragment extends Fragment {
             }
         });
 
+        bGoToChat.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "Chat button clicked");
+                CometChat.getUser(matchID, new CometChat.CallbackListener<User>() {
+                    @Override
+                    public void onSuccess(User user) {
+                        startUserIntent(user);
+                    }
+
+                    @Override
+                    public void onError(CometChatException e) {
+                        e.printStackTrace();
+                    }
+                });
+                alert.cancel();
+            }
+        });
+
+    }
+
+    private void startUserIntent(User user) {
+        Intent intent = new Intent(getActivity(), CometChatMessageListActivity.class);
+        intent.putExtra(UIKitConstants.IntentStrings.UID, user.getUid());
+        intent.putExtra(UIKitConstants.IntentStrings.AVATAR, user.getAvatar());
+        intent.putExtra(UIKitConstants.IntentStrings.STATUS, user.getStatus());
+        intent.putExtra(UIKitConstants.IntentStrings.NAME, user.getName());
+        intent.putExtra(UIKitConstants.IntentStrings.LINK, user.getLink());
+        intent.putExtra(UIKitConstants.IntentStrings.TYPE, CometChatConstants.RECEIVER_TYPE_USER);
+        startActivity(intent);
     }
 
     public void filterDialog() {
@@ -861,6 +804,9 @@ public class MyCardFragment extends Fragment {
         final RadioButton rbGuitar = viewInflated.findViewById(R.id.rbGuitar);
         final RadioButton rbVocals = viewInflated.findViewById(R.id.rbVocals);
         final RadioButton rbDrum = viewInflated.findViewById(R.id.rdDrum);
+        final RadioButton rbBass = viewInflated.findViewById(R.id.rbBass);
+        final RadioButton rbKeys = viewInflated.findViewById(R.id.rbKeys);
+        final RadioButton rbProd = viewInflated.findViewById(R.id.rbProd);
         final RadioButton rd5 = viewInflated.findViewById(R.id.rd5);
         final RadioButton rd10 = viewInflated.findViewById(R.id.rd10);
         final RadioButton rd20 = viewInflated.findViewById(R.id.rd20);
@@ -890,6 +836,28 @@ public class MyCardFragment extends Fragment {
                 filterI = "vocal";
             }
         });
+
+        rbBass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterI = "bass";
+            }
+        });
+
+        rbKeys.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterI = "keys";
+            }
+        });
+
+        rbProd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterI = "prod";
+            }
+        });
+
 
         rd5.setOnClickListener(new View.OnClickListener() {
             @Override

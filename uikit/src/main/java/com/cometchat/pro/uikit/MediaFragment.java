@@ -9,12 +9,10 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.MediaController;
 import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
@@ -40,7 +38,6 @@ public class MediaFragment extends Fragment {
     User me = CometChat.getLoggedInUser();
     String TAG = "MediaFrag";
     public List<MyMedia> mediaList;
-    MediaController controller;
     public VideoView vv1;
     public CardView cv1;
     public VideoView vv2;
@@ -82,21 +79,17 @@ public class MediaFragment extends Fragment {
     }
 
     public int queryMedia() throws ParseException {
-        //Log.e(TAG, user + "Querying");
         ParseQuery<MyMedia> query = ParseQuery.getQuery(MyMedia.class);
-        //query.include(MyMedia.KEY_USER);
         query.setLimit(6);
         query.addAscendingOrder("createdAt");
         query.whereContains("User", me.getUid());
         // start a synchronous call for posts
         List<MyMedia> vids = query.find();
-        Log.e(TAG, me + " has #vids: " + vids.size());
         mediaList = vids;
         return vids.size();
     }
 
     public void setupView(View v, int vids) {
-        //backgroundOff = v.getBackground();
         AudioManager audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
         currentUser = ParseUser.getCurrentUser();
@@ -154,8 +147,6 @@ public class MediaFragment extends Fragment {
     }
 
     public void playMedia(int vids) {
-        Log.e(TAG, "Media list size: " + mediaList.size() + ", vids: " + vids);
-        //Log.e(TAG, "Media list 0: " + mediaList.get(0).getVidURL() + ", vids: " + vids);
         if (vids >= 1) {
             playVid(vv1, bDel1, Uri.parse(mediaList.get(0).getVidURL()));
             clickOne = 2;
@@ -183,7 +174,6 @@ public class MediaFragment extends Fragment {
             clickOne = -1;
         }
         setClickVisual();
-        Log.e(TAG, "Clickone: " + clickOne);
     }
 
     public void setClickVisual() {
@@ -247,7 +237,7 @@ public class MediaFragment extends Fragment {
                 if (clickOne == 1) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
-                    startActivityForResult(i, 45); //for video
+                    startActivityForResult(i, 45);
                 }
             }
         });
@@ -258,7 +248,7 @@ public class MediaFragment extends Fragment {
                 if (clickOne == 2) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
-                    startActivityForResult(i, 45); //for video
+                    startActivityForResult(i, 45);
                 }
             }
         });
@@ -269,7 +259,7 @@ public class MediaFragment extends Fragment {
                 if (clickOne == 3) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
-                    startActivityForResult(i, 45); //for video
+                    startActivityForResult(i, 45);
                 }
             }
         });
@@ -280,7 +270,7 @@ public class MediaFragment extends Fragment {
                 if (clickOne == 4) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
-                    startActivityForResult(i, 45); //for video
+                    startActivityForResult(i, 45);
                 }
             }
         });
@@ -291,7 +281,7 @@ public class MediaFragment extends Fragment {
                 if (clickOne == 5) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
-                    startActivityForResult(i, 45); //for video
+                    startActivityForResult(i, 45);
                 }
             }
         });
@@ -302,7 +292,7 @@ public class MediaFragment extends Fragment {
                 if (clickOne == 6) {
                     Intent i = new Intent(Intent.ACTION_PICK);
                     i.setType("video/*");
-                    startActivityForResult(i, 45); //for video
+                    startActivityForResult(i, 45);
                 }
             }
         });
@@ -310,7 +300,6 @@ public class MediaFragment extends Fragment {
         vv1.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                Log.e(TAG, "start1");
                 mediaPlayer.setLooping(true);
             }
         });
@@ -318,7 +307,6 @@ public class MediaFragment extends Fragment {
         vv2.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                Log.e(TAG, "start2");
                 mediaPlayer.setLooping(true);
             }
         });
@@ -326,7 +314,6 @@ public class MediaFragment extends Fragment {
         vv3.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                Log.e(TAG, "start3");
                 mediaPlayer.setLooping(true);
             }
         });
@@ -334,7 +321,6 @@ public class MediaFragment extends Fragment {
         vv4.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                Log.e(TAG, "start4");
                 mediaPlayer.setLooping(true);
             }
         });
@@ -342,7 +328,6 @@ public class MediaFragment extends Fragment {
         vv5.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                Log.e(TAG, "start5");
                 mediaPlayer.setLooping(true);
             }
         });
@@ -350,7 +335,6 @@ public class MediaFragment extends Fragment {
         vv6.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                Log.e(TAG, "start6");
                 mediaPlayer.setLooping(true);
             }
         });
@@ -429,19 +413,15 @@ public class MediaFragment extends Fragment {
         if (requestCode == 45 && resultCode == -1) {
             Uri vid = data.getData();
             if (vid != null) {
-                Log.e(TAG, "Uri: " + vid);
                 byte[] bytes = convertVideoToBytes(vid);
-                Log.e(TAG, "Bytes: " + String.valueOf(bytes == null));
                 ParseFile videoF = new ParseFile("video.mp4", bytes);
-                Log.e(TAG, "ParseFile: " + String.valueOf(videoF == null));
                 videoF.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if (e != null) {
-                            Log.e(TAG, "Error saving parsefile " + e);
+                            e.printStackTrace();
                             return;
                         }
-                        Log.e(TAG, "Parsefile for video saved");
                         saveMedia(me.getUid(), videoF, vid);
                     }
                 });
@@ -451,7 +431,6 @@ public class MediaFragment extends Fragment {
 
     public byte[] convertVideoToBytes(Uri videoUri) {
         byte[] videoBytes = null;
-        //File inputFile=new File(videoUri);
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -478,17 +457,14 @@ public class MediaFragment extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Log.e(TAG, "Error saving media: " + e);
-                    Log.e(TAG, "Video too large!");
+                    e.printStackTrace();
                     return;
                 }
-                Log.e(TAG, "Saved!");
                 try {
                     playMedia(queryMedia());
                 } catch (ParseException ex) {
                     ex.printStackTrace();
                 }
-                //whatVid(vid); //sets the pfps
             }
         });
     }
@@ -498,7 +474,6 @@ public class MediaFragment extends Fragment {
         toDelete.deleteInBackground(new DeleteCallback() {
             @Override
             public void done(ParseException e) {
-                Log.e(TAG, "Deleted");
                 try {
                     hideAll();
                     playMedia(queryMedia());
@@ -510,9 +485,7 @@ public class MediaFragment extends Fragment {
     }
 
     public MyMedia queryToDelete(int pos) throws ParseException {
-        //Log.e(TAG, user + "Querying");
         ParseQuery<MyMedia> query = ParseQuery.getQuery(MyMedia.class);
-        //query.include(MyMedia.KEY_USER);
         query.setLimit(6);
         query.addAscendingOrder("createdAt");
         query.whereContains("User", me.getUid());

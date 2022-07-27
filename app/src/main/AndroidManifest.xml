@@ -31,26 +31,11 @@
             android:name=".GenreSelect"
             android:exported="false" />
         <activity
-            android:name=".GenreActivity"
-            android:exported="false" />
-        <activity
             android:name=".InstrumentActivity"
             android:exported="false" />
         <activity
             android:name=".CreateAccountActivity"
             android:exported="false" />
-        <activity
-            android:name=".ChatActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
-        <activity
-            android:name=".CardActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".LoginActivity"
             android:exported="false"

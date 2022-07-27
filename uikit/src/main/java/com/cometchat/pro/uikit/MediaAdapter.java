@@ -1,7 +1,6 @@
 package com.cometchat.pro.uikit;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,25 +45,21 @@ public class MediaAdapter extends BaseAdapter {
         if (newView == null) {
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_media, viewGroup, false);
             getCardUser(i, view);
-            Log.e(TAG, "Null");
         } else {
             view = newView;
-            Log.e(TAG, "Old view");
         }
         return view;
     }
 
     public void getCardUser(int pos, View v) {
-        Log.e(TAG, "User at " + pos + " is " + list.get(pos));
         CometChat.getUser(list.get(pos), new CometChat.CallbackListener<User>() {
             @Override
             public void onSuccess(User user) {
-                Log.e(TAG, "User at " + pos + " is now " + user.getName());
             }
 
             @Override
             public void onError(CometChatException e) {
-                Log.e(TAG, "No user to populate card", e);
+                e.printStackTrace();
             }
         });
     }

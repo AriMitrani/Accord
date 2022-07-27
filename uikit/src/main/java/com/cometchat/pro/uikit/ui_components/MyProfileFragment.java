@@ -91,11 +91,6 @@ public class MyProfileFragment extends Fragment {
     public void setup(View v) {
         ivSettings = v.findViewById(R.id.ivSettings);
         ivPFP = v.findViewById(R.id.ivPFP);
-        Log.e(TAG, "PFP user: " + CometChat.getLoggedInUser().getName());
-        //Log.e(TAG, "PFP url: " + CometChat.getLoggedInUser().getAvatar());
-        /*if(CometChat.getLoggedInUser().getAvatar() != null){
-            Glide.with(this).load(CometChat.getLoggedInUser().getAvatar()).circleCrop().into(ivPFP);
-        }*/
         setPFP();
         ivButtonMedia = v.findViewById(R.id.ivButtonMedia);
         tvName = v.findViewById(R.id.tvName);
@@ -119,12 +114,11 @@ public class MyProfileFragment extends Fragment {
         try {
             double lat = user.getMetadata().getDouble("Lat");
             double lon = user.getMetadata().getDouble("Lon");
-            // Log.e(TAG, "Pop Lat: " + lat);
             return getCityState(lat, lon);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return "broke";
+        return "";
     }
 
     private String getCityState(double lat, double lon) {
@@ -136,14 +130,10 @@ public class MyProfileFragment extends Fragment {
         }
 
         try {
-            addresses = geocoder.getFromLocation(lat, lon, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-            // String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            // Here 1 represent max location result to returned, by documentation it's recommended to use 1 to 5
+            addresses = geocoder.getFromLocation(lat, lon, 1);
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
-            // Log.e(TAG, "Address: " + address);
-            // Log.e(TAG, "Lat: " + lat);
-            // Log.e(TAG, "Location city: " + city);
-            // Log.e(TAG, "Location state: " + state);
             if (city == null || state == null) {
                 return "No Location";
             }
@@ -241,7 +231,6 @@ public class MyProfileFragment extends Fragment {
         ivEditBio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(TAG, "Changing bio");
                 changeBioDialog();
             }
         });
@@ -249,9 +238,6 @@ public class MyProfileFragment extends Fragment {
         ivPFP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(TAG, "Change PFP");
-
-                //queryPFPs(CometChat.getLoggedInUser().getUid(), pfp);
                 changePFPDialog();
             }
         });
@@ -259,7 +245,6 @@ public class MyProfileFragment extends Fragment {
         tvChangePFP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(TAG, "Change PFP");
                 changePFPDialog();
             }
         });
@@ -270,11 +255,7 @@ public class MyProfileFragment extends Fragment {
                 Fragment fragment = new MediaFragment();
                 if (fragment != null) {
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame, fragment).commit();
-                    //return true;
                 }
-                //return false;
-                /*Intent intent = new Intent(getActivity(), MediaFragment.class);
-                startActivity(intent);*/
             }
         });
 
@@ -283,7 +264,6 @@ public class MyProfileFragment extends Fragment {
     public void changeNameDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog alert = builder.create();
-        //builder.setTitle("Change name");
         View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.input_alert, (ViewGroup) getView(), false);
         TextInputLayout IL = (TextInputLayout) viewInflated.findViewById(R.id.textInputLayout);
         IL.setCounterEnabled(false);
@@ -316,12 +296,9 @@ public class MyProfileFragment extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Log.e(TAG, "Error saving prof pic: " + e);
+                    e.printStackTrace();
                 }
-                Log.e(TAG, "Saved!");
-                //add to metadata
                 setPFP();
-                //ivPFP.setImageResource(0);
             }
         });
     }
@@ -334,13 +311,10 @@ public class MyProfileFragment extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Log.e(TAG, "Error saving prof pic: " + e);
+                    e.printStackTrace();
                     return;
                 }
-                Log.e(TAG, "Saved!");
-                //add to metadata
                 setPFP();
-                //ivPFP.setImageResource(0);
             }
         });
     }
@@ -355,36 +329,28 @@ public class MyProfileFragment extends Fragment {
         CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
             @Override
             public void onSuccess(User user) {
-                Log.e(TAG, "Updated!");
             }
 
             @Override
             public void onError(CometChatException e) {
-                Log.e(TAG, "PFP update failed", e);
+                e.printStackTrace();
             }
         });
     }
 
     private void queryPFPs(String UID, File photoFile) {
-        //Boolean done = false;
-        Log.e(TAG, "Query started");
         ParseQuery<ProfPic> query = ParseQuery.getQuery(ProfPic.class);
-        // include data referred by user key
         query.include(ProfPic.KEY_USER);
-        //query.setLimit(20);
-        // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         query.whereContains(ProfPic.KEY_USER, UID);
-        // start an asynchronous call for posts
         query.findInBackground(new FindCallback<ProfPic>() {
             @Override
             public void done(List<ProfPic> pics, ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting pfp", e);
+                    e.printStackTrace();
                     return;
                 }
-                Log.e(TAG, "# of pics: " + pics.size());
                 if (pics.size() == 0) {
                     savePFP(UID, photoFile);
                 } else {
@@ -401,25 +367,21 @@ public class MyProfileFragment extends Fragment {
     }
 
     private void queryPFPs(String UID, ParseFile photoFile) {
-        //Boolean done = false;
-        Log.e(TAG, "Query started");
         ParseQuery<ProfPic> query = ParseQuery.getQuery(ProfPic.class);
         // include data referred by user key
         query.include(ProfPic.KEY_USER);
-        //query.setLimit(20);
-        // order posts by creation date (newest first)
+        // order pfps by creation date (newest first)
         query.addDescendingOrder("createdAt");
         query.whereContains(ProfPic.KEY_USER, UID);
-        // start an asynchronous call for posts
+        // start an asynchronous call for pfps
         query.findInBackground(new FindCallback<ProfPic>() {
             @Override
             public void done(List<ProfPic> pics, ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting pfp", e);
+                    e.printStackTrace();
                     return;
                 }
-                Log.e(TAG, "# of pics: " + pics.size());
                 if (pics.size() == 0) {
                     savePFP(UID, photoFile);
                 } else {
@@ -436,7 +398,6 @@ public class MyProfileFragment extends Fragment {
     }
 
     private void setPFP() {
-        Log.e(TAG, "Setting pfp");
         ParseQuery<ProfPic> query = ParseQuery.getQuery(ProfPic.class);
         query.include(ProfPic.KEY_USER);
         query.whereContains(ProfPic.KEY_USER, CometChat.getLoggedInUser().getUid());
@@ -446,7 +407,7 @@ public class MyProfileFragment extends Fragment {
             public void done(List<ProfPic> pics, ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting pfp", e);
+                    e.printStackTrace();
                     return;
                 }
                 if (pics.size() == 0) {
@@ -454,7 +415,6 @@ public class MyProfileFragment extends Fragment {
                     Glide.with(getContext()).load(R.drawable.circle).circleCrop().into(ivPFP);
                 } else {
                     //set pfp
-                    Log.e(TAG, "Setting existing PFP");
                     String pfpFile = pics.get(0).getImage().getUrl();
                     metadataPFP(pfpFile);
                     Glide.with(getContext()).load(pfpFile).circleCrop().into(ivPFP);
@@ -483,7 +443,6 @@ public class MyProfileFragment extends Fragment {
             public void onClick(View view) {
                 String newBio = etInput.getText().toString().trim();
                 if (!newBio.isEmpty() && newBio.length() <= 140) {
-                    Log.e(TAG, newBio);
                     changeBio(newBio);
                     alert.cancel();
                 }
@@ -505,7 +464,6 @@ public class MyProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 onLaunchCamera(view);
-                //changePFP(newUrl);
                 alert.cancel();
             }
         });
@@ -514,7 +472,6 @@ public class MyProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 openGallery();
-                //changePFP(newUrl);
                 alert.cancel();
             }
         });
@@ -531,13 +488,12 @@ public class MyProfileFragment extends Fragment {
         CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
             @Override
             public void onSuccess(User user) {
-                Log.e(TAG, "Updated!");
                 tvBio.setText(bio);
             }
 
             @Override
             public void onError(CometChatException e) {
-                Log.e(TAG, "Name update failed", e);
+                e.printStackTrace();
             }
         });
     }
@@ -547,36 +503,18 @@ public class MyProfileFragment extends Fragment {
         CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
             @Override
             public void onSuccess(User user) {
-                Log.e(TAG, "Updated!");
                 tvName.setText(name);
             }
 
             @Override
             public void onError(CometChatException e) {
-                Log.e(TAG, "Name update failed", e);
+                e.printStackTrace();
             }
         });
     }
 
-    /*public void changePFP(String newUrl){
-        //CometChat.getLoggedInUser().setAvatar(newUrl);
-        CometChat.updateCurrentUserDetails(CometChat.getLoggedInUser(), new CometChat.CallbackListener<User>() {
-            @Override
-            public void onSuccess(User user) {
-                Log.e(TAG, "PFP Updated!");
-                Glide.with(getContext()).load(CometChat.getLoggedInUser().getAvatar()).circleCrop().into(ivPFP);
-            }
-
-            @Override
-            public void onError(CometChatException e) {
-                Log.e(TAG, "PFP update failed", e);
-            }
-        });
-    }*/
-
     public void onLaunchCamera(View view) {
         // create Intent to take a picture and return control to the calling application
-
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Create a File reference for future access
         photoFile = getPhotoFileUri(photoFileName);
@@ -602,7 +540,6 @@ public class MyProfileFragment extends Fragment {
         gallery.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
         if (gallery.resolveActivity(getContext().getPackageManager()) != null) {
             // Start the image capture intent to take photo
-            Log.e(TAG, "Starting for result.");
             startActivityForResult(gallery, PICK_IMAGE);
         }
     }
@@ -617,7 +554,6 @@ public class MyProfileFragment extends Fragment {
         //File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), TAG);
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            Log.d(TAG, "failed to create directory");
         }
 
         // Return the file target for the photo based on filename
@@ -628,9 +564,7 @@ public class MyProfileFragment extends Fragment {
     @SuppressLint("Range")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.e(TAG, "Result: " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        // Log.e(TAG, "Photo start.");
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == getActivity().RESULT_OK) {
                 String[] orientationColumn = {MediaStore.Images.Media.ORIENTATION};
@@ -639,7 +573,6 @@ public class MyProfileFragment extends Fragment {
                 if (cur != null && cur.moveToFirst()) {
                     orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]));
                 }
-                // Log.e(TAG, "Photo ok.");
                 // by this point we have the camera photo on disk
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                 switch (orientation) {
@@ -658,11 +591,10 @@ public class MyProfileFragment extends Fragment {
                 // RESIZE BITMAP, see section below
                 Bitmap resizedBitmap = BitmapScaler.scaleToFitWidth(takenImage, 1000);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-// Compress the image further
+                // Compress the image further
                 resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-// Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
+                // Create a new file for the resized bitmap (`getPhotoFileUri` defined above)
                 File resizedFile = getPhotoFileUri(photoFileName + "_resized");
-                //rotateBitmapOrientation(resizedFile.getPath());
                 try {
                     resizedFile.createNewFile();
                 } catch (IOException e) {
@@ -674,7 +606,7 @@ public class MyProfileFragment extends Fragment {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-// Write the bytes of the bitmap to file
+                // Write the bytes of the bitmap to file
                 try {
                     fos.write(bytes.toByteArray());
                 } catch (IOException e) {
@@ -686,11 +618,7 @@ public class MyProfileFragment extends Fragment {
                     e.printStackTrace();
                 }
                 // Load the taken image into a preview
-                // Log.e(TAG, "Photo load.");
-                //ivPFP.setImageBitmap(resizedBitmap);
                 queryPFPs(CometChat.getLoggedInUser().getUid(), photoFile);
-            } else { // Result was a failure
-                Log.e(TAG, "Photo not taken code: " + resultCode);
             }
         }
         if (requestCode == PICK_IMAGE) {
@@ -731,19 +659,15 @@ public class MyProfileFragment extends Fragment {
                         public void done(ParseException e) {
                             // If successful add file to user and signUpInBackground
                             if (null == e) {
-                                Log.e(TAG, "Here");
                                 queryPFPs(CometChat.getLoggedInUser().getUid(), parseFile);
                             }
 
                         }
                     });
-                } catch (Exception e){
-                    Log.e(TAG, "Photo save error code: " + e);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } else { // Result was a failure
-                Log.e(TAG, "Photo not saved code: " + resultCode);
             }
-            //Log.e(TAG, "Data: " + pf);
         }
     }
 

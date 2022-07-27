@@ -3,7 +3,6 @@ package com.example.accord;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -61,7 +60,6 @@ public class GenreSelect extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, String.valueOf(metadata));
     }
 
     public void setup() {
@@ -308,7 +306,6 @@ public class GenreSelect extends AppCompatActivity {
     }
 
     public void createData() throws JSONException {
-        Log.e(TAG, "Creating metadata");
         JSONArray genreArr = new JSONArray();
         if (rock) {
             genreArr.put("rock");
@@ -347,7 +344,6 @@ public class GenreSelect extends AppCompatActivity {
             genreArr.put("punkrock");
         }
         metadata.put("Genres", genreArr);
-        Log.e(TAG, "Metadata: " + metadata);
         Intent i = new Intent(this, CreateAccountActivity.class);
         i.putExtra("metadata", Parcels.wrap(metadata.toString()));
         startActivity(i);

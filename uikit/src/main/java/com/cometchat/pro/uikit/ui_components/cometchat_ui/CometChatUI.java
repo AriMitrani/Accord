@@ -473,7 +473,7 @@ public class CometChatUI extends AppCompatActivity implements
         intent.putExtra(UIKitConstants.IntentStrings.AVATAR, user.getAvatar());
         intent.putExtra(UIKitConstants.IntentStrings.STATUS, user.getStatus());
         intent.putExtra(UIKitConstants.IntentStrings.NAME, user.getName());
-        intent.putExtra(UIKitConstants.IntentStrings.LINK,user.getLink());
+        intent.putExtra(UIKitConstants.IntentStrings.LINK, user.getLink());
         intent.putExtra(UIKitConstants.IntentStrings.TYPE, CometChatConstants.RECEIVER_TYPE_USER);
         startActivity(intent);
     }

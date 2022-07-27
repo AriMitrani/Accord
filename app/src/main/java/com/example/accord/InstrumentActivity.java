@@ -2,7 +2,6 @@ package com.example.accord;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -59,13 +58,6 @@ public class InstrumentActivity extends AppCompatActivity {
     public RadioButton prod3;
 
     public Button bNext;
-
-    public boolean drums = false;
-    public boolean guitar = false;
-    public boolean bass = false;
-    public boolean vocals = false;
-    public boolean keys = false;
-    public boolean prod = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -285,7 +277,6 @@ public class InstrumentActivity extends AppCompatActivity {
         bNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "Button metadata click");
                 try {
                     createData();
                 } catch (JSONException e) {
@@ -353,14 +344,11 @@ public class InstrumentActivity extends AppCompatActivity {
     }
 
     public void createData() throws JSONException {
-        Log.e(TAG, "Creating metadata");
         JSONObject metadata = new JSONObject();
         metadata.put("Lat", 0);
         metadata.put("Lon", 0);
         JSONArray likedArr = new JSONArray();
         metadata.put("Liked", likedArr);
-        /*metadata.put("Bio", "");
-        metadata.put("Birthday", 0);*/
         JSONArray skillsArr = new JSONArray();
 
         if (drums1.isChecked()) {
@@ -406,7 +394,6 @@ public class InstrumentActivity extends AppCompatActivity {
             skillsArr.put("prod3");
         }
         metadata.put("Skills", skillsArr);
-        Log.e(TAG, "Metadata: " + metadata);
         Intent i = new Intent(this, GenreSelect.class);
         i.putExtra("metadata", Parcels.wrap(metadata.toString()));
         startActivity(i);

@@ -62,6 +62,7 @@ public class CardSwipeAdapter extends BaseAdapter {
     public ImageView iv7;
     public TextView tvLocation;
     public TextView tvAge;
+    public TextView tvBio;
     public int LayoutID;
     public int page;
     public VideoView vFile;
@@ -123,26 +124,22 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        //Log.e(TAG, "Getting view");
-        // Log.e(TAG, "Getting view " + position + " and vis is " + vidVisible);
         View view;
         if (convertView == null) {
             view = LayoutInflater.from(parent.getContext()).inflate(LayoutID, parent, false);
             getCardUser(position, view);
         } else {
             view = convertView;
-            Log.e(TAG, "Old view");
         }
         return view;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void setup(User user, View v, int pos) {
+    public void setup(User user, View v, int pos) throws JSONException {
         tvCardName = v.findViewById(R.id.tvCardName);
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
         lTopBar = v.findViewById(R.id.lTopBar);
-        //Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic);
         try {
             setPFP(user, v);
         } catch (JSONException e) {
@@ -164,7 +161,9 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvLocation = v.findViewById(R.id.tvLocation);
         tvLocation.setText(popLocation(user));
         tvAge = v.findViewById(R.id.tvAge);
+        tvBio = v.findViewById(R.id.tvCardBio);
         tvAge.setText(popAge(user));
+        tvBio.setText(user.getMetadata().getString("Bio"));
         vFile = v.findViewById(R.id.vFile);
         populateInstruments(user, v);
         initPageBar();
@@ -176,8 +175,6 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvCardName.setText(user.getName());
         ivCardPic = v.findViewById(R.id.ivCardPic);
         lTopBar = v.findViewById(R.id.lTopBar);
-        //Glide.with(v).load(user.getAvatar()).circleCrop().into(ivCardPic); //COCKATOO
-        //pos = list.get(pos).
         try {
             setPFP(user, v);
         } catch (JSONException e) {
@@ -235,25 +232,20 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public int getAge(String date) throws java.text.ParseException { //must be in mm/dd/yyyy
+    public int getAge(String date) throws java.text.ParseException {
         if (date.isEmpty()) {
             return -1;
         }
         if (date.charAt(date.length() - 1) == 'Y') {
-            // Log.e(TAG, "Missing date");
             return -1;
         }
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         Date dDate = formatter.parse(date);
         Date currDate = Calendar.getInstance().getTime();
-        // Log.e(TAG, "Date: " + dDate);
-        // Log.e(TAG, "Current date: " + currDate);
         int years = Period.between(convertToLocalDateViaInstant(dDate), convertToLocalDateViaInstant(currDate)).getYears();
         if (years < 12 || years > 100) {
-            // Log.e(TAG, "Please enter a valid date");
             return -1;
         }
-        Log.e(TAG, "Age: " + years);
         return years;
     }
 
@@ -266,7 +258,6 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     private void setPFP(User user, View v) throws JSONException {
         String pfpURl = user.getMetadata().getString("PFP");
-        Log.e(TAG, user.getName() + " has pfp " + pfpURl); //get pfp from metadata
         if (pfpURl.isEmpty()) {
             Glide.with(v).load(R.drawable.circle).circleCrop().into(ivCardPic);
         } else {
@@ -283,12 +274,10 @@ public class CardSwipeAdapter extends BaseAdapter {
         }
 
         try {
-            addresses = geocoder.getFromLocation(lat, lon, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-            //String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = geocoder.getFromLocation(lat, lon, 1);
             String city = addresses.get(0).getLocality();
             String state = addresses.get(0).getAdminArea();
-            Log.e(TAG, "Location city: " + city);
-            Log.e(TAG, "Location state: " + state);
             if (city == null || state == null) {
                 return "No Location";
             }
@@ -379,19 +368,8 @@ public class CardSwipeAdapter extends BaseAdapter {
         visiblePages = n + 1;
     }
 
-    public void clearPageBar() {
-        iv1.setColorFilter(null);
-        iv2.setColorFilter(null);
-        iv3.setColorFilter(null);
-        iv4.setColorFilter(null);
-        iv5.setColorFilter(null);
-        iv6.setColorFilter(null);
-        iv7.setColorFilter(null);
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void initPageBar(int newPage) {
-        // Log.e(TAG, "Initializing top bar with " + visiblePages + " pages");
         iv1.setVisibility(View.GONE);
         iv2.setVisibility(View.GONE);
         iv3.setVisibility(View.GONE);
@@ -401,7 +379,6 @@ public class CardSwipeAdapter extends BaseAdapter {
         iv7.setVisibility(View.GONE);
         if (visiblePages >= 1) {
             iv1.setVisibility(View.VISIBLE);
-            //iv1.setColorFilter(Color.argb(100, 255, 0, 0));
         }
         if (visiblePages >= 2) {
             iv2.setVisibility(View.VISIBLE);
@@ -425,7 +402,6 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     public void initPageBar() {
-        // Log.e(TAG, "Initializing top bar with " + visiblePages + " pages");
         iv1.setVisibility(View.GONE);
         iv2.setVisibility(View.GONE);
         iv3.setVisibility(View.GONE);
@@ -435,7 +411,6 @@ public class CardSwipeAdapter extends BaseAdapter {
         iv7.setVisibility(View.GONE);
         if (visiblePages >= 1) {
             iv1.setVisibility(View.VISIBLE);
-            //iv1.setColorFilter(Color.argb(100, 255, 0, 0));
         }
         if (visiblePages >= 2) {
             iv2.setVisibility(View.VISIBLE);
@@ -459,15 +434,16 @@ public class CardSwipeAdapter extends BaseAdapter {
     }
 
     public void getCardUser(int pos, View v) {
-        //Log.e(TAG, "Getting card user");
-        Log.e(TAG, "Whole list is: " + list);
-        Log.e(TAG, "User at " + pos + " is " + list.get(pos));
         CometChat.getUser(list.get(pos), new CometChat.CallbackListener<User>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(User user) {
                 if (vidVisible) {
-                    setup(user, v, pos);
+                    try {
+                        setup(user, v, pos);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     setupHide(user, v, pos);
                 }
@@ -476,7 +452,7 @@ public class CardSwipeAdapter extends BaseAdapter {
 
             @Override
             public void onError(CometChatException e) {
-                Log.e(TAG, "No user to populate card");
+                e.printStackTrace();
             }
         });
     }
@@ -516,23 +492,18 @@ public class CardSwipeAdapter extends BaseAdapter {
     public Drawable matchInst(String inst) {
         if (inst.contains("bass")) {
             return context.getResources().getDrawable(R.drawable.bass);
-            //Log.e(TAG, "bass");
         }
         if (inst.contains("drums")) {
             return context.getResources().getDrawable(R.drawable.drums);
-            //Log.e(TAG, "drums");
         }
         if (inst.contains("guitar")) {
             return context.getResources().getDrawable(R.drawable.guitar);
-            //Log.e(TAG, "guitar");
         }
         if (inst.contains("vocals")) {
             return context.getResources().getDrawable(R.drawable.mic);
-            //Log.e(TAG, "vocals");
         }
         if (inst.contains("keys")) {
             return context.getResources().getDrawable(R.drawable.keys);
-            //Log.e(TAG, "keys");
         }
         notifyDataSetChanged();
         return context.getResources().getDrawable(R.drawable.drums);
@@ -574,12 +545,9 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvAge.setVisibility(View.INVISIBLE);
         tvLocation.setVisibility(View.INVISIBLE);
 
-        //show
         vFile.setVisibility(View.VISIBLE);
         lTopBar.setVisibility(View.VISIBLE);
         notifyDataSetChanged();
-        //queryMedia(user);
-        //vFile.setVideoPath();
     }
 
     public void showFirst(User user, View v) {
@@ -589,21 +557,16 @@ public class CardSwipeAdapter extends BaseAdapter {
         tvAge.setVisibility(View.VISIBLE);
         tvLocation.setVisibility(View.VISIBLE);
         lTopBar.setVisibility(View.VISIBLE);
-
-        //things to hide
         vFile.setVisibility(View.INVISIBLE);
     }
 
     public int queryMedia(String user) throws ParseException {
-        //Log.e(TAG, user + "Querying");
         ParseQuery<MyMedia> query = ParseQuery.getQuery(MyMedia.class);
-        //query.include(MyMedia.KEY_USER);
         query.setLimit(6);
         query.addDescendingOrder("createdAt");
         query.whereContains("User", user);
         // start a synchronous call for posts
         List<MyMedia> vids = query.find();
-        Log.e(TAG, user + " has #vids: " + vids.size());
         notifyDataSetChanged();
         mediaList = vids;
         return vids.size();
@@ -612,20 +575,15 @@ public class CardSwipeAdapter extends BaseAdapter {
 
     public void loadVideo(MyMedia vid) {
         String mediaUrl = vid.getVidURL();
-        //vFile.setMinimumHeight(1);
-        //vFile.getLayoutParams().height = 200;
-        //vFile.getLayoutParams().width = 200;
         vFile.setVideoPath(mediaUrl);
         vFile.requestFocus();
         vFile.start();
-        Log.e(TAG, "Loading vid");
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void setPage(int p) {
         page = p;
-        Log.e(TAG, "Page adapter: " + page);
         initPageBar(p);
         if (page > 1) {
             loadVideo(mediaList.get(page - 2));
@@ -637,18 +595,14 @@ public class CardSwipeAdapter extends BaseAdapter {
                     loadVideo(mediaList.get(page - 2));
                 }
             }, 1000);
-            //loadVideo(mediaList.get(page-2));
         }
     }
 
     public void updateTopMenu(int p) {
-        //Log.e(TAG, "Updating menu to page " + p);
-        //clearPageBar();
         if (p == 1) {
             iv1.setColorFilter(Color.argb(100, 10, 10, 10));
         }
         if (p == 2) {
-            //Log.e(TAG, "here page " + p);
             iv2.setColorFilter(Color.argb(100, 10, 10, 10));
         }
         if (p == 3) {
